@@ -11,6 +11,7 @@ export const QC_RULES: RuleDefinition[] = [
     status: "IN_FORCE",
     reads: ["jurisdictions", "dataCategories", "aiDecisionRole", "mitigations"],
     appliesWhen: (c) =>
+      c.privateSector &&
       c.jurisdictions.includes("quebec") &&
       c.personalData &&
       (c.aiDecisionRole === "decides_alone" ||
@@ -39,7 +40,11 @@ export const QC_RULES: RuleDefinition[] = [
     effectiveDate: "2027-05-01",
     reads: ["sector", "jurisdictions", "orgType"],
     appliesWhen: (c) =>
-      (c.sector === "financial_services" || c.sector === "insurance") && c.jurisdictions.includes("quebec") && c.privateSector,
+      // Federally regulated banks are not AMF-supervised (ADR-0015).
+      (c.sector === "financial_services" || c.sector === "insurance") &&
+      c.jurisdictions.includes("quebec") &&
+      c.privateSector &&
+      !(c.frfi && c.sector === "financial_services"),
     severity: () => "action",
     consideration:
       "From May 1, 2027, the AMF guideline sets expectations on AI governance, explainability and fair treatment of clients for Quebec-regulated financial institutions.",

@@ -10,7 +10,7 @@ import { ON_RULES } from "./on";
 import { QC_RULES } from "./qc";
 
 /** Bump whenever a rule's status, trigger, wording or sources change. */
-export const RULE_CATALOGUE_VERSION = "2026-11-20.1";
+export const RULE_CATALOGUE_VERSION = "2026-11-20.2";
 
 export const RULE_CATALOGUE: readonly RuleDefinition[] = [
   ...BC_RULES,

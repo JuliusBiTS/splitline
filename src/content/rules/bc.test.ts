@@ -74,8 +74,12 @@ describe("BC rules", () => {
     expect(t?.inScope).toBe(false);
   });
 
-  it("BC-HRC-01 does not apply to federally regulated FIs or federal institutions", () => {
-    const c = makeCase("frfi", { orgType: "federally_regulated_fi", useCasePatterns: ["hiring_selection"] });
+  it("BC-HRC-01 does not apply to federal banks or federal institutions (ADR-0015)", () => {
+    const c = makeCase("frfi bank", {
+      orgType: "federally_regulated_fi",
+      sector: "financial_services",
+      useCasePatterns: ["hiring_selection"],
+    });
     expect(triggeredIds(c)).not.toContain("BC-HRC-01");
     expect(triggeredIds(EDGE.federalAdminDecision)).not.toContain("BC-HRC-01");
   });

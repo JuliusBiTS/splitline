@@ -27,7 +27,7 @@ describe("presets", () => {
     it("explains the verdict in at most 3 sentences, without legal-advice wording", () => {
       const sentences = p.verdictExplanation.split(/(?<=[.!?])\s+/).filter(Boolean);
       expect(sentences.length).toBeLessThanOrEqual(3);
-      expect(p.verdictExplanation).not.toMatch(/compliant|must comply|legal advice|you must/i);
+      expect(p.verdictExplanation).not.toMatch(/compliant|must comply|legal advice|you must|mandatory action|required by law/i);
     });
     it("runs through the engine", () => {
       expect(() => computeCase(p.intake, p.decomposition)).not.toThrow();

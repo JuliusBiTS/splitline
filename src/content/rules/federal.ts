@@ -2,8 +2,12 @@
  * Federal rules. Status per docs/research/01_* §2; predicates per ADR-0012 where it settles them.
  */
 import { tierRank } from "@/engine/tier";
-import type { RuleDefinition } from "@/engine/types";
+import type { CaseFacts, RuleDefinition } from "@/engine/types";
 import { LAST_VERIFIED, SRC } from "./sources";
+
+/** Personal information other than employee information. */
+const nonEmployeePersonalData = (c: CaseFacts): boolean =>
+  c.dataCategories.some((d) => d !== "no_personal" && d !== "employee_hr");
 
 export const FEDERAL_RULES: RuleDefinition[] = [
   {
@@ -13,7 +17,8 @@ export const FEDERAL_RULES: RuleDefinition[] = [
     instrument: "PIPEDA (accountability for transfers for processing)",
     status: "IN_FORCE",
     reads: ["orgType", "dataCategories", "hosting"],
-    appliesWhen: (c) => c.privateSector && c.personalData && c.crossBorder,
+    // Employee-only data of a provincially regulated employer falls under BC PIPA, not PIPEDA (ADR-0015).
+    appliesWhen: (c) => c.privateSector && (c.frfi ? c.personalData : nonEmployeePersonalData(c)) && c.crossBorder,
     severity: () => "action",
     consideration:
       "Personal information would leave the province or Canada in the course of commercial activity, so PIPEDA likely applies. The organization stays accountable for information it transfers to a third party for processing.",
@@ -22,7 +27,7 @@ export const FEDERAL_RULES: RuleDefinition[] = [
       "Carry out vendor due diligence before procurement.",
       "Tell individuals that their information may be processed outside Canada.",
     ],
-    sources: [SRC.kukiePipeda, SRC.jointOpenAi, SRC.claudeResidency],
+    sources: [SRC.opcVendorNews, SRC.jointOpenAi, SRC.kukiePipeda, SRC.claudeResidency],
     lastVerified: LAST_VERIFIED,
   },
   {
@@ -83,7 +88,8 @@ export const FEDERAL_RULES: RuleDefinition[] = [
     instrument: "Bill C-36, Protecting Privacy and Consumer Data Act, s. 57 (proposed)",
     status: "PROPOSED",
     reads: ["orgType", "dataCategories", "hosting"],
-    appliesWhen: (c) => c.privateSector && c.personalData && c.crossBorder,
+    // Employee-only data of a provincially regulated employer falls under BC PIPA, not PIPEDA (ADR-0015).
+    appliesWhen: (c) => c.privateSector && (c.frfi ? c.personalData : nonEmployeePersonalData(c)) && c.crossBorder,
     severity: () => "info",
     consideration:
       "Bill C-36 would call for a privacy impact assessment and mitigation measures before personal information is transferred outside Canada. It is a bill, not law; PIPEDA still governs.",

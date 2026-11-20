@@ -34,11 +34,9 @@ export const BC_RULES: RuleDefinition[] = [
     jurisdiction: "bc",
     instrument: "BC PIPA, employee personal information provisions (ss. 13, 16, 19; section numbers pending verification)",
     status: "IN_FORCE",
-    reads: ["orgType", "dataCategories", "businessFunction", "useCasePatterns"],
-    appliesWhen: (c) =>
-      c.bcPipaOrg &&
-      c.dataCategories.includes("employee_hr") &&
-      (c.businessFunction === "hr" || has(c, "hiring_selection") || has(c, "performance_management")),
+    reads: ["orgType", "jurisdictions", "dataCategories"],
+    // Any use of employee information by a BC PIPA organization (ADR-0015); BC-PIPA-01 covers other personal data.
+    appliesWhen: (c) => c.bcPipaOrg && c.dataCategories.includes("employee_hr"),
     severity: () => "action",
     consideration:
       "Employee personal information may be collected, used or disclosed without consent if that is reasonable for establishing, managing or ending the employment relationship and the employee is notified. If the information is not collected solely for that purpose, the normal consent rules likely apply.",
@@ -162,12 +160,13 @@ export const BC_RULES: RuleDefinition[] = [
     instrument: "BC Human Rights Code",
     status: "IN_FORCE",
     reads: ["orgType", "jurisdictions", "useCasePatterns"],
-    // ADR-0012: BC connection AND hiring / performance / claims eligibility / eligibility-type admin decision.
-    // Federal institutions and federally regulated FIs fall under the Canadian Human Rights Act instead.
+    // ADR-0012: BC connection AND hiring / performance / claims eligibility / admin decision (any admin
+    // decision: the intake can't tell eligibility-type apart; ADR-0015). Federal institutions and federally
+    // regulated banks fall under the Canadian Human Rights Act instead; federally regulated insurers stay in.
     appliesWhen: (c) =>
       c.bcConnected &&
       !c.federalInstitution &&
-      !c.frfi &&
+      !(c.frfi && c.sector === "financial_services") &&
       (has(c, "hiring_selection") ||
         has(c, "performance_management") ||
         has(c, "claims_eligibility") ||
@@ -226,7 +225,7 @@ export const BC_RULES: RuleDefinition[] = [
     notes: (c) =>
       c.privateSector
         ? []
-        : ["Your organization is a public insurer outside the Code's scope; the Code is used here as a reference framework."],
+        : ["Your organization is a public insurer that is likely outside the Code's scope; the Code is used here as a reference framework."],
     actionsToConsider: [
       "Review AI-assisted claims outcomes for fair treatment of customers.",
       "Prepare plain-language explanations for customers about how AI is used in their claim.",

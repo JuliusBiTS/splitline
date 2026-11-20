@@ -28,7 +28,7 @@ export const SRC = {
   },
   bcGenAiPolicy: { label: "BC Gov, generative AI policy", url: "https://digital.gov.bc.ca/ai/gen-ai-policy/" },
   bcHumanRights: {
-    label: "BC Human Rights Commissioner, joint call on AI",
+    label: "BC Human Rights Commissioner, joint call on AI (context; primary source for the Code pending in research §5)",
     url: "https://bchumanrights.ca/news-and-events/news/b-c-independent-oversight-offices-urge-public-consultation-legislative-reform-on-use-of-artificial-intelligence",
   },
   bcfsaRoadmap: {

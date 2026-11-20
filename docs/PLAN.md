@@ -70,7 +70,7 @@ Phase 3 (design) runs in parallel to Phases 1–2. Phases 1–2 have no UI depen
 - [ ] `src/engine/rollout.ts`: 90-day plan built from triggered rules + levers + KPIs.
 - [ ] `src/engine/whatif.ts`: recompute + diff (tier, verdict, rules added/removed).
 - [ ] `src/engine/pulse.ts`: scoring, minimum, quadrant, lagging driver → lever.
-- [ ] Extend the golden tests: expected split owners for the key subtasks of each preset; the drift check flags the HR preset KPIs.
+- [ ] Extend the golden tests: expected split owners for the key subtasks of each preset; the drift check flags the HR preset KPIs; crisis edge golden asserts the temporary-centralization scope note and low-readiness edge golden asserts the gradual exchange ramp (deferred from Phase 1, ADR-0014 §5).
 
 **Acceptance**
 - `pnpm test` passes; engine coverage ≥ 90% lines (`vitest --coverage`).

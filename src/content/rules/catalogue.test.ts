@@ -1,7 +1,44 @@
 import { describe, expect, it } from "vitest";
 import { severityCap, severityRank } from "@/engine/rules";
 import { RuleMetaSchema } from "@/engine/types";
-import { ALL_CASES, run } from "../../../tests/fixtures/cases";
+import { ALL_CASES, makeCase, run, type CaseInput } from "../../../tests/fixtures/cases";
+import { AiDecisionRoleSchema, GenAiToolTypeSchema, OrgTypeSchema } from "@/engine/types";
+
+/** All fixtures plus a grid over org type × decision role × gen-AI tool type × personal data × patterns. */
+const BLOCKER_PROBE_CASES: CaseInput[] = [
+  ...ALL_CASES,
+  ...OrgTypeSchema.options.flatMap((orgType) =>
+    AiDecisionRoleSchema.options.flatMap((aiDecisionRole) =>
+      [...GenAiToolTypeSchema.options, undefined].flatMap((genAiToolType) =>
+        [true, false].map((personal) =>
+          makeCase("probe", {
+            orgType,
+            aiDecisionRole,
+            genAiToolType,
+            sector: "government_ministry",
+            aiType: "generative_llm",
+            hosting: "unsure",
+            monitorsEmployees: true,
+            customerFacingOutput: true,
+            employerSize25Plus: true,
+            jurisdictions: ["bc", "ontario", "quebec"],
+            affectedPeople: ["public_customers", "patients", "employees_applicants"],
+            dataCategories: personal ? ["health", "customer_pi", "employee_hr", "children"] : ["no_personal"],
+            useCasePatterns: [
+              "hiring_selection",
+              "performance_management",
+              "clinical_triage",
+              "ambient_scribe",
+              "claims_eligibility",
+              "administrative_decision",
+              "customer_chatbot",
+            ],
+          }),
+        ),
+      ),
+    ),
+  ),
+];
 import { RULE_CATALOGUE } from "./index";
 
 /** The 25 rules of docs/research/01_* §3. */
@@ -49,11 +86,17 @@ describe("rule catalogue", () => {
     expect(RuleMetaSchema.safeParse({ ...first, sources: [] }).success).toBe(false);
   });
 
-  it("every rule that can block has a redesign path", () => {
+  it("every rule that can request blocker has a redesign path (checked on the requested severity, over a wide fact grid)", () => {
+    // Call each rule's severity() directly on many fact combinations, whether or not appliesWhen holds,
+    // so a rule that could ask for blocker is caught even if no fixture triggers it.
+    const grid = BLOCKER_PROBE_CASES.map((c) => run(c).facts);
     for (const rule of RULE_CATALOGUE) {
-      const canBlock = ALL_CASES.some((c) => run(c).triggeredRules.some((t) => t.ruleId === rule.id && t.severity === "blocker"));
+      const canBlock = grid.some((f) => rule.severity(f) === "blocker");
       if (canBlock) expect(rule.redesignPath, rule.id).toBeTruthy();
     }
+    // The probe does reach the known blocker-capable rules.
+    const blockers = RULE_CATALOGUE.filter((r) => grid.some((f) => r.severity(f) === "blocker")).map((r) => r.id);
+    expect(blockers).toEqual(expect.arrayContaining(["BC-PIPA-MON", "BC-GOV-GENAI"]));
   });
 });
 

@@ -1,7 +1,7 @@
 {
   "slug": "hiring-and-sentiment",
   "organization": "Tidewater Logistics Inc. (fictional)",
-  "verdictExplanation": "The system rejects applicants on its own and scores employee sentiment from workplace messages, which puts it at indicative tier IV. OIPC BC regards continuous, routine employee monitoring as seldom authorized, so the sentiment scoring is a blocker as designed. Redesigning it as a narrow, overt measure and keeping a person in the hiring decision would open the way to go with conditions.",
+  "verdictExplanation": "The system rejects applicants on its own and scores employee sentiment from workplace messages, which puts it at indicative tier IV. OIPC BC regards continuous, routine employee monitoring as seldom authorized, so the sentiment scoring is a blocker as designed. The redesign path is to drop the continuous sentiment scoring, limit any measurement to a narrow and overt purpose, and keep a person in each hiring decision.",
   "intake": {
     "title": "Applicant screening and team sentiment scoring",
     "processDescription": "Recruiters at a regional logistics company read several hundred applications for each warehouse and driver posting and shortlist candidates by hand. Separately, team leads try to spot disengagement through one-to-ones. We want a vendor's machine-learning tool to rank applicants and automatically reject those below a cut-off, and to score employee sentiment continuously from workplace chat messages so HR can flag low performers and disengaged staff for follow-up.",
