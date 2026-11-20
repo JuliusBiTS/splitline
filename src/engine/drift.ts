@@ -10,32 +10,32 @@ import type { KpiKind, OperatingModel } from "./types";
 
 export type DriftCheck = OperatingModel["driftCheck"];
 
-/** Keyword lexicon per KPI kind. Matching is case-insensitive on word starts. */
+/**
+ * Phrase lexicon per KPI kind, case-insensitive. Deliberately phrase-based, not bare words: a loose
+ * word such as "feedback", "quality" or "expert" would let an efficiency-only KPI set (e.g.
+ * "Customer feedback score", "Expert hours saved") clear the drift warning the check exists for.
+ */
 export const KPI_LEXICON: Record<KpiKind, readonly RegExp[]> = {
   learning_loop: [
     /\bcorrections?\b/i,
     /\bfed back\b/i,
-    /\bfeedback\b/i,
+    /\bfeedback (?:to|into) the (?:model|system|rules|prompts?)\b/i,
     /\bsplit changes?\b/i,
-    /\boverrides?\b/i,
-    /\boverride rate\b/i,
-    /\bretrain/i,
+    /\boverride (?:rate|count)s?\b/i,
+    /\boverrides? per\b/i,
+    /\bretrain(?:ed|ing|s)?\b/i,
     /\brules? (?:added|updated|codified)\b/i,
-    /\bcodifi/i,
-    /\blessons?\b/i,
-    /\blearning\b/i,
+    /\bcodified\b/i,
   ],
   augmentation_value: [
-    /\bquality\b/i,
-    /\bnon-routine\b/i,
-    /\bunusual\b/i,
-    /\bcomplex cases?\b/i,
-    /\bdifficult cases?\b/i,
+    /\bdecision quality\b/i,
+    /\bquality (?:on|of|for) (?:non-routine|complex|difficult|unusual|edge)\b/i,
+    /\bnon-routine cases?\b/i,
+    /\b(?:complex|difficult|unusual|edge) cases?\b/i,
     /\bdecision accuracy\b/i,
-    /\brework\b/i,
+    /\brework (?:avoided|rate)\b/i,
     /\bappeals? (?:upheld|overturned)\b/i,
-    /\bjudgment\b/i,
-    /\bexpert(?:ise)?\b/i,
+    /\bexpert review\b/i,
   ],
   efficiency: [
     /\btime\b/i,

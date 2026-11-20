@@ -28,10 +28,15 @@ export const ROLLOUT_PHASE_TITLES = {
 
 const KPI_KINDS: readonly KpiKind[] = ["efficiency", "augmentation_value", "learning_loop"];
 
-/** One KPI per kind: the user's first KPI of that kind, else Splitline's first suggestion. */
+/**
+ * One distinct KPI per kind: the user's first unused KPI of that kind, else Splitline's first
+ * suggestion. A KPI that matches two kinds fills only one slot.
+ */
 export function selectRolloutKpis(proposedKpis: readonly string[]): RolloutPlan["kpis"] {
+  const used = new Set<string>();
   const pick = (kind: KpiKind): RolloutKpi => {
-    const own = proposedKpis.find((k) => classifyKpi(k).includes(kind));
+    const own = proposedKpis.find((k) => !used.has(k) && classifyKpi(k).includes(kind));
+    if (own !== undefined) used.add(own);
     return own !== undefined
       ? { kind, name: own, fromUser: true }
       : { kind, name: SUGGESTED_KPIS[kind][0] ?? kind, fromUser: false };

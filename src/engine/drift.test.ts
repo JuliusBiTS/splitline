@@ -12,6 +12,14 @@ describe("KPI classification (ADR-0016 §9)", () => {
     ["Decision quality on non-routine cases", ["augmentation_value"]],
     ["Rework avoided", ["augmentation_value"]],
     ["Share of referrals returned for missing information", []],
+    ["Quality on complex cases", ["augmentation_value"]],
+    ["Retraining cycles per quarter", ["learning_loop"]],
+    // Loose words must not count (thesis-fidelity review): these are customer or efficiency measures.
+    ["Customer feedback score", []],
+    ["Expert hours saved", ["efficiency"]],
+    ["Judgment calls per hour", ["efficiency"]],
+    ["Data quality score", []],
+    ["Learning hours per employee", ["efficiency"]],
   ])("%s → %j", (kpi, kinds) => {
     expect(classifyKpi(kpi)).toEqual(kinds);
   });
@@ -28,6 +36,13 @@ describe("drift check (`02_*` §3.6)", () => {
     expect(d.ok).toBe(false);
     expect(d.missing).toEqual(["augmentation_value", "learning_loop"]);
     expect(d.suggestedKpis).toEqual([...SUGGESTED_KPIS.augmentation_value, ...SUGGESTED_KPIS.learning_loop]);
+  });
+
+  it("an efficiency/customer-only set with loose words still warns", () => {
+    expect(driftCheck(["Customer feedback score", "Expert hours saved", "Data quality score"]).missing).toEqual([
+      "augmentation_value",
+      "learning_loop",
+    ]);
   });
 
   it("no KPIs at all → both missing", () => {

@@ -74,7 +74,15 @@ export function scorePulse(input: PulseInput): PulseResult {
     .filter((d) => p[d] === lowest)
     .map((d) => {
       const lever = DRIVER_LEVER[d];
-      return { item: d, score: p[d], lever, leverName: LEVER_NAMES[lever], guardrail: TABLE_4[lever].guardrail };
+      return {
+        item: d,
+        score: p[d],
+        lever,
+        leverName: LEVER_NAMES[lever],
+        guardrail: TABLE_4[lever].guardrail,
+        // `02_*` §1.7: a recommended lever always travels with its direct cost.
+        directCost: TABLE_4[lever].directCost,
+      };
     });
   return {
     a,

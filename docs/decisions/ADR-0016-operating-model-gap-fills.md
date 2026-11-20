@@ -28,8 +28,19 @@ The lever content (guardrail, direct cost, signal to track, warning sign) is tak
 8. **Injected date:** `computeCase(intake, decomposition, { today, catalogue? })`. `today` is a required ISO date. The cadence adds 1, 2 or 3 calendar months and clamps the day to the month's end (31 Jan + 1 month → 28/29 Feb).
 9. **Drift lexicon:** KPIs are user-typed strings, so they are classified with a fixed, tested keyword list. This is not a rule trigger, so ADR-0006 (no rule facts from free text) is unaffected.
 
+10. **Review fixes (thesis-fidelity and plan reviewers):**
+    - With crisis and the scope switch both in force, the crisis copy says decisions return to "central guardrails, local proposals" after the crisis, not to the team.
+    - The Pulse lagging driver carries the lever's direct cost as well as its guardrail (`02_*` §1.7).
+    - The what-if diff reports decision-rights setting changes and scope notes added or removed, so the crisis toggle is visible ("reverses P1").
+    - The drift lexicon matches phrases, not loose words such as "feedback", "quality" or "expert".
+
+## Open for Julius
+§1 and §2 were decided by Julius. §3 (critical counts as ≥ high), §4 (codifiable fallback when no subtask is consequential) and §7 (quadrant boundaries, origin = vicious) are gap fills made during Phase 2. Please confirm them. §4 refines the SPEC §7.4 / ADR-0007 §7 definition of "codifiable at case level".
+
 ## Consequences
 - Golden split owners are asserted per preset in `tests/golden/expectations.ts`.
 - `ENGINE_VERSION` moves to 0.2.0.
 - The Table 4 wording was read from thesis draft v42; `02_*` cites v48. Julius should confirm the wording has not changed.
-- Sync SPEC §7.5–7.7 with these types at the next spec revision.
+- Sync SPEC §7.4 (codifiable fallback, "is the decision", no-branch fallback) and §7.5–7.7 (these types) at the next spec revision.
+- The labels the Operating model tab needs (`TRADE_OFF_NOTE`, `LEVER_INDICATORS_LABEL`, `THESIS_SCOPE_DISCLOSURE`, `STARTING_SPLIT_LABEL`; cadence defaults are illustrative) are exported constants; Phase 4 must render them.
+- The hiring preset is already hosted in Canada, so the Phase 4 check "What-if hosting → in_canada changes the rules count" needs a different toggle for that preset.

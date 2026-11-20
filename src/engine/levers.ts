@@ -77,8 +77,18 @@ export const STANDARDIZED_BASE_ITEMS = [
 export const CENTRAL_GUARDRAILS_SETTING =
   "Central guardrails, local proposals: the team proposes split changes and an accountable owner ratifies them.";
 
-export const CRISIS_SETTING =
-  "Temporary centralization: during the crisis, an accountable owner sets the split. This reverses P1; hand split decisions back to the team when the crisis ends.";
+/** Where split decisions go after the crisis: back to the team, or back to central guardrails when the scope switch holds. */
+function afterCrisis(central: boolean): string {
+  return central
+    ? "when the crisis ends, return to central guardrails, local proposals"
+    : "hand split decisions back to the team when the crisis ends";
+}
+
+export function crisisSetting(central: boolean): string {
+  return `Temporary centralization: during the crisis, an accountable owner sets the split. This reverses P1; ${afterCrisis(central)}.`;
+}
+
+export const CRISIS_SETTING = crisisSetting(false);
 
 export const DEFAULT_DECISION_RIGHTS_SETTING =
   "The team that does the work sets and revises the split (P1), within a shared platform.";
@@ -103,7 +113,7 @@ export function humanFinalDecisionRequired(facts: Pick<CaseFacts, "indicativeTie
 function decisionRightsCard(facts: CaseFacts): LeverCard {
   const t = TABLE_4.decision_rights;
   const central = scopeSwitchApplies(facts);
-  const setting = facts.crisisContext ? CRISIS_SETTING : central ? CENTRAL_GUARDRAILS_SETTING : DEFAULT_DECISION_RIGHTS_SETTING;
+  const setting = facts.crisisContext ? crisisSetting(central) : central ? CENTRAL_GUARDRAILS_SETTING : DEFAULT_DECISION_RIGHTS_SETTING;
   const details: string[] = [
     `Shared platform: ${SHARED_PLATFORM_ITEMS.join("; ")}.`,
     "Operators can override any machine output; every override is logged.",
@@ -184,8 +194,12 @@ export function computeLevers(facts: CaseFacts, cadence: SplitReviewCadence): Op
   return [decisionRightsCard(facts), coordinationCard(facts, cadence), exchangeCard(facts)];
 }
 
-export const CRISIS_SCOPE_NOTE =
-  "Crisis context: temporary centralization of decision rights over the split. This reverses P1 (decentralized decision rights; thesis Section 5.4). Hand split decisions back to the team when the crisis ends.";
+export function crisisScopeNote(central: boolean): string {
+  const after = afterCrisis(central);
+  return `Crisis context: temporary centralization of decision rights over the split. This reverses P1 (decentralized decision rights; thesis Section 5.4). ${after.charAt(0).toUpperCase()}${after.slice(1)}.`;
+}
+
+export const CRISIS_SCOPE_NOTE = crisisScopeNote(false);
 
 export const LOW_READINESS_SCOPE_NOTE =
   "Low readiness: integration is bounded by absorptive capacity, so exchange ramps up gradually, with enablement first.";
@@ -202,7 +216,7 @@ export function tierFloorNote(facts: CaseFacts): string {
 export function computeScopeNotes(facts: CaseFacts): string[] {
   const notes: string[] = [];
   if (scopeSwitchApplies(facts)) notes.push(centralGuardrailsNote(facts));
-  if (facts.crisisContext) notes.push(CRISIS_SCOPE_NOTE);
+  if (facts.crisisContext) notes.push(crisisScopeNote(scopeSwitchApplies(facts)));
   if (humanFinalDecisionRequired(facts)) notes.push(tierFloorNote(facts));
   if (facts.readiness === "low") notes.push(LOW_READINESS_SCOPE_NOTE);
   return notes;

@@ -2,6 +2,7 @@
  * What-if (SPEC §7.6): apply toggles to the intake, recompute synchronously and diff the results.
  * The engine decides everything; the diff only compares two engine results.
  */
+import { CADENCE_LABELS } from "./cadence";
 import { computeCase, type ComputeOptions, type EngineResult } from "./index";
 import { VERDICT_LABELS } from "./verdict";
 import {
@@ -65,6 +66,14 @@ export function diffResults(before: EngineResult, after: EngineResult): WhatIfDi
     changed: before.operatingModel.splitReviewCadence !== after.operatingModel.splitReviewCadence,
   };
 
+  const decisionRights = {
+    from: before.operatingModel.levers[0].setting,
+    to: after.operatingModel.levers[0].setting,
+    changed: before.operatingModel.levers[0].setting !== after.operatingModel.levers[0].setting,
+  };
+  const scopeNotesAdded = after.operatingModel.scopeNotes.filter((n) => !before.operatingModel.scopeNotes.includes(n));
+  const scopeNotesRemoved = before.operatingModel.scopeNotes.filter((n) => !after.operatingModel.scopeNotes.includes(n));
+
   const chips: string[] = [];
   chips.push(tier.changed ? `Tier ${tier.from} → ${tier.to}` : "Tier unchanged");
   chips.push(
@@ -74,9 +83,29 @@ export function diffResults(before: EngineResult, after: EngineResult): WhatIfDi
   if (rulesRemoved.length > 0) chips.push(`−${plural(rulesRemoved.length, "rule")}`);
   if (rulesChangedSeverity.length > 0) chips.push(`${plural(rulesChangedSeverity.length, "rule")} changed severity`);
   if (splitChanges.length > 0) chips.push(`${plural(splitChanges.length, "split owner")} changed`);
-  if (cadence.changed) chips.push(`Split review: ${cadence.from} → ${cadence.to}`);
+  if (cadence.changed) chips.push(`Split review: ${CADENCE_LABELS[cadence.from]} → ${CADENCE_LABELS[cadence.to]}`);
+  if (decisionRights.changed) chips.push(`Decision rights: ${decisionRightsChip(after.operatingModel.levers[0].setting)}`);
 
-  return { tier, verdict, rulesAdded, rulesRemoved, rulesChangedSeverity, splitChanges, cadence, chips };
+  return {
+    tier,
+    verdict,
+    rulesAdded,
+    rulesRemoved,
+    rulesChangedSeverity,
+    splitChanges,
+    cadence,
+    decisionRights,
+    scopeNotesAdded,
+    scopeNotesRemoved,
+    chips,
+  };
+}
+
+/** Short chip text for a decision-rights setting: the part before the first colon or full stop. */
+function decisionRightsChip(setting: string): string {
+  if (setting.startsWith("Temporary centralization")) return "temporary centralization (reverses P1)";
+  if (setting.startsWith("Central guardrails")) return "central guardrails, local proposals";
+  return "the team sets the split";
 }
 
 export interface WhatIfResult {

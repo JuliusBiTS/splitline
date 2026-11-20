@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { getPreset } from "@/content/presets";
 import { EDGE, makeCase, run, TEST_TODAY } from "../../tests/fixtures/cases";
 import { computeCase } from "./index";
+import { WhatIfDiffSchema } from "./types";
 import { applyWhatIf, computeWhatIf, diffResults } from "./whatif";
 
 const opts = { today: TEST_TODAY };
@@ -60,6 +61,11 @@ describe("diffResults", () => {
     const r = run(EDGE.noPersonalData);
     const d = diffResults(r, r);
     expect(d.chips).toEqual(["Tier unchanged", "Verdict unchanged"]);
+    expect(d.decisionRights.changed).toBe(false);
+    expect(() => WhatIfDiffSchema.parse(d)).not.toThrow();
+    const crisis = computeWhatIf(r, EDGE.noPersonalData.intake, EDGE.noPersonalData.decomposition, { crisisContext: true }, opts);
+    expect(() => WhatIfDiffSchema.parse(crisis.diff)).not.toThrow();
+    expect([d.scopeNotesAdded, d.scopeNotesRemoved]).toEqual([[], []]);
     expect([d.rulesAdded, d.rulesRemoved, d.rulesChangedSeverity, d.splitChanges]).toEqual([[], [], [], []]);
   });
 
@@ -106,6 +112,28 @@ describe("diffResults", () => {
     expect(dyn.chips).toContain("Split review: quarterly → monthly");
     const crisis = computeWhatIf(base, intake, decomposition, { crisisContext: true }, opts).diff;
     expect(crisis.chips.slice(0, 2)).toEqual(["Tier unchanged", "Verdict unchanged"]);
+    // The P1 reversal is visible in the diff (02_* §1.10, §3.3).
+    expect(crisis.decisionRights.changed).toBe(true);
+    expect(crisis.decisionRights.to).toMatch(/^Temporary centralization/);
+    expect(crisis.chips).toContain("Decision rights: temporary centralization (reverses P1)");
+    expect(crisis.scopeNotesAdded.some((n) => n.includes("reverses P1"))).toBe(true);
+    expect(crisis.scopeNotesRemoved).toEqual([]);
+  });
+
+  it("turning crisis off returns decision rights to the team and removes the crisis note", () => {
+    const c = EDGE.crisis;
+    const base = run(c);
+    const d = computeWhatIf(base, c.intake, c.decomposition, { crisisContext: false }, opts).diff;
+    expect(d.chips).toContain("Decision rights: the team sets the split");
+    expect(d.scopeNotesRemoved.some((n) => n.includes("reverses P1"))).toBe(true);
+  });
+
+  it("the scope switch shows as central guardrails in the diff", () => {
+    const c = EDGE.federalAdminDecision;
+    const base = run(c);
+    const d = computeWhatIf(base, c.intake, c.decomposition, { aiDecisionRole: "decides_alone" }, opts);
+    expect(["III", "IV"]).toContain(d.result.tier.level);
+    expect(d.diff.chips).toContain("Decision rights: central guardrails, local proposals");
   });
 
   it("reports verdict changes and severity changes of rules present in both results", () => {

@@ -500,6 +500,10 @@ export const WhatIfDiffSchema = z.object({
   rulesChangedSeverity: z.array(z.object({ ruleId: z.string(), from: SeveritySchema, to: SeveritySchema })),
   splitChanges: z.array(z.object({ subtaskId: z.string(), from: SplitOwnerSchema, to: SplitOwnerSchema })),
   cadence: z.object({ from: SplitReviewCadenceSchema, to: SplitReviewCadenceSchema, changed: z.boolean() }),
+  /** Decision-rights setting (e.g. crisis → temporary centralization, which reverses P1). */
+  decisionRights: z.object({ from: z.string(), to: z.string(), changed: z.boolean() }),
+  scopeNotesAdded: z.array(z.string()),
+  scopeNotesRemoved: z.array(z.string()),
   chips: z.array(z.string()),
 });
 export type WhatIfDiff = z.infer<typeof WhatIfDiffSchema>;
@@ -545,7 +549,14 @@ export const PulseResultSchema = z.object({
   weakerDirection: z.enum(["a_to_b", "b_to_a", "both"]),
   quadrant: PulseQuadrantSchema,
   laggingDrivers: z.array(
-    z.object({ item: PulseDriverSchema, score: z.number(), lever: LeverKeySchema, leverName: z.string(), guardrail: z.string() }),
+    z.object({
+      item: PulseDriverSchema,
+      score: z.number(),
+      lever: LeverKeySchema,
+      leverName: z.string(),
+      guardrail: z.string().min(1),
+      directCost: z.string().min(1),
+    }),
   ),
   /** True when the scores show a problem (reinforcement ≤ 0), so the driver check is the next step. */
   driverCheckRelevant: z.boolean(),

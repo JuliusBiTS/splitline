@@ -40,6 +40,10 @@ describe("90-day rollout (SPEC §7.5)", () => {
       { kind: "learning_loop", name: "Adjuster corrections per 100 claims", fromUser: true },
     ]);
     expect(selectRolloutKpis([]).every((x) => !x.fromUser)).toBe(true);
+    // A KPI matching two kinds fills one slot only.
+    const both = selectRolloutKpis(["Corrections on complex cases"]);
+    expect(both.filter((x) => x.fromUser)).toHaveLength(1);
+    expect(new Set(both.map((x) => x.name)).size).toBe(3);
   });
 
   it("the monitoring plan carries each lever's Table 4 signal and warning sign", () => {

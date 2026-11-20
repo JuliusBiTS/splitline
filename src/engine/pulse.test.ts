@@ -68,7 +68,14 @@ describe("quadrants (`02_*` §3.7, Figure 2; ADR-0016 §7)", () => {
 describe("lagging driver → lever + guardrail (Table 4)", () => {
   it("the lowest D item names the lever and its guardrail", () => {
     expect(scorePulse(input(3, 3, [5, 2, 6])).laggingDrivers).toEqual([
-      { item: "D2", score: 2, lever: "coordination", leverName: "Coordination (P2)", guardrail: TABLE_4.coordination.guardrail },
+      {
+        item: "D2",
+        score: 2,
+        lever: "coordination",
+        leverName: "Coordination (P2)",
+        guardrail: TABLE_4.coordination.guardrail,
+        directCost: TABLE_4.coordination.directCost,
+      },
     ]);
     expect(scorePulse(input(3, 3, [1, 2, 6])).laggingDrivers[0]?.lever).toBe("decision_rights");
     expect(scorePulse(input(3, 3, [6, 2, 1])).laggingDrivers[0]?.lever).toBe("exchange");

@@ -4,6 +4,8 @@ import {
   CENTRAL_GUARDRAILS_SETTING,
   CRISIS_SCOPE_NOTE,
   CRISIS_SETTING,
+  crisisScopeNote,
+  crisisSetting,
   DEFAULT_DECISION_RIGHTS_SETTING,
   GRADUAL_RAMP_SETTING,
   HFD_FEDERAL,
@@ -91,9 +93,18 @@ describe("decision rights (`02_*` §3.3)", () => {
       CONSEQUENTIAL_DECOMPOSITION,
     );
     const r = run(crisisCentral);
-    expect(r.operatingModel.levers[0].setting).toBe(CRISIS_SETTING);
+    expect(r.operatingModel.levers[0].setting).toBe(crisisSetting(true));
     expect(r.operatingModel.levers[0].details.join(" ")).toContain(`After the crisis, return to: ${CENTRAL_GUARDRAILS_SETTING}`);
-    expect(r.operatingModel.scopeNotes).toContain(CRISIS_SCOPE_NOTE);
+    expect(r.operatingModel.scopeNotes).toContain(crisisScopeNote(true));
+    // One post-crisis state only: never "hand back to the team" while the scope switch holds.
+    const text = [r.operatingModel.levers[0].setting, ...r.operatingModel.scopeNotes].join(" ");
+    expect(text).not.toMatch(/back to the team/i);
+    expect(text).toContain("return to central guardrails, local proposals");
+    // Without the scope switch, decisions go back to the team.
+    const plain = run(EDGE.crisis);
+    expect(plain.operatingModel.levers[0].setting).toBe(CRISIS_SETTING);
+    expect(plain.operatingModel.scopeNotes).toContain(CRISIS_SCOPE_NOTE);
+    expect(CRISIS_SCOPE_NOTE).toContain("Hand split decisions back to the team");
   });
 
   it("tier ≥ III, non-federal: human final decision as Splitline's design setting with the DADM reference", () => {
