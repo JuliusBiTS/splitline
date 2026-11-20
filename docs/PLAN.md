@@ -23,17 +23,18 @@ Phase 3 (design) runs in parallel to Phases 1–2. Phases 1–2 have no UI depen
 
 ## Phase 0: Setup & spec lock
 **Goal:** a reproducible repo, CI, and a spec without open questions.
-- [ ] Scaffold Next.js 16 (App Router, TS strict, Tailwind, ESLint) with pnpm; Node 24 LTS (`.nvmrc`).
-- [ ] Add Vitest, Playwright, `@axe-core/playwright`, Zod, `@anthropic-ai/sdk`, `@upstash/ratelimit`, `@upstash/redis`, `@vercel/analytics`, `lucide-react`.
-- [ ] Scripts:
+- [x] Scaffold Next.js 16 (App Router, TS strict, Tailwind, ESLint) with pnpm; Node 24 LTS (`.nvmrc`).
+- [x] Add Vitest, Playwright, `@axe-core/playwright`, Zod, `@anthropic-ai/sdk`, `@upstash/ratelimit`, `@upstash/redis`, `@vercel/analytics`, `lucide-react`.
+- [x] Scripts:
   - `typecheck`, `lint`, `test` (Vitest run), `test:e2e` (Playwright), `test:a11y`
   - `eval:engine` (golden cases), `eval:llm` (live, manual)
   - `verify` = typecheck + lint + test
-- [ ] GitHub Actions: `pnpm verify` + `pnpm test:e2e` on PRs.
-- [ ] `.env.example` with all vars from SPEC §13; `.gitignore` covers `.env*` except the example.
-- [ ] Make the hooks in `.claude/settings.json` executable (`chmod +x scripts/hooks/*.sh`); confirm with `/hooks`.
-- [ ] Run `next dev` once so Next writes `AGENTS.md`; confirm that `CLAUDE.md` imports it.
-- [ ] **Spec interview** (plan mode, AskUserQuestion): resolve SPEC §14; update SPEC to v1.0; write ADR-0004 (tier weights approach).
+- [x] GitHub Actions: `pnpm verify` + `pnpm test:e2e` on PRs (plus `test:a11y`, `eval:engine` and a dependency audit).
+- [x] `.env.example` with all vars from SPEC §13; `.gitignore` covers `.env*` except the example.
+- [x] Make the hooks work: ported to Node scripts (ADR-0011) because bash hooks in exec form never ran on Windows; verified live (a Write to `.env.local` is blocked).
+- [x] Run `next dev` once so Next writes `AGENTS.md`; confirm that `CLAUDE.md` imports it.
+- [x] **Spec interview** (plan mode, AskUserQuestion): resolve SPEC §14; update SPEC to v1.0; write ADR-0004 (tier weights approach). Also ADR-0006–0011.
+- [x] Push to `JuliusBiTS/splitline` and open the first PR; CI green (PR #1: verify, e2e + a11y, audit).
 
 **Acceptance**
 - `pnpm verify` exits 0 on the empty app; CI is green on the first PR.
@@ -141,7 +142,7 @@ Phase 3 (design) runs in parallel to Phases 1–2. Phases 1–2 have no UI depen
 
 ## Phase 7: Living Lab Lite (→ M2)
 **Goal:** the 2-minute demo that shows the thesis in action. Spec: `docs/research/05_*`, SPEC §9.
-- [ ] `scripts/generate-synthetic-docs.ts`: ground-truth JSON → HTML templates (≥ 2 layouts per type, handwriting + noise variants) → PNG/PDF. Around 30 documents, fictional names only.
+- [ ] `scripts/generate-synthetic-docs.ts`: ground-truth JSON → HTML templates (≥ 2 layouts per type, handwriting + noise variants) → PNG/PDF. 48 documents = 6 disjoint episodes × 8 (ADR-0009), fictional names only.
 - [ ] `scripts/record-lab-runs.ts`: extraction with Claude over all documents → `src/content/lab/recorded/`. Report field accuracy vs ground truth per type (this doubles as the extraction eval).
 - [ ] `src/lab/`:
   - validation rules, grounding check, quality flags, router (Split Register), QA sampler;

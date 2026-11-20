@@ -40,6 +40,7 @@ AI operating-model studio: Canadian/BC governance triage + thesis-based human–
 ## Code style
 - TypeScript strict; no `any` (use `unknown` + Zod). Named exports. Server components by default; `"use client"` only where needed.
 - Tailwind with design tokens from the Claude Design handoff; no inline hex colours outside the tokens.
+- UI: shadcn/ui (Base UI) restyled with tokens + Sonner + NumberFlow only; no effect/animation libraries without an ADR.
 - Charts are hand-built SVG with a text/table alternative.
 - Accessibility is part of done: keyboard path, visible focus, labels, `aria-live` for async results, targets ≥ 24 px.
 - Tests sit next to the code (`*.test.ts`); e2e in `tests/e2e/`; golden cases in `tests/golden/`.

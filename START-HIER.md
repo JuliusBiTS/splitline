@@ -16,10 +16,10 @@ Dieses Paket ist das Startgerüst deines Repos. Claude Code findet darin alles, 
 | `.claude/skills/` | `add-legal-rule` (Regeln sauber anlegen), `/release-check` (vor jedem Deploy) |
 
 ## Vorbereitung (einmalig, ca. 30 Minuten)
-1. **Installieren:** Claude Code, Node 24 LTS, pnpm, git, **jq** (wird von den Hooks gebraucht; Mac: `brew install jq`).
+1. **Installieren:** Claude Code, Node 24 LTS, pnpm, git. (jq ist nicht mehr nötig: die Hooks sind Node-Skripte, siehe ADR-0011.)
 2. **GitHub:** neues Repo `splitline` anlegen und den Inhalt dieses Pakets als ersten Commit pushen.
 3. **Anthropic Console:** Workspace „splitline“, API-Key erzeugen, **Spend Limit setzen** (z. B. 25 USD/Monat).
-4. **Hooks ausführbar machen:** `chmod +x scripts/hooks/*.sh`.
+4. **Hooks:** erledigt in Phase 0 (Node-Skripte unter `scripts/hooks/*.mjs`, laufen auf Windows und Mac).
 5. **Prof. König fragen**, ob du die Arbeit öffentlich referenzieren darfst (blockiert erst den Launch, nicht den Bau).
 6. **Später (Phase 6):** Vercel- und Upstash-Accounts.
 
