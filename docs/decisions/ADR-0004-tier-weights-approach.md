@@ -29,7 +29,7 @@ Reversibility is the largest factor (0–6) and decides whether the claims prese
 
 | Preset | Raw score | Without mitigations | With mitigations | Tier |
 |---|---|---|---|---|
-| Claims | ≈ 18 | 56% | 15.3 → 48% (4/5 ticked) | II |
+| Claims | ≈ 20 without an appeal path (hard_to_reverse); ≈ 18 with one (short_term) | 62.5% | 18 × 0.85 = 15.3 → 48% (4/5 ticked incl. appeal path) | II |
 | Clinical | ≈ 22 | 69% | 59% | III |
 | Contract | ≈ 12 | 38% | — | II |
 | Hiring | ≈ 26 | 81% | — | IV |

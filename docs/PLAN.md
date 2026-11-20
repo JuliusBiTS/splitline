@@ -142,7 +142,7 @@ Phase 3 (design) runs in parallel to Phases 1–2. Phases 1–2 have no UI depen
 
 ## Phase 7: Living Lab Lite (→ M2)
 **Goal:** the 2-minute demo that shows the thesis in action. Spec: `docs/research/05_*`, SPEC §9.
-- [ ] `scripts/generate-synthetic-docs.ts`: ground-truth JSON → HTML templates (≥ 2 layouts per type, handwriting + noise variants) → PNG/PDF. Around 30 documents, fictional names only.
+- [ ] `scripts/generate-synthetic-docs.ts`: ground-truth JSON → HTML templates (≥ 2 layouts per type, handwriting + noise variants) → PNG/PDF. 48 documents = 6 disjoint episodes × 8 (ADR-0009), fictional names only.
 - [ ] `scripts/record-lab-runs.ts`: extraction with Claude over all documents → `src/content/lab/recorded/`. Report field accuracy vs ground truth per type (this doubles as the extraction eval).
 - [ ] `src/lab/`:
   - validation rules, grounding check, quality flags, router (Split Register), QA sampler;

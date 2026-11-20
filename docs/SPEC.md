@@ -56,7 +56,9 @@ It combines three things:
 | `/pulse` | Reinforcement Pulse survey (9 items) + result |
 | `/sources` | All rules: status, scope, source links, last verified. Promoted in the **main navigation** as "Governance Map" and linked from every RuleCard (ADR-0010). |
 | `/self-assessment` | Splitline assessed by its own engine; states that Claude API inference runs in the US/global (no Canadian geo) |
-| `/about` | Thesis in 150 words, limits, an "About the author" card |
+| `/about` | Thesis in 150 words, limits (incl. the scope disclosure below), an "About the author" card |
+
+**Thesis scope disclosure (`02_*` §1.9):** `/about`, the Operating model tab, the Pulse result and the Lab dashboard each say: "The thesis propositions are untested. The thesis model is firm-level; Splitline applies it at unit and use-case level, following Table 5 and the task-episode measure (Section 6.4)."
 
 **Main navigation:** Presets (`/`) · Start your own (`/case/new`) · Living Lab (`/lab`) · Pulse (`/pulse`) · Governance Map (`/sources`).
 
@@ -119,6 +121,7 @@ interface IntakeInput {
   useCasePatterns: UseCasePattern[];  // essential (step 2), multi-select, may be empty
   mitigations?: Mitigation[];         // advanced; default []; checkboxes, unticked by default
   reversibilityOverride?: Reversibility; // advanced; default = engine-derived value (§7.2)
+  genAiToolType?: "public_tool" | "approved_enterprise" | "direct_api"; // advanced; shown when aiType = generative_llm (BC-GOV-GENAI)
 }
 ```
 
@@ -168,8 +171,12 @@ interface RuleDefinition {
   title: string;
   jurisdiction: "federal" | "bc" | "on" | "qc" | "intl";
   instrument: string;              // e.g. "BC FIPPA s. 33.1 + B.C. Reg. 294/2021"
-  status: RuleStatus;
-  effectiveDate?: string;          // ISO, for IN_FORCE_FUTURE
+  status: RuleStatus;              // status inside the rule's scope
+  effectiveDate?: string;          // ISO; REQUIRED when status = IN_FORCE_FUTURE (Zod refinement)
+  draft?: { consultationEnds?: string }; // REGULATOR_GUIDANCE still in draft (e.g. FED-OPC-VENDOR)
+  inScope?: (c: CaseFacts) => boolean;   // who the instrument binds or addresses; default: always
+  statusWhenOutOfScope?: RuleStatus;     // e.g. GOVERNMENT_POLICY → REFERENCE outside federal institutions
+  scopeLabel?: string;             // e.g. "federal institutions", used in "Mandatory for <scope>; reference elsewhere"
   appliesWhen: (c: CaseFacts) => boolean;
   severity: (c: CaseFacts) => Severity;
   consideration: string;           // plain-language why
@@ -177,25 +184,37 @@ interface RuleDefinition {
   sources: Array<{ label: string; url: string }>;
   lastVerified: string;            // ISO date
 }
-interface TriggeredRule { ruleId: string; severity: Severity; matchedFacts: string[] }
+interface TriggeredRule {
+  ruleId: string;
+  effectiveStatus: RuleStatus;   // status, or statusWhenOutOfScope when inScope(c) is false
+  severity: Severity;            // effective severity after the cap
+  matchedFacts: string[];
+}
 ```
 - Rules live as data in `src/content/rules/` (one file per jurisdiction). The catalogue starts from `docs/research/01_*`, section 3.
 - `matchedFacts` lists the intake values that triggered the rule (shown in RuleCard as "Why this applies").
 
 **Evaluation order (ADR-0007):** `IntakeInput` + confirmed `Decomposition` → `CaseFacts` → **tier** (§7.2) → **rules** (predicates may read the tier, e.g. `FED-DADM-HITL`) → **severity cap** → **verdict** (§7.3) → operating model (§7.4) → rollout (§7.5). The tier never reads rule results, so there is no cycle.
 
-**Severity cap by status (ADR-0007), enforced in code and by a test:**
+**Effective status (ADR-0012):** `effectiveStatus = inScope(c) ? status : (statusWhenOutOfScope ?? "REFERENCE")`. The cap and the UI label both use the effective status. Example: INS-FAIR is REGULATOR_GUIDANCE for BC-authorized private insurers, but REFERENCE for the fictional Crown insurer in the claims preset.
 
-| Status | Max severity |
-|---|---|
-| `IN_FORCE`, `IN_FORCE_FUTURE` | blocker |
-| `GOVERNMENT_POLICY` where the org is in scope (e.g. `federal_institution` for DADM) | blocker |
-| `REGULATOR_GUIDANCE` | blocker (e.g. `BC-PIPA-MON`) |
-| `PROPOSED`, `VOLUNTARY`, `REFERENCE`, and `GOVERNMENT_POLICY` out of scope | **info** (UI: "Prepare for (proposed)", "Good practice", "Reference framework") |
+**Severity cap by effective status (ADR-0007), enforced in code and by a test:**
 
-`effectiveSeverity = min(rule.severity(facts), cap(status, facts))`. A PROPOSED bill can never change the verdict.
+| Effective status | Max severity | UI label |
+|---|---|---|
+| `IN_FORCE` | blocker | "Applies" |
+| `IN_FORCE_FUTURE` | blocker | "Applies from <effectiveDate>" |
+| `GOVERNMENT_POLICY` (in scope) | blocker | "Mandatory for <scopeLabel>" |
+| `REGULATOR_GUIDANCE` (final) | blocker (e.g. `BC-PIPA-MON`) | "Regulator expects" |
+| `REGULATOR_GUIDANCE` with `draft` | **action** | "Regulator draft (consultation until <date>)" |
+| `PROPOSED` | **info** | "Prepare for (proposed)" |
+| `VOLUNTARY` | **info** | "Good practice" |
+| `REFERENCE` | **info** | "Reference framework" |
+| `GOVERNMENT_POLICY` out of scope (shown as REFERENCE) | **info** | "Mandatory for <scopeLabel>; reference elsewhere" |
 
-**Sensitive personal information (`BC-FIPPA-XB`, ADR-0007):** `health`, `biometric`, `children`, `financial` → triggers as `action`. Any other personal category (`customer_pi`, `employee_hr`) → triggers as `info` with "Assess whether this information is sensitive; the head of the public body decides (B.C. Reg. 294/2021 does not define 'sensitive')." `no_personal` alone → does not trigger.
+`effectiveSeverity = min(rule.severity(facts), cap(effectiveStatus, draft))`. A PROPOSED bill can never change the verdict, and a draft can never block.
+
+**Sensitive personal information (`BC-FIPPA-XB`, ADR-0007):** `health`, `biometric`, `children`, `financial` → triggers as `action`, worded "likely sensitive (Splitline heuristic)". The regulation itself names no categories. Any other personal category (`customer_pi`, `employee_hr`) → triggers as `info`: "Assess whether this information is sensitive (B.C. Reg. 294/2021 does not define it). If it is, a supplementary assessment (PIA Part 4) and a risk-based decision by the head of the public body are needed." Both tiers keep the action "Assess the foreign legal framework and reasonable security (FIPPA s. 30)", because s. 30 applies to any disclosure outside Canada. `no_personal` alone → does not trigger.
 
 **Hosting `unsure` (ADR-0007):** treated as outside Canada for every cross-border rule. `matchedFacts` contains "Hosting unknown; assumed outside Canada", and each such rule adds the action "Confirm the vendor's processing and storage region". The What-if toggle `hosting → in_canada` shows the effect.
 
@@ -233,7 +252,7 @@ Maximum = sum of the maxima (computed in code; 32 with the table above).
 
 Verdict uses `effectiveSeverity` (after the status cap in §7.1).
 
-**Top 3 conditions (ADR-0007):** rank triggered rules with effective severity ≥ action by (1) severity (blocker > action), (2) bindingness (IN_FORCE > IN_FORCE_FUTURE > GOVERNMENT_POLICY > REGULATOR_GUIDANCE), (3) whether `matchedFacts` include one of the top 3 tier factors, (4) catalogue order. Fully deterministic.
+**Top 3 conditions (ADR-0007):** rank triggered rules with effective severity ≥ action by (1) severity (blocker > action), (2) bindingness of the effective status (IN_FORCE > in-scope GOVERNMENT_POLICY > IN_FORCE_FUTURE > REGULATOR_GUIDANCE > draft guidance), (3) whether `matchedFacts` include one of the top 3 tier factors, (4) catalogue order. Fully deterministic.
 
 ### 7.4 Operating model (thesis logic; spec in `docs/research/02_*`, section 3)
 
@@ -247,6 +266,8 @@ interface LeverCard {
 }
 interface OperatingModel {
   split: SplitItem[];
+  isStartingSplit: true;  // always shown as "Starting split: the split will move" (02_* §3.2)
+  nextReviewDate: string; // ISO; computed from an injected "today" + cadence (no Date.now() in the engine)
   splitReviewCadence: "monthly" | "bimonthly" | "quarterly";
   levers: [LeverCard, LeverCard, LeverCard];
   driftCheck: { ok: boolean; missing: Array<"augmentation_value" | "learning_loop">; suggestedKpis: string[] };
@@ -255,7 +276,14 @@ interface OperatingModel {
 ```
 - Split heuristic, lever settings, cadence and drift check follow `02_*` §3 exactly.
 - **IF** tier ≥ III, **THE system SHALL** set every subtask that bears on the consequential decision to `machine_review` or `human`, and the Decision Rights card SHALL require a human final decision (rule `FED-DADM-HITL`). This holds even though `FED-DADM-HITL` is capped at `info` for non-federal organizations: the cap affects the verdict, not the operating model.
-- **Precedence (ADR-0007):** apply the `02_*` §3.2 heuristic first, then the tier override. Owners only move toward more human control (`machine` → `machine_review` → `human`); the override never downgrades `human` to `machine_review`. When several heuristic branches match, the most human one wins.
+  - **Card copy (ADR-0012):** for non-federal organizations, the human final decision is presented as Splitline's design setting, citing "Reference: DADM Appendix C (mandatory for federal institutions only)". It must never read as a legal requirement.
+  - **For federal institutions:** the card reads "If your official AIA returns Level III or IV, the Directive requires human intervention points and a human final decision." The indicative tier is never presented as the official AIA level.
+- **Precedence when computing the starting split (ADR-0007):** apply the `02_*` §3.2 heuristic first, then the tier override. Here the override only moves owners toward more human control (`machine` → `machine_review` → `human`) and never downgrades `human`. When several heuristic branches match, the most human one wins.
+- **The split moves:** later split-review changes (team proposals, Lab split review) may go in either direction, including toward `machine`. Only one floor holds: at tier ≥ III, subtasks that bear on the consequential decision stay at `machine_review` or `human`.
+- **Scope switch (`02_*` §1.10, §3.3; ADR-0007):** the switch applies when the case is codifiable **AND** (safety-critical **OR** tier ≥ III).
+  - **Codifiable at case level:** every subtask with `consequential = true` has `knowledgeType = codifiable`.
+  - **Safety-critical:** any subtask has `errorCost = critical`, **OR** `useCasePatterns` contains `clinical_triage`.
+  - **Effect:** the Decision Rights card switches to "central guardrails, local proposals". The team proposes split changes, an accountable owner ratifies them, and a matching `scopeNotes` entry is added.
 
 ### 7.5 Rollout (90 days)
 Three phases (Days 1–30 Foundation & guardrails; 31–60 Shadow pilot & calibration; 61–90 Controlled scale & audit). Each phase has deliverables, KPIs and gate criteria. Deliverables come from triggered rules (e.g. a PIA) and from the levers (shared platform, standardized base, joint sessions). KPIs always include one efficiency, one augmentation-value and one learning-loop KPI.
@@ -265,7 +293,8 @@ Toggles: hosting, AI decision role, Quebec/Ontario affected, crisis, dynamism, c
 
 ### 7.7 Reinforcement Pulse
 - 9 items (A1–A3, B1–B3, D1–D3) taken from the thesis, Table 5, with citation; 1–7 scale. Item wording sits behind one content switch (`verbatim` | `paraphrased`) until written permission is on file (ADR-0009).
-- **Role selector = context only (ADR-0009):** the single respondent answers all 9 items. The chosen role (augmentation work / AI team / lead) is shown with the result, plus the note "Table 5 intends A items for augmentation staff and B items for the AI team; the other side may see it differently."
+- **Role selector = context only (ADR-0009):** the single respondent answers all 9 items. This is an MVP adaptation of `02_*` §3.7: the formula and the minimum rule are unchanged, but the per-role item assignment is replaced by a single-respondent proxy. The result is labelled **"single-perspective estimate"**, shows the chosen role (augmentation work / AI team / lead), and adds the note "Table 5 intends A items for augmentation staff, B items for the AI team, and D items for both; the other side may see it differently."
+- **Mandatory footnote (verbatim, `02_*` §3.7):** "Illustrative instrument from a conceptual thesis; not psychometrically validated." This is in addition to the short label "illustrative, not validated".
 - Scoring per `02_*` §3.7.
 - Output: 2×2, the minimum highlighted, lagging driver → lever card with guardrail, and the note "illustrative, not validated".
 - Single respondent in the MVP; team aggregation is a later feature (would need n ≥ 5 anonymity).
@@ -292,8 +321,10 @@ Toggles: hosting, AI decision role, Quebec/Ontario affected, crisis, dynamism, c
 
 ## 9. Living Lab Lite (spec in `docs/research/05_living-lab-design.md`)
 
-- **Scenario:** fictional "Cascadia Public Auto" receipt reimbursement. All data synthetic and generated by `scripts/generate-synthetic-docs.ts` (ground truth JSON → HTML → PNG/PDF via Playwright). About 30 documents in total.
-- **Size (ADR-0009):** guided mode = **2 episodes × 8 documents** (≈ 2 minutes). Autoplay compare simulates **6 episodes per team** so the two trails diverge visibly.
+- **Scenario:** fictional "Cascadia Public Auto" receipt reimbursement. All data synthetic and generated by `scripts/generate-synthetic-docs.ts` (ground truth JSON → HTML → PNG/PDF via Playwright).
+- **Size (ADR-0009):** a corpus of **48 documents = 6 disjoint episodes × 8**, with the type mix from `05_*` §2 in every episode. Guided mode = episodes 1–2 (≈ 2 minutes). Autoplay compare runs both teams over the same 6 episodes, so the two trails diverge visibly.
+- **No document reuse:** every episode is disjoint, so a codified rule is always evaluated (b1, b3, QA) on documents it was not derived from. This guards against superstitious learning (`05_*` §5).
+- **Guided mode** has one between-episode change, so its dashboard is labelled "single-step change" and is not shown as a trend. Trails appear only in autoplay.
 - **Pre-recorded model runs:** `scripts/record-lab-runs.ts` runs Claude once over all documents and commits the outputs (`src/content/lab/recorded/*.json`) together with model ID and date.
 - **Pipeline (pure TS):** validation rules → grounding check (`sourceQuote` found in document text) → quality flags → routing by the Split Register → QA sampling (blind entry).
 - **Review UI:** document left, fields right, flagged reasons with the source snippet, reason codes, keyboard shortcuts, time logging.
@@ -303,7 +334,7 @@ Toggles: hosting, AI decision role, Quebec/Ontario affected, crisis, dynamism, c
   - Guided (2 episodes)
   - Autoplay compare ("Rubber-stamp team" vs "Coupled team", seeded deterministic simulation)
   - Live single-document extraction (rate-limited)
-- **Labels:** "own log-based operationalization; illustrative".
+- **Labels:** "own log-based operationalization; illustrative, not validated", plus the info-icon text from `05_*` §6: "Illustrative log-based proxy derived from the thesis's task-episode measure; not validated."
 
 ## 10. Presets (golden cases)
 
@@ -311,20 +342,20 @@ Committed as JSON (intake + confirmed decomposition + recorded narration). Golde
 
 | Slug | Org | Expected tier | Verdict | Must trigger | Must NOT trigger |
 |---|---|---|---|---|---|
-| `clinical-referral-triage` | bc_health_authority, sector health_care, pattern clinical_triage, health data, us_or_global_api, recommends | III | Go with conditions | BC-FIPPA-01, BC-FIPPA-XB, HC-SAMD-01, FED-DADM-HITL, VC-GENAI-MGR | BC-PIPA-01 |
-| `contract-clause-review` | bc_private, sector other, customer_pi, us_or_global_api, recommends | II | Go with conditions | BC-PIPA-01, FED-PIPEDA-XB, FED-OPC-VENDOR, FED-C36-XB (PROPOSED, info) | HC-SAMD-01 |
-| `hiring-and-sentiment` | bc_private, patterns hiring_selection + performance_management, employee_hr, decides_alone, monitorsEmployees | **pinned in Phase 1** (III or IV; recorded in ADR-0004, then asserted exactly) | **Redesign** | BC-PIPA-EMP, BC-PIPA-MON (blocker), BC-HRC-01, FED-C36-ADM (PROPOSED, info) | BC-FIPPA-01 |
-| `claims-document-intake` | bc_crown_corp, sector insurance, pattern claims_eligibility, health + customer_pi, us_or_global_api, recommends | II | Go with conditions | BC-FIPPA-01, BC-FIPPA-XB, INS-FAIR | HC-SAMD-01 |
+| `clinical-referral-triage` | bc_health_authority, sector health_care, pattern clinical_triage, generative_llm, health data, us_or_global_api, recommends | III | Go with conditions | BC-FIPPA-01, BC-FIPPA-XB, HC-SAMD-01, FED-DADM-HITL (REFERENCE, info), VC-GENAI-MGR | BC-PIPA-01, FED-OPC-VENDOR as REGULATOR_GUIDANCE (public body → REFERENCE only) |
+| `contract-clause-review` | bc_private, sector other, generative_llm, customer_pi, us_or_global_api, recommends | II | Go with conditions | BC-PIPA-01, FED-PIPEDA-XB, FED-OPC-VENDOR (draft, ≤ action), FED-C36-XB (PROPOSED, info) | HC-SAMD-01 |
+| `hiring-and-sentiment` | bc_private, businessFunction hr, patterns hiring_selection + performance_management, classical_ml, employee_hr, decides_alone, monitorsEmployees | **pinned in Phase 1** (III or IV; recorded in ADR-0004, then asserted exactly) | **Redesign** | BC-PIPA-EMP, BC-PIPA-MON (blocker), BC-HRC-01 | BC-FIPPA-01, FED-C36-ADM (provincial employer; ADR-0012) |
+| `claims-document-intake` | bc_crown_corp, sector insurance, pattern claims_eligibility, generative_llm, health + customer_pi, us_or_global_api, recommends | II | Go with conditions | BC-FIPPA-01, BC-FIPPA-XB, INS-FAIR (REFERENCE for a Crown insurer, info), BC-HRC-01 | HC-SAMD-01 |
 
 All presets use fictional organizations. Preset copy must explain *why* the verdict is what it is in ≤ 3 sentences. Golden tiers are asserted **exactly** (ADR-0004).
 
-**Edge goldens (Phase 1, engine-only, no UI):** in addition to the presets, `tests/golden/` covers at least: federal institution with an administrative decision (FED-DADM-01, in-scope GOVERNMENT_POLICY), OSFI-regulated bank (OSFI-E23, INS-OSFI-GENAI where generative), Quebec residents with an exclusively automated decision (QC-L25-121), crisis flag (temporary centralization note), low readiness (gradual exchange ramp), no personal data (Go; no privacy rules), Ontario hiring with ≥ 25 employees (ON-ESA-AI), ambient scribe in a health authority (BC-OIPC-SCRIBE).
+**Edge goldens (Phase 1, engine-only, no UI):** in addition to the presets, `tests/golden/` covers at least: federal institution with an administrative decision (FED-DADM-01, in-scope GOVERNMENT_POLICY), OSFI-regulated bank (OSFI-E23, INS-OSFI-GENAI where generative), Quebec residents with an exclusively automated decision (QC-L25-121), crisis flag (temporary centralization note), low readiness (gradual exchange ramp), no personal data (Go; no privacy rules), Ontario hiring with ≥ 25 employees (ON-ESA-AI) and with headcount unset (info "confirm headcount"), ambient scribe in a health authority (BC-OIPC-SCRIBE), BC ministry with `genAiToolType = public_tool` vs `approved_enterprise` (BC-GOV-GENAI triggers only for the former), Quebec `decides_with_review` without `human_final_decision` (QC-L25-121 at info: "ensure the review is meaningful"). Rule predicates: ADR-0012.
 
 ## 11. Export
 
 - **Charter (Markdown + print stylesheet):** one page, A4/Letter.
   - Header: Splitline, case title, date, tier, verdict.
-  - Body: conditions, split summary, three levers with guardrails and costs, 90-day plan, KPIs, triggered rules with status and sources.
+  - Body: conditions, split summary, three levers with guardrails and costs, 90-day plan, KPIs, triggered rules with effective status, sources and last-verified date.
   - Footer: disclaimer and the Splitline URL.
 - **Inventory record (JSON), ISO/IEC 42001-style:** `useCaseId, title, owner(placeholder), orgType, aiType, aiDecisionRole, dataCategories, hosting, indicativeTier, verdict, triggeredRuleIds, splitReviewCadence, nextReviewDate, createdAt, engineVersion, ruleCatalogueVersion`.
 
@@ -353,7 +384,7 @@ Env: `ANTHROPIC_API_KEY`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, 
 |---|---|---|---|
 | 1 | Thesis permission | Verbal OK from Prof. König: name the thesis and use Table 5 wording. Keep the paraphrase switch; **written confirmation required before M3 launch**. | 0009 |
 | 2 | Tier weights | Calibrate within ±1 point per weight, AIA thresholds fixed; stop and ask if a golden still misses. Mitigation checkboxes, derived reversibility with override, derived scale factor. Final weights in Phase 1. | 0004 |
-| 3 | Lab size | 2 episodes × 8 documents guided; autoplay 6 episodes per team; ~30 documents. | 0009 |
+| 3 | Lab size | 2 episodes × 8 documents guided; autoplay 6 episodes per team; corpus of 48 documents in disjoint episodes (no reuse). | 0009 |
 | 4 | `/sources` | Main nav item "Governance Map". | 0010 |
 | 5 | Visual direction | **Deferred to Phase 3** (Claude Design); recorded in ADR-0005. | 0010 → 0005 |
 | 6 | Domain | `*.vercel.app` for launch; custom domain optional later. | 0010 |
@@ -364,7 +395,7 @@ Env: `ANTHROPIC_API_KEY`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, 
 | 11 | Top 3 conditions | Severity → bindingness → tier-factor match → catalogue order. | 0007 |
 | 12 | "Sensitive" PI | Tiered: health/biometric/children/financial = action; other PI = info "assess". | 0007 |
 | 13 | Hosting "unsure" | Treated as outside Canada, with a "confirm region" action. | 0007 |
-| 14 | Pulse role selector | Context only; one respondent answers all 9. | 0009 |
+| 14 | Pulse role selector | Context only; one respondent answers all 9; result labelled "single-perspective estimate" (MVP adaptation of `02_*` §3.7). | 0009 |
 | 15 | Share link | Structured data only, no free text. | 0008 |
 | 16 | Live budget | Decompose = 1 run (narrate free per case token); Lab extract 3/IP/h; shared daily cap 100. | 0008 |
 
@@ -380,9 +411,12 @@ Env: `ANTHROPIC_API_KEY`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, 
 - §7.1: evaluation order; severity cap by status; sensitive-PI tiers; `unsure` hosting.
 - §7.2: reversibility default and scale derivation; mitigation rule (≥ 4 of 5); exact level formula; calibration bounds.
 - §7.3: verdict on effective severity; top-3 ranking.
-- §7.4: precedence of heuristic vs tier override.
-- §7.7: verbatim/paraphrased switch; role selector = context.
+- §4: thesis scope disclosure.
+- §7.4: `isStartingSplit`, `nextReviewDate`; starting-split precedence vs the moving split; scope switch definition.
+- §7.7: verbatim/paraphrased switch; role selector = context ("single-perspective estimate"); verbatim footnote.
 - §8: statute lexicon for the guard; run accounting.
-- §9: Lab size.
+- §9: Lab corpus of 48 docs in disjoint episodes; "single-step change" in guided mode; full honesty label.
 - §10: patterns and sectors per preset; hiring tier pinned in Phase 1; exact assertions; edge goldens.
 - §12–13: long-form disclaimer; versions; launch host; hooks.
+- After review (`legal-content-reviewer`, ADR-0012): `RuleDefinition` scope/effective status/draft; label table; ranking order; FIPPA-XB wording; `genAiToolType`; golden rows state `businessFunction`/`aiType`; BC-HRC-01 added to claims; FED-C36-ADM moved to must-NOT for hiring; charter shows last-verified dates.
+- After review (`thesis-fidelity-reviewer`): Pulse single-perspective label and verbatim footnote; Lab label; scope disclosure; moving split; scope switch; 48-document corpus.

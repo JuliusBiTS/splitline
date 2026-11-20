@@ -15,7 +15,7 @@ That conflicts with "never show a PROPOSED bill as binding" (`01_*` §0). Four m
 
 ## Decision
 1. **Evaluation order:** facts → tier → rules (may read the tier) → severity cap → verdict → operating model → rollout. The tier never reads rules.
-2. **Severity cap by status:**
+2. **Severity cap by status** (applied to the *effective* status; drafts are capped at action; see ADR-0012, which refines this section and supersedes the ranking in §3):
    - IN_FORCE, IN_FORCE_FUTURE, in-scope GOVERNMENT_POLICY and REGULATOR_GUIDANCE may reach blocker.
    - PROPOSED, VOLUNTARY, REFERENCE and out-of-scope GOVERNMENT_POLICY are capped at info.
    - `effectiveSeverity = min(ruleSeverity, cap)`.
@@ -30,7 +30,13 @@ That conflicts with "never show a PROPOSED bill as binding" (`01_*` §0). Four m
    - health, biometric, children, financial → action;
    - other personal categories → info, with "assess whether this is sensitive; the head of the public body decides".
 5. **Hosting `unsure`:** treated as outside Canada for every cross-border rule. The rule shows the matched fact "Hosting unknown; assumed outside Canada" and the action "Confirm the vendor's processing and storage region".
-6. **Split precedence:** apply the `02_*` §3.2 heuristic first, then the tier override. Owners only ever move toward more human control.
+6. **Split precedence (starting split only):** apply the `02_*` §3.2 heuristic first, then the tier override. In this step owners only move toward more human control.
+   - Later split-review moves may go either way, because the split moves (`02_*` §1.5).
+   - The one floor: at tier ≥ III, subtasks that bear on the consequential decision stay at `machine_review` or `human`.
+7. **Scope switch (`02_*` §1.10, §3.3):** central guardrails with local proposals apply when the case is codifiable AND (safety-critical OR tier ≥ III).
+   - Codifiable: every consequential subtask has codifiable knowledge.
+   - Safety-critical: any subtask has `errorCost = critical`, or the case has the `clinical_triage` pattern.
+   - The team proposes split changes; an accountable owner ratifies them.
 
 ## Consequences
 - Tests:
