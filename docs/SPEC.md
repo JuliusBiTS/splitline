@@ -374,7 +374,12 @@ All presets use fictional organizations. Preset copy must explain *why* the verd
 
 ## 13. Tech stack
 
-Next.js 16.4 (App Router, TypeScript strict + `noUncheckedIndexedAccess`) · pnpm 12 · Node 24 LTS (`.nvmrc`; CI and Vercel) · Tailwind CSS 4 · lucide-react · Zod 4 · @anthropic-ai/sdk · @upstash/ratelimit + @upstash/redis · @vercel/analytics · Vitest · Playwright + @axe-core/playwright · hand-built SVG charts. Hosting: Vercel (Hobby; personal, non-commercial portfolio) on a `*.vercel.app` subdomain for launch (ADR-0010). Claude Code hooks are Node scripts (ADR-0011).
+Next.js 16.4 (App Router, TypeScript strict + `noUncheckedIndexedAccess`) · pnpm 12 · Node 24 LTS (`.nvmrc`; CI and Vercel) · Tailwind CSS 4 · **shadcn/ui on Base UI** (restyled with our tokens, never the default look) · **Sonner** (toasts) · **NumberFlow** (`@number-flow/react`, animated tier/score changes, respects `prefers-reduced-motion`) · lucide-react · Zod 4 · @anthropic-ai/sdk · @upstash/ratelimit + @upstash/redis · @vercel/analytics · Vitest · Playwright + @axe-core/playwright · hand-built SVG charts. Hosting: Vercel (Hobby; personal, non-commercial portfolio) on a `*.vercel.app` subdomain for launch (ADR-0010). Claude Code hooks are Node scripts (ADR-0011).
+
+**UI libraries (ADR-0013):**
+- **Allowed:** shadcn/ui (Base UI), Sonner, NumberFlow.
+- **Optional later:** shadcn Drawer (Vaul) for the mobile What-if drawer; shadcn Command (cmdk) for a ⌘K palette.
+- **Not allowed:** Radix as a separate dependency, Magic UI, Aceternity, RareUI, Beautiful UI, 21st.dev components, or any decorative effect library.
 
 Env: `ANTHROPIC_API_KEY`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, `LIVE_MODE_ENABLED`, `DAILY_LIVE_RUN_CAP`, `NEXT_PUBLIC_SITE_URL`.
 
