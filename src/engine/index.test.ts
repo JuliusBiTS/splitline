@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { PRESET_CASES, run } from "../../tests/fixtures/cases";
+import { PRESET_CASES, run, TEST_TODAY } from "../../tests/fixtures/cases";
 import { computeCase } from "./index";
 import { computeTier } from "./tier";
 import type { UseCasePattern } from "./types";
@@ -7,8 +7,8 @@ import type { UseCasePattern } from "./types";
 describe("evaluation order (ADR-0007)", () => {
   it("is acyclic: the tier is the same with or without the rule catalogue", () => {
     for (const c of PRESET_CASES) {
-      const withRules = computeCase(c.intake, c.decomposition);
-      const noRules = computeCase(c.intake, c.decomposition, []);
+      const withRules = computeCase(c.intake, c.decomposition, { today: TEST_TODAY });
+      const noRules = computeCase(c.intake, c.decomposition, { today: TEST_TODAY, catalogue: [] });
       expect(noRules.tier).toEqual(withRules.tier);
       expect(noRules.triggeredRules).toEqual([]);
     }

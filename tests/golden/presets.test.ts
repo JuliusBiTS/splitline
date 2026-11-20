@@ -4,11 +4,12 @@ import { computeCase } from "@/engine";
 import { consequentialFloorBlocks } from "@/engine/facts";
 import { checkGolden } from "./check";
 import { GOLDEN } from "./expectations";
+import { TEST_TODAY } from "../fixtures/cases";
 
 describe.each(GOLDEN.map((g) => [g.slug, g] as const))("golden preset %s (SPEC ยง10)", (slug, exp) => {
   const preset = getPreset(slug);
   if (!preset) throw new Error(`missing preset ${slug}`);
-  const r = computeCase(preset.intake, preset.decomposition);
+  const r = computeCase(preset.intake, preset.decomposition, { today: TEST_TODAY });
 
   it(`tier is exactly ${exp.tier}`, () => {
     expect(r.tier.level).toBe(exp.tier);
@@ -18,6 +19,15 @@ describe.each(GOLDEN.map((g) => [g.slug, g] as const))("golden preset %s (SPEC ย
   });
   it("must-trigger, must-not-trigger and status expectations hold", () => {
     expect(checkGolden(r, exp)).toEqual([]);
+  });
+  it("starting split owners match the key subtasks (02_* ยง3.2)", () => {
+    const owners = Object.fromEntries(r.operatingModel.split.map((s) => [s.subtaskId, s.owner]));
+    expect(owners).toEqual(exp.split);
+    expect(r.operatingModel.isStartingSplit).toBe(true);
+  });
+  it(`drift check missing = [${exp.driftMissing.join(", ")}]`, () => {
+    expect(r.operatingModel.driftCheck.missing).toEqual(exp.driftMissing);
+    expect(r.operatingModel.driftCheck.ok).toBe(exp.driftMissing.length === 0);
   });
   it("passes the consequential floor", () => {
     expect(consequentialFloorBlocks(preset.intake, preset.decomposition)).toBe(false);
@@ -30,11 +40,23 @@ describe.each(GOLDEN.map((g) => [g.slug, g] as const))("golden preset %s (SPEC ย
   });
 });
 
+describe("HR preset drift check (PLAN Phase 2)", () => {
+  it("flags the efficiency-only KPIs and suggests augmentation-value and learning-loop KPIs", () => {
+    const p = getPreset("hiring-and-sentiment");
+    if (!p) throw new Error("hiring");
+    expect(p.intake.proposedKpis).toEqual(["Time to shortlist", "Cost per hire"]);
+    const d = computeCase(p.intake, p.decomposition, { today: TEST_TODAY }).operatingModel.driftCheck;
+    expect(d.ok).toBe(false);
+    expect(d.missing).toEqual(["augmentation_value", "learning_loop"]);
+    expect(d.suggestedKpis.length).toBeGreaterThan(0);
+  });
+});
+
 describe("golden score breakdowns (ADR-0004)", () => {
   const score = (slug: string) => {
     const p = getPreset(slug);
     if (!p) throw new Error(slug);
-    return computeCase(p.intake, p.decomposition).tier;
+    return computeCase(p.intake, p.decomposition, { today: TEST_TODAY }).tier;
   };
   it("clinical: raw 23, no deduction", () => {
     const t = score("clinical-referral-triage");
@@ -56,7 +78,7 @@ describe("golden score breakdowns (ADR-0004)", () => {
   it("claims would be tier III without the mitigation deduction (What-if story)", () => {
     const p = getPreset("claims-document-intake");
     if (!p) throw new Error("claims");
-    const r = computeCase({ ...p.intake, mitigations: ["human_final_decision", "appeal_path", "monitoring_plan"] }, p.decomposition);
+    const r = computeCase({ ...p.intake, mitigations: ["human_final_decision", "appeal_path", "monitoring_plan"] }, p.decomposition, { today: TEST_TODAY });
     expect(r.tier.level).toBe("III");
   });
 });

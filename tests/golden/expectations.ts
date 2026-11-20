@@ -2,7 +2,7 @@
  * SPEC §10 golden expectations, shared by the golden tests and `pnpm eval:engine`.
  * Tiers are exact (ADR-0004); the hiring tier is pinned at IV in ADR-0004.
  */
-import type { RuleStatus, Severity, TierLevel, Verdict } from "@/engine/types";
+import type { OperatingModel, RuleStatus, Severity, SplitOwner, TierLevel, Verdict } from "@/engine/types";
 
 export interface StatusExpectation {
   ruleId: string;
@@ -22,11 +22,17 @@ export interface GoldenExpectation {
   mustTrigger: string[];
   mustNotTrigger: string[];
   statuses: StatusExpectation[];
+  /** Expected starting split owner per key subtask (02_* §3.2, ADR-0016). */
+  split: Record<string, SplitOwner>;
+  /** Expected drift-check gaps (02_* §3.6). */
+  driftMissing: OperatingModel["driftCheck"]["missing"];
 }
 
 export const GOLDEN: readonly GoldenExpectation[] = [
   {
     slug: "clinical-referral-triage",
+    split: { s1: "machine", s2: "machine", s3: "human", s4: "machine_review", s5: "human" },
+    driftMissing: ["augmentation_value", "learning_loop"],
     tier: "III",
     verdict: "go_with_conditions",
     mustTrigger: ["BC-FIPPA-01", "BC-FIPPA-XB", "HC-SAMD-01", "FED-DADM-HITL", "VC-GENAI-MGR"],
@@ -39,6 +45,8 @@ export const GOLDEN: readonly GoldenExpectation[] = [
   },
   {
     slug: "contract-clause-review",
+    split: { s1: "machine", s2: "machine_review", s3: "machine_review", s4: "machine_review" },
+    driftMissing: ["augmentation_value", "learning_loop"],
     tier: "II",
     verdict: "go_with_conditions",
     mustTrigger: ["BC-PIPA-01", "FED-PIPEDA-XB", "FED-OPC-VENDOR", "FED-C36-XB"],
@@ -50,6 +58,9 @@ export const GOLDEN: readonly GoldenExpectation[] = [
   },
   {
     slug: "hiring-and-sentiment",
+    split: { s1: "machine", s2: "human", s3: "human", s4: "machine_review", s5: "human" },
+    // HR preset KPIs are efficiency-only ("Time to shortlist", "Cost per hire") → drift warning.
+    driftMissing: ["augmentation_value", "learning_loop"],
     tier: "IV",
     verdict: "redesign",
     mustTrigger: ["BC-PIPA-EMP", "BC-PIPA-MON", "BC-HRC-01"],
@@ -58,6 +69,8 @@ export const GOLDEN: readonly GoldenExpectation[] = [
   },
   {
     slug: "claims-document-intake",
+    split: { s1: "machine", s2: "machine", s3: "machine_review", s4: "machine_review", s5: "machine_review" },
+    driftMissing: ["augmentation_value"],
     tier: "II",
     verdict: "go_with_conditions",
     mustTrigger: ["BC-FIPPA-01", "BC-FIPPA-XB", "INS-FAIR", "BC-HRC-01"],

@@ -14,10 +14,12 @@ type Row = {
   "pct (score/max)": string;
   expVerdict: string;
   verdict: string;
-  rules: string;
+  checks: string;
   ok: string;
 };
 
+/** Fixed date so the table is reproducible (only the next review date depends on it). */
+const TODAY = "2026-11-20";
 const rows: Row[] = [];
 const problems: string[] = [];
 
@@ -27,7 +29,7 @@ for (const exp of GOLDEN) {
     problems.push(`${exp.slug}: preset missing`);
     continue;
   }
-  const r = computeCase(preset.intake, preset.decomposition);
+  const r = computeCase(preset.intake, preset.decomposition, { today: TODAY });
   const p = checkGolden(r, exp);
   problems.push(...p.map((x) => `${exp.slug}: ${x}`));
   rows.push({
@@ -37,7 +39,7 @@ for (const exp of GOLDEN) {
     "pct (score/max)": `${r.tier.pct.toFixed(1)}% (${Math.round(r.tier.score * 100) / 100}/${r.tier.maxScore})`,
     expVerdict: exp.verdict,
     verdict: r.verdict.verdict,
-    rules: `${exp.mustTrigger.length + exp.mustNotTrigger.length + exp.statuses.length} checks`,
+    checks: `${exp.mustTrigger.length + exp.mustNotTrigger.length + exp.statuses.length} rule, ${Object.keys(exp.split).length} split, 1 drift`,
     ok: p.length === 0 ? "✓" : "✗",
   });
 }

@@ -23,5 +23,13 @@ export function checkGolden(result: EngineResult, exp: GoldenExpectation): strin
     if (s.maxSeverity && severityRank(t.severity) > severityRank(s.maxSeverity))
       problems.push(`${s.ruleId} severity ${t.severity} > ${s.maxSeverity}`);
   }
+  const owners = new Map(result.operatingModel.split.map((x) => [x.subtaskId, x.owner]));
+  for (const [id, owner] of Object.entries(exp.split)) {
+    const got = owners.get(id);
+    if (got !== owner) problems.push(`split ${id} ${got ?? "missing"} ≠ ${owner}`);
+  }
+  const missing = result.operatingModel.driftCheck.missing;
+  if (JSON.stringify(missing) !== JSON.stringify(exp.driftMissing))
+    problems.push(`drift missing [${missing.join(", ")}] ≠ [${exp.driftMissing.join(", ")}]`);
   return problems;
 }
