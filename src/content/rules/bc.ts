@@ -57,16 +57,27 @@ export const BC_RULES: RuleDefinition[] = [
     reads: ["orgType", "jurisdictions", "monitorsEmployees", "businessFunction", "useCasePatterns"],
     appliesWhen: (c) =>
       c.bcPipaOrg && (c.monitorsEmployees || (c.businessFunction === "hr" && has(c, "performance_management"))),
-    severity: () => "blocker",
+    // ADR-0015 (decided): blocker only when the tool monitors employees, which is what the OIPC guidance
+    // targets. HR performance management without monitoring is ordinary employment management → action.
+    severity: (c) => (c.monitorsEmployees ? "blocker" : "action"),
     redesignPath:
       "Replace ongoing, routine monitoring with a narrow, overt and time-limited measure that has a documented purpose, or drop the productivity or sentiment scoring.",
     consideration:
       "OIPC BC considers ongoing, continuous and routine monitoring of employee behaviour seldom authorized, and covert monitoring faces a very high bar. Off-the-shelf tools with default settings are not automatically acceptable.",
+    notes: (c) =>
+      c.monitorsEmployees
+        ? []
+        : [
+            "No ongoing monitoring is indicated. Confirm the tool does not track employee behaviour (for example chats, keystrokes or sentiment); if it does, tick 'monitors employees'.",
+          ],
     actionsToConsider: [
-      "Redesign: remove continuous or covert monitoring and limit any measurement to a specific, documented and overt purpose.",
       "Assess whether a less intrusive alternative achieves the same purpose.",
-      "Notify employees of any remaining measurement and review the vendor's default settings.",
+      "Notify employees of any measurement and review the vendor's default settings.",
     ],
+    extraActions: (c) =>
+      c.monitorsEmployees
+        ? ["Redesign: remove continuous or covert monitoring and limit any measurement to a specific, documented and overt purpose."]
+        : [],
     sources: [SRC.oipcMonitoring, SRC.p1701],
     lastVerified: LAST_VERIFIED,
   },

@@ -1,6 +1,6 @@
 # ADR-0015: Rule predicate refinements after the Phase 1 review
 
-- **Status:** Accepted (one item open for Julius, see "Open") · **Date:** 2026-11-20
+- **Status:** Accepted (research-source additions still open, see "Open") · **Date:** 2026-11-20
 
 ## Context
 The Phase 1 `legal-content-reviewer` and `plan-reviewer` compared the catalogue (`src/content/rules/`) with `docs/research/01_*` and ADR-0012. They found triggers that fire for the wrong organizations, one gap, and refinements that sat only in code comments. ADR-0012 stays the authoritative predicate list; this ADR amends it. `docs/research/` is unchanged (write-protected).
@@ -21,15 +21,16 @@ The Phase 1 `legal-content-reviewer` and `plan-reviewer` compared the catalogue 
 7. **Wording:** the INS-FAIR note says the Crown insurer is "likely outside" the Code's scope. The ban list also covers "mandatory action" and "required by law".
 8. **Sources:** FED-PIPEDA-XB now leads with the OPC vendor release (processor accountability). BC-HRC-01's only source is the oversight offices' joint call, labelled as context. A primary source for the Human Rights Code still has to be added to research §5.
 
-`RULE_CATALOGUE_VERSION` → `2026-11-20.2`. Every golden expectation is unchanged; tests cover each refinement (`src/content/rules/review-fixes.test.ts`).
+`RULE_CATALOGUE_VERSION` → `2026-11-20.3`. Every golden expectation is unchanged; tests cover each refinement (`src/content/rules/review-fixes.test.ts`).
+
+9. **BC-PIPA-MON severity (decided by Julius, 2026-11-20; amends ADR-0012):** the trigger is unchanged, but the rule is a **blocker only when `monitorsEmployees = true`**.
+   - HR + `performance_management` without monitoring is **action**. That is ordinary employment management under BC PIPA (reasonable purpose + notice). The OIPC "seldom authorized" guidance targets ongoing, continuous, routine monitoring.
+   - The non-monitoring path shows a note asking the user to confirm the tool doesn't track employee behaviour, and to tick "monitors employees" if it does.
+   - The "Redesign:" action appears only on the monitoring path.
+   - Guiding principle for this and future rule calls: stay within what the law and the regulator's guidance say, without going beyond it.
+   - The hiring preset doesn't change (it sets `monitorsEmployees = true`: blocker, Redesign).
 
 ## Open (Julius to decide)
-- **BC-PIPA-MON, HR + performance management without monitoring.** ADR-0012 fires this rule as a blocker for `businessFunction = hr` AND `performance_management` even when `monitorsEmployees = false`. Research §3 ties the blocker to monitoring or productivity/sentiment scoring. So an AI that only drafts review summaries from manager notes gets **Redesign**. Options:
-  - (a) keep it as is;
-  - (b) lower that path to action and keep blocker for `monitorsEmployees`;
-  - (c) add a "scores productivity or sentiment" flag.
-  
-  Code follows ADR-0012 until decided. The hiring preset doesn't depend on this, because it sets `monitorsEmployees = true`.
 - **Research §5 additions:** a primary source for the BC Human Rights Code and for PIPEDA processor accountability.
 
 ## Consequences

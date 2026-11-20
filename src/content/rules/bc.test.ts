@@ -42,18 +42,27 @@ describe("BC rules", () => {
     expect(triggeredIds(hiring)).not.toContain("BC-PIPA-01");
   });
 
-  it("BC-PIPA-MON triggers on monitoring alone, outside HR (ADR-0012)", () => {
-    expect(triggeredIds(EDGE.employeeMonitoringOnly)).toContain("BC-PIPA-MON");
+  it("BC-PIPA-MON: monitoring alone, outside HR, is a blocker with the redesign action (ADR-0012)", () => {
+    const r = run(EDGE.employeeMonitoringOnly);
+    const t = r.triggeredRules.find((x) => x.ruleId === "BC-PIPA-MON");
+    expect(t?.severity).toBe("blocker");
+    expect(t?.actions.join(" ")).toContain("Redesign:");
+    expect(r.verdict.verdict).toBe("redesign");
   });
 
-  it("BC-PIPA-MON triggers on HR + performance management without the monitoring flag", () => {
+  it("BC-PIPA-MON: HR + performance management without monitoring is action, not a blocker (ADR-0015)", () => {
     const c = makeCase("hr perf", {
       businessFunction: "hr",
       useCasePatterns: ["performance_management"],
       dataCategories: ["employee_hr"],
       affectedPeople: ["employees_applicants"],
     });
-    expect(triggeredIds(c)).toContain("BC-PIPA-MON");
+    const r = run(c);
+    const t = r.triggeredRules.find((x) => x.ruleId === "BC-PIPA-MON");
+    expect(t?.severity).toBe("action");
+    expect(t?.actions.join(" ")).not.toContain("Redesign:");
+    expect(t?.notes.join(" ")).toContain("Confirm the tool does not track employee behaviour");
+    expect(r.verdict.verdict).toBe("go_with_conditions");
   });
 
   it("BC-GOV-GENAI: tool type unset → info 'confirm the tool'", () => {
