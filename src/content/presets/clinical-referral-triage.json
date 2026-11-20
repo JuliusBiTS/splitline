@@ -1,0 +1,93 @@
+{
+  "slug": "clinical-referral-triage",
+  "organization": "Cedar Basin Health Authority (fictional)",
+  "verdictExplanation": "The tool suggests an urgency category for patient referrals, so it touches clinical decisions about patients using health information sent to a US-hosted model. That puts it at indicative tier III and likely triggers a FIPPA privacy impact assessment, a supplementary assessment for storage outside Canada and a medical-device classification check. None of these blocks the project, so it can go ahead with those conditions and a clinician making every final triage decision.",
+  "intake": {
+    "title": "Specialist referral triage assistant",
+    "processDescription": "Today, intake nurses at a regional specialist clinic read every incoming referral letter, check that the required tests and history are attached, and place the referral in an urgency category before a triage clinician confirms it and books the patient. Backlogs reach several weeks. We want a large language model to extract referral details, flag missing information, suggest an urgency category with the reasons, and draft a one-paragraph summary for the triage clinician, who makes the final decision.",
+    "orgType": "bc_health_authority",
+    "businessFunction": "health_services",
+    "aiDecisionRole": "recommends",
+    "affectedPeople": ["patients"],
+    "dataCategories": ["health"],
+    "jurisdictions": ["bc"],
+    "hosting": "us_or_global_api",
+    "aiType": "generative_llm",
+    "customerFacingOutput": false,
+    "monitorsEmployees": false,
+    "teamSetup": "separate_ai_team",
+    "readiness": "medium",
+    "proposedKpis": ["Median days from referral to triage decision", "Share of referrals returned for missing information"],
+    "sector": "health_care",
+    "useCasePatterns": ["clinical_triage"],
+    "mitigations": ["human_final_decision", "predeployment_testing", "monitoring_plan"],
+    "genAiToolType": "direct_api"
+  },
+  "decomposition": {
+    "subtasks": [
+      {
+        "id": "s1",
+        "name": "Extract referral details",
+        "description": "Pull patient identifiers, referring clinician, reason for referral and attached results from the letter.",
+        "judgmentIntensity": "low",
+        "knowledgeType": "codifiable",
+        "errorCost": "medium",
+        "volume": "high",
+        "affectsIndividuals": true,
+        "consequential": false,
+        "rationale": "Structured extraction with clear fields; errors are caught at the next step."
+      },
+      {
+        "id": "s2",
+        "name": "Check referral completeness",
+        "description": "Compare attached tests and history with the clinic's referral criteria and list what is missing.",
+        "judgmentIntensity": "low",
+        "knowledgeType": "codifiable",
+        "errorCost": "medium",
+        "volume": "high",
+        "affectsIndividuals": true,
+        "consequential": false,
+        "rationale": "The criteria are written down; a missed item delays care but is recoverable."
+      },
+      {
+        "id": "s3",
+        "name": "Suggest urgency category",
+        "description": "Propose an urgency category with the clinical reasons found in the referral.",
+        "judgmentIntensity": "high",
+        "knowledgeType": "tacit",
+        "errorCost": "critical",
+        "volume": "high",
+        "affectsIndividuals": true,
+        "consequential": true,
+        "rationale": "Under-triage can delay urgent care; the category bears directly on the patient's wait."
+      },
+      {
+        "id": "s4",
+        "name": "Draft triage summary",
+        "description": "Write a short summary of the referral for the triage clinician.",
+        "judgmentIntensity": "medium",
+        "knowledgeType": "codifiable",
+        "errorCost": "high",
+        "volume": "high",
+        "affectsIndividuals": true,
+        "consequential": false,
+        "rationale": "An inaccurate summary could mislead the clinician, so it is reviewed against the letter."
+      },
+      {
+        "id": "s5",
+        "name": "Confirm triage and book",
+        "description": "The triage clinician confirms or changes the category and books the appointment.",
+        "judgmentIntensity": "high",
+        "knowledgeType": "tacit",
+        "errorCost": "critical",
+        "volume": "medium",
+        "affectsIndividuals": true,
+        "consequential": true,
+        "rationale": "This is the clinical decision about the patient."
+      }
+    ],
+    "assumptions": ["Referral letters arrive as text or searchable PDFs.", "The clinic's referral criteria are documented."],
+    "clarifyingQuestions": [],
+    "suggestedUseCasePatterns": ["clinical_triage"]
+  }
+}

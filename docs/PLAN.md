@@ -44,15 +44,15 @@ Phase 3 (design) runs in parallel to Phases 1–2. Phases 1–2 have no UI depen
 
 ## Phase 1: Domain types & rules engine
 **Goal:** the deterministic core that produces tier, triggered rules and verdict from `CaseFacts`.
-- [ ] `src/engine/types.ts`: all types from SPEC §5–7 plus Zod schemas (single source; types inferred from Zod).
-- [ ] `src/engine/facts.ts`: IntakeInput + confirmed Decomposition → `CaseFacts` (derived flags: sensitiveData, crossBorder, consequentialPresent, reversibility …).
-- [ ] `src/content/rules/{federal,bc,on,qc,intl}.ts`: implement every rule from `docs/research/01_*` §3 with status, sources and lastVerified (use the `add-legal-rule` skill).
-- [ ] `src/engine/rules.ts`: evaluate rules → `TriggeredRule[]` with `matchedFacts`.
-- [ ] `src/engine/tier.ts`: scoring per SPEC §7.2; calibrate weights on the golden cases; write ADR-0004 with the final weights.
-- [ ] `src/engine/verdict.ts`: per SPEC §7.3.
-- [ ] `src/content/presets/*.json`: intake + decomposition for the 4 presets (decompositions hand-written now, replaced by recorded ones in Phase 5).
-- [ ] `tests/golden/*.test.ts`: assertions from SPEC §10 (tier, verdict, must / must-not rules).
-- [ ] Rule coverage test: every rule has ≥ 1 test where it triggers and ≥ 1 where it doesn't.
+- [x] `src/engine/types.ts`: all types from SPEC §5–7 plus Zod schemas (single source; types inferred from Zod).
+- [x] `src/engine/facts.ts`: IntakeInput + confirmed Decomposition → `CaseFacts` (derived flags: sensitiveData, crossBorder, consequentialPresent, reversibility …).
+- [x] `src/content/rules/{federal,bc,on,qc,intl}.ts`: implement every rule from `docs/research/01_*` §3 with status, sources and lastVerified (use the `add-legal-rule` skill).
+- [x] `src/engine/rules.ts`: evaluate rules → `TriggeredRule[]` with `matchedFacts`.
+- [x] `src/engine/tier.ts`: scoring per SPEC §7.2; calibrate weights on the golden cases; write ADR-0004 with the final weights (SPEC weights unchanged; hiring pinned at IV).
+- [x] `src/engine/verdict.ts`: per SPEC §7.3.
+- [x] `src/content/presets/*.json`: intake + decomposition for the 4 presets (decompositions hand-written now, replaced by recorded ones in Phase 5).
+- [x] `tests/golden/*.test.ts`: assertions from SPEC §10 (tier, verdict, must / must-not rules).
+- [x] Rule coverage test: every rule has ≥ 1 test where it triggers and ≥ 1 where it doesn't.
 
 **Acceptance**
 - `pnpm test` passes. `pnpm eval:engine` prints a table showing 4/4 golden cases matching.
@@ -70,7 +70,7 @@ Phase 3 (design) runs in parallel to Phases 1–2. Phases 1–2 have no UI depen
 - [ ] `src/engine/rollout.ts`: 90-day plan built from triggered rules + levers + KPIs.
 - [ ] `src/engine/whatif.ts`: recompute + diff (tier, verdict, rules added/removed).
 - [ ] `src/engine/pulse.ts`: scoring, minimum, quadrant, lagging driver → lever.
-- [ ] Extend the golden tests: expected split owners for the key subtasks of each preset; the drift check flags the HR preset KPIs.
+- [ ] Extend the golden tests: expected split owners for the key subtasks of each preset; the drift check flags the HR preset KPIs; crisis edge golden asserts the temporary-centralization scope note and low-readiness edge golden asserts the gradual exchange ramp (deferred from Phase 1, ADR-0014 §5).
 
 **Acceptance**
 - `pnpm test` passes; engine coverage ≥ 90% lines (`vitest --coverage`).
