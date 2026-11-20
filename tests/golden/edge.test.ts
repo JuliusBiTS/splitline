@@ -1,9 +1,9 @@
 /**
- * SPEC §10 edge goldens (engine-only). Crisis and low-readiness outputs are operating-model notes
- * (Phase 2 levers); Phase 1 asserts the facts they rely on and that tier and verdict ignore them
- * (ADR-0014 §3). Phase 2 extends these with the note and ramp assertions.
+ * SPEC §10 edge goldens (engine-only). Crisis and low-readiness change only the operating model:
+ * tier and verdict ignore them (ADR-0014 §3); Phase 2 asserts the scope note and the ramp (§5).
  */
 import { describe, expect, it } from "vitest";
+import { CRISIS_SCOPE_NOTE, LOW_READINESS_SCOPE_NOTE } from "@/engine/levers";
 import { EDGE, run, triggeredIds } from "../fixtures/cases";
 
 const find = (r: ReturnType<typeof run>, id: string) => r.triggeredRules.find((t) => t.ruleId === id);
@@ -36,20 +36,30 @@ describe("edge goldens (SPEC §10)", () => {
     expect(triggeredIds(EDGE.quebecWithReviewHfd)).not.toContain("QC-L25-121");
   });
 
-  it("crisis flag reaches the facts; tier and verdict are unchanged (note follows in Phase 2)", () => {
+  it("crisis flag → temporary-centralization scope note that reverses P1; tier and verdict unchanged", () => {
     const crisis = run(EDGE.crisis);
     const base = run(EDGE.noPersonalData);
     expect(crisis.facts.crisisContext).toBe(true);
     expect(crisis.tier.level).toBe(base.tier.level);
     expect(crisis.verdict.verdict).toBe(base.verdict.verdict);
+    expect(crisis.operatingModel.scopeNotes).toContain(CRISIS_SCOPE_NOTE);
+    expect(CRISIS_SCOPE_NOTE).toMatch(/temporary centralization/i);
+    expect(CRISIS_SCOPE_NOTE).toContain("reverses P1");
+    expect(crisis.operatingModel.levers[0].setting).toMatch(/^Temporary centralization/);
+    expect(base.operatingModel.scopeNotes).not.toContain(CRISIS_SCOPE_NOTE);
   });
 
-  it("low readiness reaches the facts; tier and verdict are unchanged (ramp follows in Phase 2)", () => {
+  it("low readiness → gradual exchange ramp, enablement first; tier and verdict unchanged", () => {
     const low = run(EDGE.lowReadiness);
     const base = run(EDGE.noPersonalData);
     expect(low.facts.readiness).toBe("low");
     expect(low.tier.level).toBe(base.tier.level);
     expect(low.verdict.verdict).toBe(base.verdict.verdict);
+    const exchange = low.operatingModel.levers[2];
+    expect(exchange.setting).toMatch(/^Ramp up exchange gradually, enablement first/);
+    expect(exchange.details.join(" ")).toContain("Gradual ramp");
+    expect(low.operatingModel.scopeNotes).toContain(LOW_READINESS_SCOPE_NOTE);
+    expect(base.operatingModel.levers[2].setting).not.toMatch(/gradually/);
   });
 
   it("no personal data → Go, no privacy rules", () => {

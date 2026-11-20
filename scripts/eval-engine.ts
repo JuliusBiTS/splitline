@@ -14,7 +14,7 @@ type Row = {
   "pct (score/max)": string;
   expVerdict: string;
   verdict: string;
-  rules: string;
+  checks: string;
   ok: string;
 };
 
@@ -39,7 +39,7 @@ for (const exp of GOLDEN) {
     "pct (score/max)": `${r.tier.pct.toFixed(1)}% (${Math.round(r.tier.score * 100) / 100}/${r.tier.maxScore})`,
     expVerdict: exp.verdict,
     verdict: r.verdict.verdict,
-    rules: `${exp.mustTrigger.length + exp.mustNotTrigger.length + exp.statuses.length} checks`,
+    checks: `${exp.mustTrigger.length + exp.mustNotTrigger.length + exp.statuses.length} rule, ${Object.keys(exp.split).length} split, 1 drift`,
     ok: p.length === 0 ? "✓" : "✗",
   });
 }

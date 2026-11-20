@@ -20,6 +20,15 @@ describe.each(GOLDEN.map((g) => [g.slug, g] as const))("golden preset %s (SPEC ย
   it("must-trigger, must-not-trigger and status expectations hold", () => {
     expect(checkGolden(r, exp)).toEqual([]);
   });
+  it("starting split owners match the key subtasks (02_* ยง3.2)", () => {
+    const owners = Object.fromEntries(r.operatingModel.split.map((s) => [s.subtaskId, s.owner]));
+    expect(owners).toEqual(exp.split);
+    expect(r.operatingModel.isStartingSplit).toBe(true);
+  });
+  it(`drift check missing = [${exp.driftMissing.join(", ")}]`, () => {
+    expect(r.operatingModel.driftCheck.missing).toEqual(exp.driftMissing);
+    expect(r.operatingModel.driftCheck.ok).toBe(exp.driftMissing.length === 0);
+  });
   it("passes the consequential floor", () => {
     expect(consequentialFloorBlocks(preset.intake, preset.decomposition)).toBe(false);
   });
@@ -28,6 +37,18 @@ describe.each(GOLDEN.map((g) => [g.slug, g] as const))("golden preset %s (SPEC ย
       const t = r.triggeredRules.find((x) => x.ruleId === id);
       expect(t?.severity).not.toBe("info");
     }
+  });
+});
+
+describe("HR preset drift check (PLAN Phase 2)", () => {
+  it("flags the efficiency-only KPIs and suggests augmentation-value and learning-loop KPIs", () => {
+    const p = getPreset("hiring-and-sentiment");
+    if (!p) throw new Error("hiring");
+    expect(p.intake.proposedKpis).toEqual(["Time to shortlist", "Cost per hire"]);
+    const d = computeCase(p.intake, p.decomposition, { today: TEST_TODAY }).operatingModel.driftCheck;
+    expect(d.ok).toBe(false);
+    expect(d.missing).toEqual(["augmentation_value", "learning_loop"]);
+    expect(d.suggestedKpis.length).toBeGreaterThan(0);
   });
 });
 
