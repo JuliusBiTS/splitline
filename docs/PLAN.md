@@ -64,13 +64,13 @@ Phase 3 (design) runs in parallel to Phases 1–2. Phases 1–2 have no UI depen
 
 ## Phase 2: Operating model, rollout, what-if, Pulse scoring
 **Goal:** the thesis logic as tested pure functions.
-- [ ] `src/engine/split.ts`: split heuristic (`02_*` §3.2), with tier ≥ III override (SPEC §7.4).
-- [ ] `src/engine/levers.ts`: three LeverCards incl. guardrail, direct cost, monitoring and warning indicators (from thesis Table 4); scope notes (codifiable + regulated → central guardrails; crisis → temporary centralization).
-- [ ] `src/engine/cadence.ts` (dynamism → split review cadence) and `src/engine/drift.ts` (KPI coverage check).
-- [ ] `src/engine/rollout.ts`: 90-day plan built from triggered rules + levers + KPIs.
-- [ ] `src/engine/whatif.ts`: recompute + diff (tier, verdict, rules added/removed).
-- [ ] `src/engine/pulse.ts`: scoring, minimum, quadrant, lagging driver → lever.
-- [ ] Extend the golden tests: expected split owners for the key subtasks of each preset; the drift check flags the HR preset KPIs; crisis edge golden asserts the temporary-centralization scope note and low-readiness edge golden asserts the gradual exchange ramp (deferred from Phase 1, ADR-0014 §5).
+- [x] `src/engine/split.ts`: split heuristic (`02_*` §3.2), with tier ≥ III override (SPEC §7.4).
+- [x] `src/engine/levers.ts`: three LeverCards incl. guardrail, direct cost, monitoring and warning indicators (from thesis Table 4); scope notes (codifiable + regulated → central guardrails; crisis → temporary centralization).
+- [x] `src/engine/cadence.ts` (dynamism → split review cadence) and `src/engine/drift.ts` (KPI coverage check).
+- [x] `src/engine/rollout.ts`: 90-day plan built from triggered rules + levers + KPIs.
+- [x] `src/engine/whatif.ts`: recompute + diff (tier, verdict, rules added/removed).
+- [x] `src/engine/pulse.ts`: scoring, minimum, quadrant, lagging driver → lever.
+- [x] Extend the golden tests: expected split owners for the key subtasks of each preset; the drift check flags the HR preset KPIs; crisis edge golden asserts the temporary-centralization scope note and low-readiness edge golden asserts the gradual exchange ramp (deferred from Phase 1, ADR-0014 §5).
 
 **Acceptance**
 - `pnpm test` passes; engine coverage ≥ 90% lines (`vitest --coverage`).
