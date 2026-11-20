@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+/*
+ * Placeholder tokens until the Claude Design handoff (PLAN Phase 3) replaces them
+ * via src/styles/tokens.css. Hex values live only here, never in components.
+ */
+:root {
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --muted: #475569;
+  --border: #e2e8f0;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}

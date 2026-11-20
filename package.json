@@ -1,0 +1,51 @@
+{
+  "name": "splitline",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI operating-model studio: Canadian/BC governance triage, thesis-based human–AI work design, post-launch measurement. Fictional data only.",
+  "engines": {
+    "node": ">=24"
+  },
+  "packageManager": "pnpm@12.21.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "next typegen && tsc --noEmit",
+    "lint": "eslint . --max-warnings=0",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test --project=e2e",
+    "test:a11y": "playwright test --project=a11y",
+    "eval:engine": "tsx scripts/eval-engine.ts",
+    "eval:llm": "tsx scripts/eval-llm.ts",
+    "verify": "pnpm typecheck && pnpm lint && pnpm test"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.10.0",
+    "@upstash/ratelimit": "^2.2.1",
+    "@upstash/redis": "^1.41.0",
+    "@vercel/analytics": "^2.0.1",
+    "lucide-react": "^1.75.0",
+    "next": "16.4.6",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.65.1",
+    "@tailwindcss/turbopack": "4.3.3",
+    "@types/node": "^24.19.2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitest/coverage-v8": "^5.1.1",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.6",
+    "tailwindcss": "4.3.3",
+    "tsx": "^4.23.15",
+    "typescript": "^5",
+    "vitest": "^5.1.1"
+  }
+}

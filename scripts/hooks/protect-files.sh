@@ -4,6 +4,8 @@
 input="$(cat)"
 file="$(printf '%s' "$input" | jq -r '.tool_input.file_path // empty' 2>/dev/null)"
 [ -z "$file" ] && exit 0
+# Normalize Windows paths (C:\a\b) so the patterns below also match on Windows.
+file="$(printf '%s' "$file" | tr '\\' '/')"
 
 case "$file" in
   *.env|*.env.*)
