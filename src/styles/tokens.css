@@ -1,0 +1,63 @@
+/*
+ * Splitline design tokens: Evergreen accent (ADR-0005).
+ * Source of truth: design/handoff/tokens.css (Claude Design handoff). Values are copied 1:1;
+ * `src/styles/tokens.test.ts` fails if any value drifts from the handoff.
+ *
+ * Names carry an `--sl-` prefix because the handoff's --accent, --secondary, --muted and --border
+ * mean different things from shadcn's variables of the same name. globals.css maps shadcn onto these.
+ * This is the only file in src/ that may contain colour literals.
+ */
+:root {
+  /* Accent */
+  --sl-accent: #1D5C57;          /* white text 7.4:1 */
+  --sl-accent-hover: #123F3B;
+  --sl-accent-tint: #E8F1EF;     /* banners, selected rows, positive quadrant */
+  --sl-on-accent: #FFFFFF;       /* text on accent (not in the handoff file; README: "white 500") */
+
+  /* Slate neutrals */
+  --sl-ink: #1A2230;             /* primary text */
+  --sl-ink-2: #3B4554;           /* body-on-tint, chip text */
+  --sl-secondary: #4A5565;       /* secondary text, 7.6:1 */
+  --sl-muted: #667085;           /* min. text colour, 4.8:1; axis lines */
+  --sl-placeholder: #98A2B3;     /* off switch track, pending icons (non-text) */
+  --sl-border-strong: #C3CAD3;   /* inputs, buttons, chips */
+  --sl-border: #D9DEE5;          /* cards, tables */
+  --sl-divider: #E3E7EC;
+  --sl-chip: #F2F4F7;
+  --sl-subtle: #F5F7F9;          /* section bg, table header, cost boxes */
+  --sl-rail: #FAFBFC;
+  --sl-surface: #FFFFFF;
+  --sl-desk: #E6E9ED;            /* mock canvas only */
+
+  /* Rule status: fg / bg. ALWAYS icon + label */
+  --sl-st-applies: #1F4E8C;   --sl-st-applies-bg: #EAF1FA;
+  --sl-st-prepare: #8A5300;   --sl-st-prepare-bg: #FBF3E4;
+  --sl-st-regulator: #5B3A99; --sl-st-regulator-bg: #F1ECFA;
+  --sl-st-good: #2E6B3E;      --sl-st-good-bg: #EAF4EC;
+  --sl-st-blocker: #B42318;   --sl-st-blocker-bg: #FDECEA;
+  --sl-drift-text: #5C3800;   /* on --sl-st-prepare-bg */
+  --sl-flag-field-bg: #FDF6F5;
+
+  /* Diverging scores −1..+1 (colour-blind safe) */
+  --sl-score-pos: #2166AC;
+  --sl-score-neg: #B35806;
+  --sl-score-track: #EEF1F4;
+  --sl-score-zero: #1A2230;
+
+  /* Type: families come from next/font (layout.tsx) with these fallbacks */
+  --sl-font-sans: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
+  --sl-font-mono: var(--font-plex-mono), 'IBM Plex Mono', ui-monospace, monospace;
+
+  /* Space (8-pt) */
+  --sl-s-1: 4px; --sl-s-2: 8px; --sl-s-3: 16px; --sl-s-4: 24px; --sl-s-5: 32px; --sl-s-6: 48px; --sl-s-7: 64px; --sl-s-8: 80px;
+
+  /* Radius */
+  --sl-r-control: 4px; --sl-r-card: 8px; --sl-r-pill: 999px;
+
+  /* Elevation (one level: drawers, hovered cards, drawer handle) */
+  --sl-shadow: 0 1px 2px rgba(16,24,40,.06), 0 8px 24px rgba(16,24,40,.08);
+  --sl-shadow-doc: 0 1px 2px rgba(16,24,40,.06);
+
+  /* Focus */
+  --sl-focus: 2px solid var(--sl-accent); --sl-focus-offset: 2px;
+}

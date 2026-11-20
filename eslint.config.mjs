@@ -17,6 +17,8 @@ const eslintConfig = defineConfig([
     "playwright-report/**",
     "test-results/**",
     "blob-report/**",
+    // Claude Design handoff bundle: reference prototypes, not app code (ADR-0005).
+    "design/handoff/**",
   ]),
 ]);
 

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0;background:#E6E9ED;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#1A2230;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}a{color:#1D5C57}a:hover{color:#123F3B}*:focus-visible{outline:2px solid #1D5C57;outline-offset:2px}button,input{font-family:inherit}</style>
+</helmet>
+<div style="padding:64px;display:flex;flex-direction:column;gap:16px">
+<div style="font:500 13px 'IBM Plex Mono',monospace;color:#4A5565">Living Lab · Claims document intake · 1440</div>
+<div data-screen-label="Living Lab" style="width:1440px;background:#FFFFFF">
+<header style="height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;border-bottom:1px solid #E3E7EC">
+<div style="display:flex;align-items:center;gap:24px"><a href="Landing.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:#1A2230"><span style="display:flex;gap:2px"><span style="width:9px;height:20px;background:#1D5C57;border-radius:2px 0 0 2px"></span><span style="width:9px;height:20px;box-sizing:border-box;border:2px solid #1D5C57;border-radius:0 2px 2px 0"></span></span><span style="font-size:18px;font-weight:600;letter-spacing:-0.01em">Splitline</span></a><span style="font-size:15px;font-weight:600">Living Lab</span><span style="font-size:14px;color:#4A5565">Claims document intake · Synthetic data</span></div>
+<nav role="tablist" style="display:flex;gap:4px;padding:4px;background:#F2F4F7;border-radius:6px">
+<sc-for list="{{ tabs }}" as="t" hint-placeholder-count="2">
+<sc-if value="{{ t.on }}"><button role="tab" aria-selected="true" onClick="{{ t.pick }}" style="height:32px;padding:0 14px;border:0;border-radius:4px;background:#FFFFFF;box-shadow:0 1px 2px rgba(16,24,40,.1);font-size:14px;font-weight:600;color:#1A2230;cursor:pointer">{{ t.label }}</button></sc-if>
+<sc-if value="{{ t.off }}"><button role="tab" aria-selected="false" onClick="{{ t.pick }}" style="height:32px;padding:0 14px;border:0;border-radius:4px;background:transparent;font-size:14px;color:#4A5565;cursor:pointer">{{ t.label }}</button></sc-if>
+</sc-for>
+</nav>
+</header>
+
+<sc-if value="{{ isReview }}" hint-placeholder-val="{{ true }}">
+<div style="display:grid;grid-template-columns:232px minmax(0,1fr) 400px;min-height:860px">
+
+<aside style="border-right:1px solid #E3E7EC;display:flex;flex-direction:column">
+<div style="padding:16px 20px;display:flex;justify-content:space-between;font-size:13px;color:#4A5565;border-bottom:1px solid #E3E7EC"><span style="font-weight:600;color:#1A2230">Review queue</span><span>12 flagged</span></div>
+<sc-for list="{{ queue }}" as="q" hint-placeholder-count="6">
+<div style="padding:14px 20px;border-bottom:1px solid #E3E7EC;display:flex;flex-direction:column;gap:4px;font-size:14px;background:{{ q.bg }};box-shadow:{{ q.bar }}">
+<span style="font-weight:500">{{ q.title }}</span>
+<span style="font-size:13px;color:#4A5565">{{ q.flag }}</span>
+</div>
+</sc-for>
+</aside>
+
+<main style="padding:24px 32px;display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;justify-content:space-between;align-items:center"><div style="display:flex;flex-direction:column;gap:2px"><span style="font:500 12px 'IBM Plex Mono',monospace;color:#4A5565">CLM-20481 · 3 of 12</span><span style="font-size:20px;font-weight:600">Physiotherapy receipt</span></div><span style="font-size:13px;color:#4A5565">Routed to you: 1 field below threshold</span></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px;align-items:start">
+
+<div style="background:#F5F7F9;border-radius:8px;padding:24px">
+<div style="background:#FFFFFF;border:1px solid #D9DEE5;padding:28px;display:flex;flex-direction:column;gap:16px;font-size:14px;box-shadow:0 1px 2px rgba(16,24,40,.06)">
+<div style="display:flex;justify-content:space-between"><div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:16px;font-weight:600">Coastline Physiotherapy</span><span style="color:#4A5565">212 Harbour St, Nanaimo BC · synthetic</span></div><span style="font:400 12px 'IBM Plex Mono',monospace;color:#4A5565;text-align:right">RECEIPT<br>No. 0047-118</span></div>
+<div style="display:flex;justify-content:space-between;color:#4A5565;font-size:13px"><span>Patient: J. Okafor</span><span>Date of service: 2026-09-12</span></div>
+<div style="display:flex;flex-direction:column;border-top:1px solid #1A2230;font:400 14px 'IBM Plex Mono',monospace">
+<sc-for list="{{ lines }}" as="l" hint-placeholder-count="4">
+<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dotted #C3CAD3"><span>{{ l.d }}</span><span>{{ l.a }}</span></div>
+</sc-for>
+<div style="display:flex;justify-content:space-between;padding:10px 8px;margin:6px -8px 0;background:#FDECEA;outline:2px solid #B42318;font-weight:500"><span>TOTAL</span><span>$289.00</span></div>
+</div>
+<span style="font-size:12px;color:#4A5565">Paid by debit · Thank you</span>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:14px">
+<sc-for list="{{ fields }}" as="f" hint-placeholder-count="4">
+<label style="display:flex;flex-direction:column;gap:4px;font-size:13px"><span style="display:flex;justify-content:space-between;color:#4A5565"><span>{{ f.k }}</span><span>{{ f.conf }}</span></span><input value="{{ f.v }}" style="height:36px;border:1px solid #C3CAD3;border-radius:4px;padding:0 10px;font:400 14px 'IBM Plex Mono',monospace;color:#1A2230"></label>
+</sc-for>
+<div style="display:flex;flex-direction:column;gap:6px;padding:12px;margin:0 -12px;background:#FDF6F5;border-radius:4px">
+<span style="display:flex;justify-content:space-between;font-size:13px"><span style="font-weight:600">Total</span><span style="display:inline-flex;align-items:center;gap:6px;color:#B42318;font-weight:500"><span style="width:12px;height:11px;background:currentColor;clip-path:polygon(50% 0,100% 100%,0 100%)"></span>Total ≠ sum of lines</span></span>
+<input value="289.00" aria-invalid="true" style="height:40px;border:2px solid #B42318;border-radius:4px;padding:0 10px;font:500 15px 'IBM Plex Mono',monospace;color:#1A2230;background:#FFFFFF">
+<span style="font-size:13px;line-height:1.45;color:#3B4554">Source: <span style="font-family:'IBM Plex Mono',monospace;background:#FDECEA;padding:1px 4px">TOTAL $289.00</span> · Lines sum to <strong style="font-weight:600">$277.00</strong> (difference $12.00)</span>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:13px;font-weight:600">Reason code</span>
+<div style="display:flex;flex-wrap:wrap;gap:6px">
+<sc-for list="{{ reasons }}" as="r" hint-placeholder-count="5">
+<sc-if value="{{ r.on }}"><button onClick="{{ r.pick }}" aria-pressed="true" style="height:28px;padding:0 10px;border:1px solid #1A2230;border-radius:14px;background:#1A2230;color:#FFFFFF;font-size:13px;cursor:pointer">{{ r.key }} {{ r.label }}</button></sc-if>
+<sc-if value="{{ r.off }}"><button onClick="{{ r.pick }}" aria-pressed="false" style="height:28px;padding:0 10px;border:1px solid #C3CAD3;border-radius:14px;background:#FFFFFF;color:#1A2230;font-size:13px;cursor:pointer">{{ r.key }} {{ r.label }}</button></sc-if>
+</sc-for>
+</div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+<button style="height:40px;border:1px solid #C3CAD3;border-radius:4px;background:#FFFFFF;font-size:14px;font-weight:500;cursor:pointer">Accept AI</button>
+<button style="height:40px;border:0;border-radius:4px;background:#1D5C57;color:#FFFFFF;font-size:14px;font-weight:500;cursor:pointer">Correct</button>
+<button style="height:40px;border:1px solid #C3CAD3;border-radius:4px;background:#FFFFFF;font-size:14px;font-weight:500;cursor:pointer">Escalate</button>
+</div>
+</div>
+</div>
+<div style="margin-top:auto;display:flex;gap:20px;flex-wrap:wrap;font-size:13px;color:#4A5565;border-top:1px solid #E3E7EC;padding-top:14px">
+<sc-for list="{{ keys }}" as="k" hint-placeholder-count="5"><span style="display:flex;align-items:center;gap:6px"><kbd style="min-width:22px;height:22px;padding:0 6px;box-sizing:border-box;border:1px solid #C3CAD3;border-bottom-width:2px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;font:500 12px 'IBM Plex Mono',monospace;color:#1A2230">{{ k.k }}</kbd>{{ k.d }}</span></sc-for>
+</div>
+</main>
+
+<aside style="border-left:1px solid #E3E7EC;background:#FAFBFC;padding:24px;display:flex;flex-direction:column;gap:20px">
+<div role="status" style="display:flex;gap:10px;padding:12px 14px;border-radius:4px;background:#FBF3E4;color:#5C3800;font-size:14px;line-height:1.45"><span style="flex:none;margin-top:4px;width:12px;height:11px;background:#8A5300;clip-path:polygon(50% 0,100% 100%,0 100%)"></span><span><strong style="font-weight:600">Drift:</strong> a new clinic receipt format since Tuesday. Confidence on “Total” is down; more items are routed to people.</span></div>
+<div style="display:flex;justify-content:space-between;align-items:baseline"><h2 style="margin:0;font-size:16px;font-weight:600">Reinforcement Pulse</h2><span style="font-size:13px;color:#4A5565">Episode 2 of 2</span></div>
+<div style="background:#FFFFFF;border:1px solid #D9DEE5;border-radius:8px;padding:12px">
+<svg width="100%" viewBox="0 0 350 300" style="display:block;height:auto;font-family:'IBM Plex Sans',sans-serif" role="img" aria-label="Quadrant: episode 1 at A→B +0.10, B→A −0.15; episode 2 at +0.42, +0.18, inside mutual reinforcement">
+<rect x="175" y="10" width="160" height="125" fill="#E8F1EF"></rect>
+<rect x="15" y="10" width="320" height="250" fill="none" stroke="#C3CAD3"></rect>
+<line x1="175" y1="10" x2="175" y2="260" stroke="#667085"></line>
+<line x1="15" y1="135" x2="335" y2="135" stroke="#667085"></line>
+<text x="327" y="28" text-anchor="end" font-size="12" font-weight="600" fill="#1D5C57">Mutual reinforcement</text>
+<text x="23" y="252" font-size="12" fill="#4A5565">Both weaken</text>
+<line x1="191" y1="154" x2="242" y2="113" stroke="#1A2230" stroke-dasharray="3 3"></line>
+<circle cx="191" cy="154" r="5" fill="#FFFFFF" stroke="#1A2230" stroke-width="2"></circle>
+<circle cx="242" cy="113" r="6" fill="#1A2230"></circle>
+<text x="199" y="172" font-size="12" fill="#4A5565">Ep 1</text>
+<text x="250" y="109" font-size="12" font-weight="600" fill="#1A2230">Ep 2</text>
+<text x="335" y="280" text-anchor="end" font-size="12" fill="#4A5565">A→B · AI team helps claims team →</text>
+<text x="15" y="280" font-size="12" fill="#4A5565">↑ B→A</text>
+</svg>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<sc-for list="{{ bars }}" as="b" hint-placeholder-count="3">
+<div style="display:grid;grid-template-columns:120px 1fr 52px;align-items:center;gap:10px;padding:6px 8px;margin:0 -8px;border-radius:4px;outline:{{ b.ring }}">
+<span style="display:flex;flex-direction:column;font-size:14px"><span style="font-weight:{{ b.weight }}">{{ b.label }}</span><span style="font-size:12px;color:#4A5565">{{ b.sub }}</span></span>
+<span style="position:relative;height:14px;background:#EEF1F4;border-radius:2px"><span style="position:absolute;left:50%;top:0;bottom:0;width:{{ b.w }};background:#2166AC"></span><span style="position:absolute;left:50%;top:-4px;bottom:-4px;width:1px;background:#1A2230"></span></span>
+<span style="font:500 14px 'IBM Plex Mono',monospace;text-align:right">{{ b.v }}</span>
+</div>
+</sc-for>
+<span style="font-size:12px;color:#4A5565">Reinforcement is the weaker direction. Scale −1 to +1, zero line marked.</span>
+</div>
+<div style="display:flex;gap:24px;border-top:1px solid #E3E7EC;padding-top:16px;font:500 15px 'IBM Plex Mono',monospace"><span>STP 62%</span><span style="color:#C3CAD3">·</span><span>Automation error 4%</span></div>
+</aside>
+</div>
+</sc-if>
+
+<sc-if value="{{ isCompare }}">
+<div style="padding:32px 40px 40px;display:flex;flex-direction:column;gap:24px;min-height:860px;box-sizing:border-box">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div style="display:flex;flex-direction:column;gap:4px"><h2 style="margin:0;font-size:24px;font-weight:600">Autoplay compare</h2><p style="margin:0;font-size:15px;color:#4A5565">Same queue, same model. One team accepts almost every AI value; the other corrects, codes reasons and meets weekly.</p></div>
+<div style="display:flex;align-items:center;gap:12px"><button onClick="{{ play }}" style="height:40px;padding:0 16px;border:0;border-radius:4px;background:#1D5C57;color:#FFFFFF;font-size:14px;font-weight:500;cursor:pointer">{{ playLabel }}</button><span style="font:500 14px 'IBM Plex Mono',monospace">Episode {{ ep }} of 3</span></div>
+</div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px">
+<sc-for list="{{ teams }}" as="t" hint-placeholder-count="2">
+<div style="border:1px solid #D9DEE5;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:20px;font-weight:600">{{ t.name }}</span><span style="font-size:14px;color:#4A5565">{{ t.desc }}</span></div>
+<svg width="100%" height="260" viewBox="0 0 560 260" style="display:block;font-family:'IBM Plex Sans',sans-serif">
+<rect x="280" y="10" width="270" height="115" fill="#E8F1EF"></rect>
+<rect x="10" y="10" width="540" height="230" fill="none" stroke="#C3CAD3"></rect>
+<line x1="280" y1="10" x2="280" y2="240" stroke="#667085"></line>
+<line x1="10" y1="125" x2="550" y2="125" stroke="#667085"></line>
+<text x="542" y="28" text-anchor="end" font-size="12" font-weight="600" fill="#1D5C57">Mutual reinforcement</text>
+<sc-for list="{{ t.segs }}" as="s" hint-placeholder-count="0"><line x1="{{ s.x1 }}" y1="{{ s.y1 }}" x2="{{ s.x2 }}" y2="{{ s.y2 }}" stroke="#1A2230" stroke-dasharray="3 3"></line></sc-for>
+<sc-for list="{{ t.pts }}" as="p" hint-placeholder-count="0"><g><circle cx="{{ p.x }}" cy="{{ p.y }}" r="{{ p.r }}" fill="{{ p.fill }}" stroke="#1A2230" stroke-width="2"></circle><text x="{{ p.tx }}" y="{{ p.ty }}" font-size="12" fill="#1A2230">{{ p.label }}</text></g></sc-for>
+</svg>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;border-top:1px solid #E3E7EC;padding-top:16px">
+<div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:13px;color:#4A5565">STP</span><span style="font:500 22px 'IBM Plex Mono',monospace">{{ t.stp }}</span></div>
+<div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:13px;color:#4A5565">Automation error</span><span style="font:500 22px 'IBM Plex Mono',monospace">{{ t.err }}</span></div>
+<div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:13px;color:#4A5565">Reinforcement</span><span style="font:500 22px 'IBM Plex Mono',monospace">{{ t.rein }}</span></div>
+</div>
+<span style="font-size:14px;line-height:1.5;color:#3B4554">{{ t.read }}</span>
+</div>
+</sc-for>
+</div>
+<span style="font-size:13px;color:#4A5565">Synthetic simulation for illustration. Higher STP alone does not mean the design is working.</span>
+</div>
+</sc-if>
+
+<footer style="padding:16px 40px;font-size:13px;color:#4A5565;border-top:1px solid #E3E7EC">Indicative triage, not legal advice. Synthetic data; all organizations are fictional.</footer>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;tab&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Review queue&quot;,&quot;Autoplay compare&quot;],&quot;default&quot;:&quot;Review queue&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;State&quot;}}">
+class Component extends DCLogic {
+  state = { tab: null, reason: 0, ep: 3, playing: false };
+  componentWillUnmount() { clearInterval(this.t); }
+  play = () => {
+    clearInterval(this.t);
+    this.setState({ ep: 1, playing: true });
+    this.t = setInterval(() => this.setState(s => s.ep >= 3 ? (clearInterval(this.t), { playing: false }) : { ep: s.ep + 1 }), 1400);
+  };
+  team(name, desc, data, read) {
+    const ep = this.state.ep, map = ([a, b]) => ({ x: 280 + a * 270, y: 125 - b * 115 });
+    const shown = data.slice(0, ep);
+    const pts = shown.map((d, i) => { const p = map(d.xy), last = i === shown.length - 1; return { ...p, r: last ? 6 : 4, fill: last ? '#1A2230' : '#FFFFFF', tx: p.x + 10, ty: p.y - 8, label: 'Ep ' + (i + 1) }; });
+    const segs = pts.slice(1).map((p, i) => ({ x1: pts[i].x, y1: pts[i].y, x2: p.x, y2: p.y }));
+    const cur = data[ep - 1], f = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(2);
+    return { name, desc, pts, segs, stp: cur.stp + '%', err: cur.err + '%', rein: f(cur.rein), read };
+  }
+  renderVals() {
+    const tab = this.state.tab ?? (this.props.tab === 'Autoplay compare' ? 1 : 0);
+    const r = this.state.reason;
+    return {
+      tabs: ['Review queue', 'Autoplay compare'].map((label, i) => ({ label, on: tab === i, off: tab !== i, pick: () => this.setState({ tab: i }) })),
+      isReview: tab === 0, isCompare: tab === 1,
+      queue: [
+        ['Dental invoice', 'Provider not on file'], ['Massage therapy receipt', 'Duplicate claim?'], ['Physiotherapy receipt', 'Total ≠ sum of lines'],
+        ['Optometry receipt', 'Date outside policy'], ['Pharmacy printout', 'Low legibility'], ['Chiropractic receipt', 'Total ≠ sum of lines']
+      ].map(([title, flag], i) => ({ title, flag, bg: i === 2 ? '#E8F1EF' : '#FFFFFF', bar: i === 2 ? 'inset 3px 0 0 #1D5C57' : 'none' })),
+      lines: [{ d: 'Initial assessment', a: '95.00' }, { d: 'Treatment, 30 min', a: '85.00' }, { d: 'Treatment, 30 min', a: '85.00' }, { d: 'Exercise band', a: '12.00' }],
+      fields: [
+        { k: 'Document type', v: 'Receipt · Physiotherapy', conf: 'High' },
+        { k: 'Provider', v: 'Coastline Physiotherapy', conf: 'High' },
+        { k: 'Date of service', v: '2026-09-12', conf: 'High' },
+        { k: 'Line items', v: '4', conf: 'Medium' }
+      ],
+      reasons: ['Total mismatch', 'Illegible', 'Duplicate claim', 'Out of policy', 'Other'].map((label, i) => ({ label, key: i + 1, on: r === i, off: r !== i, pick: () => this.setState({ reason: i }) })),
+      keys: [{ k: 'A', d: 'Accept AI' }, { k: 'C', d: 'Correct' }, { k: 'E', d: 'Escalate' }, { k: '1–5', d: 'Reason code' }, { k: 'J/K', d: 'Next / previous' }],
+      bars: [
+        { label: 'A→B', sub: 'AI team → claims team', v: '+0.42', w: '21%', ring: 'none', weight: 400 },
+        { label: 'B→A', sub: 'Minimum', v: '+0.18', w: '9%', ring: '2px solid #1A2230', weight: 600 },
+        { label: 'Reinforcement', sub: 'min(A→B, B→A)', v: '+0.18', w: '9%', ring: 'none', weight: 600 }
+      ],
+      ep: this.state.ep, play: this.play, playLabel: this.state.playing ? 'Playing…' : 'Replay',
+      teams: [
+        this.team('Rubber-stamp team', 'Accepts 98% of AI values; no reason codes; no joint sessions.', [
+          { xy: [0.05, -0.05], stp: 74, err: 6, rein: -0.05 }, { xy: [-0.10, -0.22], stp: 81, err: 8, rein: -0.22 }, { xy: [-0.25, -0.30], stp: 86, err: 11, rein: -0.30 }],
+          'Throughput rises while errors climb. Corrections stop reaching the model, and reviewers lose the skill to catch drift.'),
+        this.team('Coupled team', 'Corrects and codes reasons; weekly session with the AI team.', [
+          { xy: [0.10, -0.15], stp: 55, err: 5, rein: -0.15 }, { xy: [0.42, 0.18], stp: 62, err: 4, rein: 0.18 }, { xy: [0.55, 0.34], stp: 68, err: 3, rein: 0.34 }],
+          'Slower start. Coded corrections improve extraction, and reviewers learn where the model is weak. Both directions turn positive.')
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
