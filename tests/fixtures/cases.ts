@@ -6,6 +6,9 @@ import { PRESETS } from "@/content/presets";
 import { computeCase, type EngineResult } from "@/engine";
 import type { ConfirmedDecomposition, IntakeInputRaw, Subtask } from "@/engine/types";
 
+/** Fixed "today" for engine tests (the engine never reads the clock; ADR-0016 §8). */
+export const TEST_TODAY = "2026-11-20";
+
 export interface CaseInput {
   name: string;
   intake: IntakeInputRaw;
@@ -300,7 +303,7 @@ export const PRESET_CASES: CaseInput[] = PRESETS.map((p) => ({
 export const ALL_CASES: CaseInput[] = [...PRESET_CASES, ...Object.values(EDGE)];
 
 export function run(c: CaseInput): EngineResult {
-  return computeCase(c.intake, c.decomposition);
+  return computeCase(c.intake, c.decomposition, { today: TEST_TODAY });
 }
 
 export function triggeredIds(c: CaseInput): string[] {

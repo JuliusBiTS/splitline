@@ -418,6 +418,148 @@ export const OperatingModelSchema = z.object({
 });
 export type OperatingModel = z.infer<typeof OperatingModelSchema>;
 
+export const LeverKeySchema = z.enum(["decision_rights", "coordination", "exchange"]);
+export type LeverKey = z.infer<typeof LeverKeySchema>;
+
+export const SplitReviewCadenceSchema = z.enum(["monthly", "bimonthly", "quarterly"]);
+export type SplitReviewCadence = z.infer<typeof SplitReviewCadenceSchema>;
+
+export const KpiKindSchema = z.enum(["efficiency", "augmentation_value", "learning_loop"]);
+export type KpiKind = z.infer<typeof KpiKindSchema>;
+
+// ---------------------------------------------------------------------------
+// §7.5 Rollout (ADR-0016)
+// ---------------------------------------------------------------------------
+
+export const DeliverableSourceSchema = z.discriminatedUnion("kind", [
+  z.object({ kind: z.literal("rule"), ruleId: z.string() }),
+  z.object({ kind: z.literal("lever"), lever: LeverKeySchema }),
+  z.object({ kind: z.literal("model") }),
+]);
+export type DeliverableSource = z.infer<typeof DeliverableSourceSchema>;
+
+export const DeliverableSchema = z.object({ text: z.string(), source: DeliverableSourceSchema });
+export type Deliverable = z.infer<typeof DeliverableSchema>;
+
+export const RolloutKpiSchema = z.object({
+  kind: KpiKindSchema,
+  name: z.string(),
+  /** True when the KPI comes from the user's proposed KPIs; false when Splitline suggests it. */
+  fromUser: z.boolean(),
+});
+export type RolloutKpi = z.infer<typeof RolloutKpiSchema>;
+
+export const RolloutPhaseSchema = z.object({
+  id: z.enum(["foundation", "shadow_pilot", "controlled_scale"]),
+  days: z.string(),
+  title: z.string(),
+  deliverables: z.array(DeliverableSchema),
+  kpis: z.array(z.string()),
+  gateCriteria: z.array(z.string()),
+});
+export type RolloutPhase = z.infer<typeof RolloutPhaseSchema>;
+
+export const MonitoringPlanItemSchema = z.object({
+  lever: LeverKeySchema,
+  monitoringIndicator: z.string(),
+  warningIndicator: z.string(),
+});
+export type MonitoringPlanItem = z.infer<typeof MonitoringPlanItemSchema>;
+
+export const RolloutPlanSchema = z.object({
+  phases: z.tuple([RolloutPhaseSchema, RolloutPhaseSchema, RolloutPhaseSchema]),
+  /** Always exactly one efficiency, one augmentation-value and one learning-loop KPI (SPEC §7.5). */
+  kpis: z.tuple([RolloutKpiSchema, RolloutKpiSchema, RolloutKpiSchema]),
+  monitoringPlan: z.tuple([MonitoringPlanItemSchema, MonitoringPlanItemSchema, MonitoringPlanItemSchema]),
+});
+export type RolloutPlan = z.infer<typeof RolloutPlanSchema>;
+
+// ---------------------------------------------------------------------------
+// §7.6 What-if (ADR-0016)
+// ---------------------------------------------------------------------------
+
+export const WhatIfTogglesSchema = z
+  .object({
+    hosting: HostingSchema,
+    aiDecisionRole: AiDecisionRoleSchema,
+    quebecAffected: z.boolean(),
+    ontarioAffected: z.boolean(),
+    crisisContext: z.boolean(),
+    dynamism: DynamismSchema,
+    customerFacingOutput: z.boolean(),
+  })
+  .partial();
+export type WhatIfToggles = z.infer<typeof WhatIfTogglesSchema>;
+
+export const WhatIfDiffSchema = z.object({
+  tier: z.object({ from: TierLevelSchema, to: TierLevelSchema, changed: z.boolean() }),
+  verdict: z.object({ from: VerdictSchema, to: VerdictSchema, changed: z.boolean() }),
+  rulesAdded: z.array(z.string()),
+  rulesRemoved: z.array(z.string()),
+  /** Rules present in both results whose effective severity changed. */
+  rulesChangedSeverity: z.array(z.object({ ruleId: z.string(), from: SeveritySchema, to: SeveritySchema })),
+  splitChanges: z.array(z.object({ subtaskId: z.string(), from: SplitOwnerSchema, to: SplitOwnerSchema })),
+  cadence: z.object({ from: SplitReviewCadenceSchema, to: SplitReviewCadenceSchema, changed: z.boolean() }),
+  chips: z.array(z.string()),
+});
+export type WhatIfDiff = z.infer<typeof WhatIfDiffSchema>;
+
+// ---------------------------------------------------------------------------
+// §7.7 Reinforcement Pulse (ADR-0009, ADR-0016)
+// ---------------------------------------------------------------------------
+
+const PulseItem = z.number().int().min(1).max(7);
+
+export const PulseRoleSchema = z.enum(["augmentation_work", "ai_team", "lead"]);
+export type PulseRole = z.infer<typeof PulseRoleSchema>;
+
+export const PulseInputSchema = z.object({
+  /** Context only (ADR-0009): one respondent answers all nine items. */
+  role: PulseRoleSchema,
+  A1: PulseItem,
+  A2: PulseItem,
+  A3: PulseItem,
+  B1: PulseItem,
+  B2: PulseItem,
+  B3: PulseItem,
+  D1: PulseItem,
+  D2: PulseItem,
+  D3: PulseItem,
+});
+export type PulseInput = z.infer<typeof PulseInputSchema>;
+
+export const PulseQuadrantSchema = z.enum(["virtuous", "one_sided", "one_way_limit", "vicious"]);
+export type PulseQuadrant = z.infer<typeof PulseQuadrantSchema>;
+
+export const PulseDriverSchema = z.enum(["D1", "D2", "D3"]);
+export type PulseDriver = z.infer<typeof PulseDriverSchema>;
+
+export const PulseResultSchema = z.object({
+  /** A→B (automation → augmentation), −1 to +1. */
+  a: z.number().min(-1).max(1),
+  /** B→A (augmentation → automation), −1 to +1. */
+  b: z.number().min(-1).max(1),
+  /** min(A→B, B→A). Non-compensatory. */
+  reinforcement: z.number().min(-1).max(1),
+  /** Which direction sets the minimum ("both" when equal). */
+  weakerDirection: z.enum(["a_to_b", "b_to_a", "both"]),
+  quadrant: PulseQuadrantSchema,
+  laggingDrivers: z.array(
+    z.object({ item: PulseDriverSchema, score: z.number(), lever: LeverKeySchema, leverName: z.string(), guardrail: z.string() }),
+  ),
+  /** True when the scores show a problem (reinforcement ≤ 0), so the driver check is the next step. */
+  driverCheckRelevant: z.boolean(),
+  role: PulseRoleSchema,
+  labels: z.object({
+    short: z.literal("illustrative, not validated"),
+    footnote: z.literal("Illustrative instrument from a conceptual thesis; not psychometrically validated."),
+    perspective: z.literal("single-perspective estimate"),
+    roleNote: z.string(),
+    scopeDisclosure: z.string(),
+  }),
+});
+export type PulseResult = z.infer<typeof PulseResultSchema>;
+
 // ---------------------------------------------------------------------------
 // §10 Presets
 // ---------------------------------------------------------------------------

@@ -30,7 +30,7 @@ describe("presets", () => {
       expect(p.verdictExplanation).not.toMatch(/compliant|must comply|legal advice|you must|mandatory action|required by law/i);
     });
     it("runs through the engine", () => {
-      expect(() => computeCase(p.intake, p.decomposition)).not.toThrow();
+      expect(() => computeCase(p.intake, p.decomposition, { today: "2026-11-20" })).not.toThrow();
     });
   });
 });

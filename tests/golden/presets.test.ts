@@ -4,11 +4,12 @@ import { computeCase } from "@/engine";
 import { consequentialFloorBlocks } from "@/engine/facts";
 import { checkGolden } from "./check";
 import { GOLDEN } from "./expectations";
+import { TEST_TODAY } from "../fixtures/cases";
 
 describe.each(GOLDEN.map((g) => [g.slug, g] as const))("golden preset %s (SPEC §10)", (slug, exp) => {
   const preset = getPreset(slug);
   if (!preset) throw new Error(`missing preset ${slug}`);
-  const r = computeCase(preset.intake, preset.decomposition);
+  const r = computeCase(preset.intake, preset.decomposition, { today: TEST_TODAY });
 
   it(`tier is exactly ${exp.tier}`, () => {
     expect(r.tier.level).toBe(exp.tier);
@@ -34,7 +35,7 @@ describe("golden score breakdowns (ADR-0004)", () => {
   const score = (slug: string) => {
     const p = getPreset(slug);
     if (!p) throw new Error(slug);
-    return computeCase(p.intake, p.decomposition).tier;
+    return computeCase(p.intake, p.decomposition, { today: TEST_TODAY }).tier;
   };
   it("clinical: raw 23, no deduction", () => {
     const t = score("clinical-referral-triage");
@@ -56,7 +57,7 @@ describe("golden score breakdowns (ADR-0004)", () => {
   it("claims would be tier III without the mitigation deduction (What-if story)", () => {
     const p = getPreset("claims-document-intake");
     if (!p) throw new Error("claims");
-    const r = computeCase({ ...p.intake, mitigations: ["human_final_decision", "appeal_path", "monitoring_plan"] }, p.decomposition);
+    const r = computeCase({ ...p.intake, mitigations: ["human_final_decision", "appeal_path", "monitoring_plan"] }, p.decomposition, { today: TEST_TODAY });
     expect(r.tier.level).toBe("III");
   });
 });
