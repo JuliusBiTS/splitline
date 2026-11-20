@@ -1,0 +1,81 @@
+{
+  "slug": "contract-clause-review",
+  "organization": "Harbourlight Leasing Co. (fictional)",
+  "verdictExplanation": "The assistant reviews business contracts that contain names and contact details, and sends them to a US-hosted model. That likely triggers BC PIPA purpose and consent duties and PIPEDA accountability for the vendor, with OPC draft vendor guidance to consider. These are conditions to plan for, not blockers, and Bill C-36 is shown only as something to prepare for.",
+  "intake": {
+    "title": "Equipment-lease contract clause review",
+    "processDescription": "Our legal team reviews incoming equipment-lease contracts from business customers. A paralegal reads each contract, compares the clauses with our clause playbook, flags non-standard terms and drafts a redline for a lawyer, who decides which positions to take. Contracts contain the names and contact details of customer representatives and guarantors. We want a large language model to extract clauses, compare them with the playbook, recommend a position on non-standard clauses and draft redline suggestions.",
+    "orgType": "bc_private",
+    "businessFunction": "legal_compliance",
+    "aiDecisionRole": "recommends",
+    "affectedPeople": ["businesses_only"],
+    "dataCategories": ["customer_pi"],
+    "jurisdictions": ["bc"],
+    "hosting": "us_or_global_api",
+    "aiType": "generative_llm",
+    "customerFacingOutput": false,
+    "monitorsEmployees": false,
+    "teamSetup": "embedded",
+    "readiness": "high",
+    "proposedKpis": ["Review hours per contract", "Clauses escalated to a lawyer"],
+    "sector": "other",
+    "useCasePatterns": [],
+    "mitigations": ["predeployment_testing"],
+    "genAiToolType": "direct_api"
+  },
+  "decomposition": {
+    "subtasks": [
+      {
+        "id": "s1",
+        "name": "Extract clauses",
+        "description": "Split the contract into clauses and label each by type (term, liability, indemnity, renewal).",
+        "judgmentIntensity": "low",
+        "knowledgeType": "codifiable",
+        "errorCost": "medium",
+        "volume": "high",
+        "affectsIndividuals": false,
+        "consequential": false,
+        "rationale": "Clause types follow a known taxonomy; mislabels are visible in review."
+      },
+      {
+        "id": "s2",
+        "name": "Compare with clause playbook",
+        "description": "Match each clause with the playbook's standard wording and mark deviations.",
+        "judgmentIntensity": "medium",
+        "knowledgeType": "codifiable",
+        "errorCost": "high",
+        "volume": "high",
+        "affectsIndividuals": false,
+        "consequential": false,
+        "rationale": "The playbook is written down; a missed deviation could cost money."
+      },
+      {
+        "id": "s3",
+        "name": "Recommend a position",
+        "description": "Recommend accepting, negotiating or rejecting each non-standard clause, with reasons.",
+        "judgmentIntensity": "high",
+        "knowledgeType": "tacit",
+        "errorCost": "high",
+        "volume": "medium",
+        "affectsIndividuals": false,
+        "consequential": true,
+        "rationale": "The position sets the legal terms with the customer."
+      },
+      {
+        "id": "s4",
+        "name": "Draft redline suggestions",
+        "description": "Draft replacement wording for clauses the team wants to negotiate.",
+        "judgmentIntensity": "medium",
+        "knowledgeType": "codifiable",
+        "errorCost": "medium",
+        "volume": "medium",
+        "affectsIndividuals": false,
+        "consequential": false,
+        "rationale": "A lawyer edits and approves every redline."
+      }
+    ],
+    "assumptions": ["Contracts are in English.", "The clause playbook is current."],
+    "clarifyingQuestions": [],
+    "suggestedUseCasePatterns": []
+  }
+}

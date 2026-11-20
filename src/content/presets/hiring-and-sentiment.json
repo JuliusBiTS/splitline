@@ -1,0 +1,92 @@
+{
+  "slug": "hiring-and-sentiment",
+  "organization": "Tidewater Logistics Inc. (fictional)",
+  "verdictExplanation": "The system rejects applicants on its own and scores employee sentiment from workplace messages, which puts it at indicative tier IV. OIPC BC regards continuous, routine employee monitoring as seldom authorized, so the sentiment scoring is a blocker as designed. Redesigning it as a narrow, overt measure and keeping a person in the hiring decision would open the way to go with conditions.",
+  "intake": {
+    "title": "Applicant screening and team sentiment scoring",
+    "processDescription": "Recruiters at a regional logistics company read several hundred applications for each warehouse and driver posting and shortlist candidates by hand. Separately, team leads try to spot disengagement through one-to-ones. We want a vendor's machine-learning tool to rank applicants and automatically reject those below a cut-off, and to score employee sentiment continuously from workplace chat messages so HR can flag low performers and disengaged staff for follow-up.",
+    "orgType": "bc_private",
+    "businessFunction": "hr",
+    "aiDecisionRole": "decides_alone",
+    "affectedPeople": ["employees_applicants"],
+    "dataCategories": ["employee_hr"],
+    "jurisdictions": ["bc"],
+    "hosting": "in_canada",
+    "aiType": "classical_ml",
+    "customerFacingOutput": false,
+    "monitorsEmployees": true,
+    "teamSetup": "vendor_run",
+    "readiness": "medium",
+    "proposedKpis": ["Time to shortlist", "Cost per hire"],
+    "sector": "other",
+    "useCasePatterns": ["hiring_selection", "performance_management"],
+    "mitigations": []
+  },
+  "decomposition": {
+    "subtasks": [
+      {
+        "id": "s1",
+        "name": "Parse applications",
+        "description": "Extract work history, licences and availability from each application.",
+        "judgmentIntensity": "low",
+        "knowledgeType": "codifiable",
+        "errorCost": "medium",
+        "volume": "high",
+        "affectsIndividuals": true,
+        "consequential": false,
+        "rationale": "Field extraction; errors can unfairly drop an applicant if not checked."
+      },
+      {
+        "id": "s2",
+        "name": "Score and rank applicants",
+        "description": "Score each applicant against the role profile and rank the pool.",
+        "judgmentIntensity": "high",
+        "knowledgeType": "tacit",
+        "errorCost": "high",
+        "volume": "high",
+        "affectsIndividuals": true,
+        "consequential": true,
+        "rationale": "The ranking decides who is considered for the job."
+      },
+      {
+        "id": "s3",
+        "name": "Auto-reject below cut-off",
+        "description": "Send a rejection to applicants whose score falls below the cut-off.",
+        "judgmentIntensity": "high",
+        "knowledgeType": "tacit",
+        "errorCost": "critical",
+        "volume": "high",
+        "affectsIndividuals": true,
+        "consequential": true,
+        "rationale": "A rejection is a decision about a person with no human in the loop."
+      },
+      {
+        "id": "s4",
+        "name": "Score employee sentiment",
+        "description": "Score sentiment continuously from workplace chat messages for each employee.",
+        "judgmentIntensity": "medium",
+        "knowledgeType": "tacit",
+        "errorCost": "high",
+        "volume": "high",
+        "affectsIndividuals": true,
+        "consequential": true,
+        "rationale": "Continuous monitoring of individual employees that feeds HR follow-up."
+      },
+      {
+        "id": "s5",
+        "name": "Flag low performers",
+        "description": "Combine sentiment and productivity signals to flag employees for HR follow-up.",
+        "judgmentIntensity": "high",
+        "knowledgeType": "tacit",
+        "errorCost": "high",
+        "volume": "medium",
+        "affectsIndividuals": true,
+        "consequential": true,
+        "rationale": "A flag can lead to performance action against an employee."
+      }
+    ],
+    "assumptions": ["The vendor hosts the tool in Canada.", "Workplace chat is company-owned."],
+    "clarifyingQuestions": ["Are employees told that their messages are scored?"],
+    "suggestedUseCasePatterns": ["hiring_selection", "performance_management"]
+  }
+}
