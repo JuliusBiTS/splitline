@@ -34,7 +34,7 @@ Phase 3 (design) runs in parallel to Phases 1–2. Phases 1–2 have no UI depen
 - [x] Make the hooks work: ported to Node scripts (ADR-0011) because bash hooks in exec form never ran on Windows; verified live (a Write to `.env.local` is blocked).
 - [x] Run `next dev` once so Next writes `AGENTS.md`; confirm that `CLAUDE.md` imports it.
 - [x] **Spec interview** (plan mode, AskUserQuestion): resolve SPEC §14; update SPEC to v1.0; write ADR-0004 (tier weights approach). Also ADR-0006–0011.
-- [ ] Push to `JuliusBiTS/splitline` and open the first PR; CI green.
+- [x] Push to `JuliusBiTS/splitline` and open the first PR; CI green (PR #1: verify, e2e + a11y, audit).
 
 **Acceptance**
 - `pnpm verify` exits 0 on the empty app; CI is green on the first PR.
