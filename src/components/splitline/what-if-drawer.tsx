@@ -5,6 +5,7 @@ import { ChevronLeftIcon } from "lucide-react";
 import { useId } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import type { TierLevel, Verdict } from "@/engine/types";
 import { cn } from "@/lib/utils";
@@ -16,6 +17,11 @@ export interface WhatIfToggle {
   label: string;
   checked: boolean;
 }
+
+/** A What-if control: an on/off switch or a choice from a short list (SPEC §7.6). */
+export type WhatIfControl =
+  | ({ kind?: "switch" } & WhatIfToggle)
+  | { kind: "select"; id: string; label: string; value: string; options: { value: string; label: string }[] };
 
 /** One diff chip: struck-through old value → bold new value. */
 export function DiffChipView({ chip }: { chip: DiffChip }) {
@@ -38,34 +44,84 @@ export function DiffChipView({ chip }: { chip: DiffChip }) {
   );
 }
 
+function ControlRow({
+  control,
+  onToggle,
+  onSelect,
+}: {
+  control: WhatIfControl;
+  onToggle: (id: string, checked: boolean) => void;
+  onSelect?: (id: string, value: string) => void;
+}) {
+  const labelId = `whatif-${control.id}-label`;
+  if (control.kind === "select") {
+    return (
+      <>
+        <span id={labelId} className="text-[15px] text-ink">
+          {control.label}
+        </span>
+        <Select value={control.value} items={control.options} onValueChange={(v) => typeof v === "string" && onSelect?.(control.id, v)}>
+          <SelectTrigger aria-labelledby={labelId} className="min-w-44">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {control.options.map((o) => (
+              <SelectItem key={o.value} value={o.value}>
+                {o.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </>
+    );
+  }
+  return (
+    <>
+      <label htmlFor={`whatif-${control.id}`} className="text-[15px] text-ink">
+        {control.label}
+      </label>
+      <Switch id={`whatif-${control.id}`} checked={control.checked} onCheckedChange={(c) => onToggle(control.id, c)} />
+    </>
+  );
+}
+
 /**
- * WhatIfDrawer: a non-modal right sheet (Base UI Dialog). Toggles recompute through the engine
- * (the caller passes `onToggle` and the resulting diff); nothing persists until "Apply to design".
+ * WhatIfDrawer: a non-modal right sheet (Base UI Dialog). Controls recompute through the engine
+ * (the caller passes `onToggle`/`onSelect` and the resulting diff); nothing persists until "Apply to
+ * design". Without `onApply` (presets) the drawer is exploration only and shows `footerNote`.
  */
 export function WhatIfDrawer({
   open,
   onOpenChange,
   toggles,
   onToggle,
+  onSelect,
   chips,
   verdict,
   tier,
   rulesCount,
   blockersCount,
   onApply,
+  footerNote,
+  pending = false,
   side = "right",
   handle = "fixed",
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  toggles: WhatIfToggle[];
+  toggles: WhatIfControl[];
   onToggle: (id: string, checked: boolean) => void;
+  onSelect?: (id: string, value: string) => void;
   chips: DiffChip[];
   verdict: Verdict;
   tier: TierLevel;
   rulesCount: number;
   blockersCount: number;
-  onApply: () => void;
+  onApply?: () => void;
+  /** Shown in the footer when there is no Apply button, e.g. "Presets are fixed." */
+  footerNote?: string;
+  /** True while the engine loads; the diff area says so instead of "No change yet". */
+  pending?: boolean;
   side?: "right" | "bottom";
   /** "fixed" pins the handle to the right edge (product); "inline" keeps it in flow (specimens). */
   handle?: "fixed" | "inline";
@@ -80,7 +136,9 @@ export function WhatIfDrawer({
               type="button"
               className={cn(
                 "flex h-[132px] w-10 cursor-pointer flex-col items-center justify-center gap-2 rounded-l-card bg-surface text-sm font-semibold text-brand shadow-elevated [writing-mode:vertical-rl]",
-                handle === "fixed" && "fixed top-1/2 right-0 z-40 -translate-y-1/2",
+                // Below md the side tab would cover content: it becomes a bottom-right pill instead.
+                handle === "fixed" &&
+                  "fixed right-4 bottom-4 z-40 h-11 w-auto flex-row rounded-pill border border-border px-4 [writing-mode:horizontal-tb] md:top-1/2 md:right-0 md:bottom-auto md:h-[132px] md:w-10 md:-translate-y-1/2 md:flex-col md:rounded-none md:rounded-l-card md:border-0 md:px-0 md:[writing-mode:vertical-rl]",
               )}
             />
           ) : (
@@ -88,7 +146,7 @@ export function WhatIfDrawer({
           )
         }
       >
-        {side === "right" && <ChevronLeftIcon aria-hidden className="size-4 rotate-90" />}
+        {side === "right" && <ChevronLeftIcon aria-hidden className={cn("size-4 rotate-90", handle === "fixed" && "hidden md:block")} />}
         What if…
       </DialogTrigger>
       <DialogContent variant={side === "right" ? "sheet-right" : "sheet-bottom"} showOverlay={side === "bottom"} aria-describedby={diffId}>
@@ -99,10 +157,7 @@ export function WhatIfDrawer({
         <ul className="flex flex-col divide-y divide-divider">
           {toggles.map((t) => (
             <li key={t.id} className="flex items-center justify-between gap-4 py-3">
-              <label htmlFor={`whatif-${t.id}`} className="text-[15px] text-ink">
-                {t.label}
-              </label>
-              <Switch id={`whatif-${t.id}`} checked={t.checked} onCheckedChange={(c) => onToggle(t.id, c)} />
+              <ControlRow control={t} onToggle={onToggle} onSelect={onSelect} />
             </li>
           ))}
         </ul>
@@ -115,13 +170,13 @@ export function WhatIfDrawer({
           <dl className="grid grid-cols-2 gap-2 text-sm">
             <div>
               <dt className="text-muted-foreground">Rules triggered</dt>
-              <dd className="font-mono text-lg font-medium text-ink">
+              <dd data-testid="whatif-rules-count" data-value={rulesCount} className="font-mono text-lg font-medium text-ink">
                 <NumberFlow value={rulesCount} respectMotionPreference />
               </dd>
             </div>
             <div>
               <dt className="text-muted-foreground">Blockers</dt>
-              <dd className="font-mono text-lg font-medium text-ink">
+              <dd data-testid="whatif-blockers-count" data-value={blockersCount} className="font-mono text-lg font-medium text-ink">
                 <NumberFlow value={blockersCount} respectMotionPreference />
               </dd>
             </div>
@@ -133,15 +188,22 @@ export function WhatIfDrawer({
               </li>
             ))}
           </ul>
-          {chips.length === 0 && <p className="text-sm text-muted-foreground">No change yet. Turn on a switch above.</p>}
+          {pending ? (
+            <p className="text-sm text-muted-foreground">Loading the engine…</p>
+          ) : (
+            chips.length === 0 && <p className="text-sm text-muted-foreground">No change yet. Change a setting above.</p>
+          )}
         </section>
         <DialogFooter>
+          {footerNote && <p className="mr-auto self-center text-sm text-muted-foreground">{footerNote}</p>}
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Close
           </Button>
-          <Button onClick={onApply} disabled={chips.length === 0}>
-            Apply to design
-          </Button>
+          {onApply && (
+            <Button onClick={onApply} disabled={chips.length === 0}>
+              Apply to design
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

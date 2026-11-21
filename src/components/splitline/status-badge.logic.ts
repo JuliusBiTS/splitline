@@ -104,3 +104,33 @@ export function ruleCountSummary(rules: readonly CountedRule[]): string {
   ].filter((p): p is string => p !== null);
   return parts.length > 0 ? parts.join(" · ") : "No rules triggered";
 }
+
+export interface CatalogueStatus {
+  badge: StatusBadgeModel;
+  /** Who the status holds for, and what it is elsewhere, e.g. "For private-sector organizations; reference framework elsewhere." */
+  scopeNote?: string;
+}
+
+/**
+ * Status of a rule in the catalogue (Governance Map), without a case: the status inside the
+ * rule's scope, plus a scope note when it is a reference elsewhere (ADR-0012). Never a severity.
+ */
+export function catalogueStatus(rule: StatusRuleMeta & Pick<RuleMeta, "statusWhenOutOfScope">): CatalogueStatus {
+  const scoped = rule.scopeLabel !== undefined;
+  if (rule.status === "GOVERNMENT_POLICY" && scoped && (rule.statusWhenOutOfScope ?? "REFERENCE") === "REFERENCE") {
+    // "Mandatory for <scope>; reference elsewhere" (SPEC §7.1) already says both halves.
+    const { label } = statusLabelFor({ effectiveStatus: "REFERENCE", inScope: false, rule });
+    // Kind "reference" (SPEC §7.1 out-of-scope row): most visitors sit outside the scope.
+    return { badge: { kind: "reference", label, statusLabel: label } };
+  }
+  const { kind, label } = statusLabelFor({ effectiveStatus: rule.status, inScope: true, rule });
+  const badge = { kind, label, statusLabel: label };
+  if (!scoped) return { badge };
+  const elsewhere = rule.statusWhenOutOfScope
+    ? statusLabelFor({ effectiveStatus: rule.statusWhenOutOfScope, inScope: false, rule }).label.toLowerCase()
+    : undefined;
+  return {
+    badge,
+    scopeNote: elsewhere ? `For ${rule.scopeLabel}; ${elsewhere} elsewhere.` : `For ${rule.scopeLabel}.`,
+  };
+}

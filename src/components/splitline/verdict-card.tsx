@@ -63,8 +63,8 @@ export interface VerdictCardProps {
   tier: TierLevel;
   /** Why the verdict is what it is (preset `verdictExplanation`). */
   reason: string;
-  /** Confidence in words, never a percentage, e.g. "moderate". */
-  confidence: string;
+  /** Confidence in words, never a percentage, e.g. "moderate". Omitted when nothing grounds it. */
+  confidence?: string;
   confidenceNote?: string;
   /** e.g. "2 rules in force · 1 proposed" from `ruleCountSummary`. */
   ruleSummary: string;
@@ -115,11 +115,13 @@ export function VerdictCard({
       </div>
       <p className="mt-4 max-w-prose text-[17px] leading-[1.55] text-ink-2">{reason}</p>
       <hr className="my-5 border-divider" />
-      <p className="text-[15px] text-ink-2">
-        How sure: <strong className="font-semibold text-ink">{confidence}</strong>
-        {confidenceNote ? `. ${confidenceNote}` : null}
-      </p>
-      <p className="mt-1 text-sm text-muted-foreground">{ruleSummary}</p>
+      {confidence && (
+        <p className="mb-1 text-[15px] text-ink-2">
+          How sure: <strong className="font-semibold text-ink">{confidence}</strong>
+          {confidenceNote ? `. ${confidenceNote}` : null}
+        </p>
+      )}
+      <p className="text-sm text-muted-foreground">{ruleSummary}</p>
       {topConditions.length > 0 && (
         <>
           <Sub className="mt-6 text-base font-semibold text-ink">Top conditions</Sub>
