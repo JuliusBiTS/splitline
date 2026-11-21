@@ -94,16 +94,16 @@ Phase 3 (design) runs in parallel to Phases 1–2. Phases 1–2 have no UI depen
 
 ## Phase 4: UI shell, presets, sources, self-assessment
 **Goal:** a recruiter can open any preset on any device and understand it in 10 seconds.
-- [ ] Layout, navigation, footer with disclaimer; component library from the handoff (VerdictCard, StatusBadge, RuleCard, SplitMap, LeverCard, DivergingScoreBar, QuadrantChart, WhatIfDrawer).
-- [ ] `/` with the preset gallery; `/preset/[slug]` workspace with tabs Summary · Triage · Operating model · Rollout · Export (statically generated).
-- [ ] What-if drawer wired to `whatif.ts`.
-- [ ] `/sources` generated from the rule catalogue; `/self-assessment` = Splitline run through its own engine (committed intake); `/about`.
-- [ ] Canadian English pass on all copy.
+- [x] Layout, navigation, footer with disclaimer; component library from the handoff (VerdictCard, StatusBadge, RuleCard, SplitMap, LeverCard, DivergingScoreBar, QuadrantChart, WhatIfDrawer).
+- [x] `/` with the preset gallery; `/preset/[slug]` workspace with tabs Summary · Triage · Operating model · Rollout · Export (statically generated).
+- [x] What-if drawer wired to `whatif.ts`.
+- [x] `/sources` generated from the rule catalogue; `/self-assessment` = Splitline run through its own engine (committed intake); `/about`.
+- [x] Canadian English pass on all copy.
 
 **Acceptance**
-- `pnpm test:e2e`: for each preset → open from `/`, the verdict and tier are visible, What-if "hosting → in_canada" changes the rules count; screenshots saved for the PR.
+- `pnpm test:e2e`: for each preset → open from `/`, the verdict and tier are visible, What-if "hosting → in_canada" changes the rules count; screenshots saved for the PR. (`hiring-and-sentiment` is already hosted in Canada and no hosting value changes its rules; e2e asserts the drawer shows no effect and that Quebec changes the count instead, ADR-0017.)
 - `pnpm test:a11y`: zero serious or critical axe violations on `/`, `/preset/*`, `/sources`.
-- Lighthouse (Playwright or CI) performance ≥ 90 on `/` and one preset page.
+- Lighthouse (Playwright or CI) performance ≥ 90 on `/` and one preset page (`pnpm build && pnpm test:lighthouse`).
 - Mobile 375 px screenshots of `/` and one Summary attached as evidence.
 
 ---
