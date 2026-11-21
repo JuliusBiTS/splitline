@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0;background:#E6E9ED;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#1A2230;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}a{color:#1D5C57}a:hover{color:#123F3B}*:focus-visible{outline:2px solid #1D5C57;outline-offset:2px}button,select{font-family:inherit}</style>
+</helmet>
+<div style="padding:64px;display:flex;flex-direction:column;gap:16px">
+<div style="font:500 13px 'IBM Plex Mono',monospace;color:#4A5565">Intake · Step 3 · Confirm the split · 1440</div>
+<div data-screen-label="Intake step 3" style="width:1440px;background:#FFFFFF;min-height:900px;display:flex;flex-direction:column">
+<header style="height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 80px;border-bottom:1px solid #E3E7EC">
+<a href="Landing.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:#1A2230"><span style="display:flex;gap:2px"><span style="width:9px;height:20px;background:#1D5C57;border-radius:2px 0 0 2px"></span><span style="width:9px;height:20px;box-sizing:border-box;border:2px solid #1D5C57;border-radius:0 2px 2px 0"></span></span><span style="font-size:18px;font-weight:600;letter-spacing:-0.01em">Splitline</span></a>
+<span style="font-size:14px;color:#4A5565">Claims document intake · Public insurer (fictional) · Draft saved</span>
+</header>
+
+<div style="padding:32px 80px 0;display:flex;align-items:center;gap:12px;font-size:14px;max-width:760px">
+<span style="display:flex;align-items:center;gap:8px"><span style="width:24px;height:24px;border-radius:50%;background:#E8F1EF;color:#1D5C57;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600">✓</span>Describe</span><span style="flex:1;height:1px;background:#C3CAD3"></span>
+<span style="display:flex;align-items:center;gap:8px"><span style="width:24px;height:24px;border-radius:50%;background:#E8F1EF;color:#1D5C57;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600">✓</span>Break down</span><span style="flex:1;height:1px;background:#C3CAD3"></span>
+<span aria-current="step" style="display:flex;align-items:center;gap:8px;font-weight:600"><span style="width:24px;height:24px;border-radius:50%;background:#1D5C57;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:13px">3</span>Confirm the split</span>
+</div>
+
+<section style="padding:40px 80px 0;display:flex;flex-direction:column;gap:8px">
+<h1 style="margin:0;font-size:32px;font-weight:600;letter-spacing:-0.015em">Confirm the split</h1>
+<p style="margin:0;font-size:16px;line-height:1.5;color:#4A5565;max-width:760px">The AI broke your description into five subtasks and proposed an owner for each. Change any value; your edits are kept.</p>
+</section>
+
+<div role="status" style="margin:24px 80px 0;padding:14px 16px;border-radius:4px;background:#E8F1EF;display:flex;align-items:center;gap:12px;font-size:15px">
+<span style="width:20px;height:20px;border-radius:50%;background:#1D5C57;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600">i</span>
+<span><strong style="font-weight:600">Review the AI's breakdown.</strong> Nothing is analysed until you confirm.</span>
+</div>
+
+<div style="margin:24px 80px 0;border:1px solid #D9DEE5;border-radius:8px;overflow:hidden">
+<div style="display:grid;grid-template-columns:40px minmax(0,1.5fr) 128px 128px 128px 360px minmax(0,1.2fr);background:#F5F7F9;border-bottom:1px solid #D9DEE5;font-size:13px;font-weight:500;color:#4A5565">
+<span style="padding:12px 0 12px 16px">#</span><span style="padding:12px 16px">Subtask</span><span style="padding:12px 8px">Judgment</span><span style="padding:12px 8px">Error cost</span><span style="padding:12px 8px">Volume</span><span style="padding:12px 16px">Proposed owner</span><span style="padding:12px 16px">Reason</span>
+</div>
+<sc-for list="{{ rows }}" as="r" hint-placeholder-count="5">
+<div style="display:grid;grid-template-columns:40px minmax(0,1.5fr) 128px 128px 128px 360px minmax(0,1.2fr);align-items:center;border-bottom:1px solid #E3E7EC;font-size:15px;min-height:64px">
+<span style="padding-left:16px;font:400 13px 'IBM Plex Mono',monospace;color:#4A5565">{{ r.n }}</span>
+<span style="padding:0 16px;display:flex;flex-direction:column;gap:2px"><span contenteditable="true" style="font-weight:500;outline-offset:2px">{{ r.task }}</span><sc-if value="{{ r.edited }}"><span style="font-size:12px;color:#1D5C57;font-weight:500">Owner edited by you · AI proposed {{ r.aiOwner }}</span></sc-if></span>
+<span style="padding:0 8px"><select aria-label="Judgment" style="height:36px;width:108px;border:1px solid #C3CAD3;border-radius:4px;padding:0 8px;font-size:14px;background:#FFFFFF;color:#1A2230"><option selected="{{ r.jLow }}">Low</option><option selected="{{ r.jMed }}">Medium</option><option selected="{{ r.jHigh }}">High</option></select></span>
+<span style="padding:0 8px"><select aria-label="Error cost" style="height:36px;width:108px;border:1px solid #C3CAD3;border-radius:4px;padding:0 8px;font-size:14px;background:#FFFFFF;color:#1A2230"><option selected="{{ r.eLow }}">Low</option><option selected="{{ r.eMed }}">Medium</option><option selected="{{ r.eHigh }}">High</option></select></span>
+<span style="padding:0 8px"><select aria-label="Volume" style="height:36px;width:108px;border:1px solid #C3CAD3;border-radius:4px;padding:0 8px;font-size:14px;background:#FFFFFF;color:#1A2230"><option selected="{{ r.vLow }}">Low</option><option selected="{{ r.vMed }}">Medium</option><option selected="{{ r.vHigh }}">High</option></select></span>
+<span style="padding:0 16px"><span role="radiogroup" aria-label="Owner" style="display:flex;border:1px solid #C3CAD3;border-radius:4px;overflow:hidden;height:36px">
+<sc-for list="{{ r.opts }}" as="o" hint-placeholder-count="3">
+<sc-if value="{{ o.on }}"><button role="radio" aria-checked="true" onClick="{{ o.pick }}" style="flex:1;border:0;background:#1D5C57;color:#FFFFFF;font-size:13px;font-weight:500;cursor:pointer;padding:0 6px">{{ o.label }}</button></sc-if>
+<sc-if value="{{ o.off }}"><button role="radio" aria-checked="false" onClick="{{ o.pick }}" style="flex:1;border:0;background:#FFFFFF;color:#1A2230;font-size:13px;cursor:pointer;padding:0 6px" style-hover="background:#F2F4F7">{{ o.label }}</button></sc-if>
+</sc-for>
+</span></span>
+<span style="padding:0 16px"><span style="font-size:13px;padding:4px 10px;border-radius:12px;background:#F2F4F7;color:#3B4554">{{ r.reason }}</span></span>
+</div>
+</sc-for>
+<button style="width:100%;height:48px;border:0;background:#FFFFFF;text-align:left;padding:0 16px 0 56px;font-size:14px;font-weight:500;color:#1D5C57;cursor:pointer" style-hover="background:#F5F7F9">+ Add subtask</button>
+</div>
+
+<div style="margin:24px 80px 0;display:flex;justify-content:space-between;align-items:center;gap:24px">
+<span style="font-size:14px;color:#4A5565">{{ summary }}</span>
+<sc-if value="{{ notConfirmed }}" hint-placeholder-val="{{ true }}">
+<span style="display:flex;gap:12px;align-items:center">
+<a href="#" style="height:44px;padding:0 18px;border-radius:4px;border:1px solid #C3CAD3;color:#1A2230;font-size:15px;font-weight:500;display:inline-flex;align-items:center;text-decoration:none">Back</a>
+<button onClick="{{ confirm }}" style="height:44px;padding:0 20px;border-radius:4px;border:0;background:#1D5C57;color:#FFFFFF;font-size:15px;font-weight:500;cursor:pointer" style-hover="background:#123F3B">Confirm split and analyse</button>
+</span>
+</sc-if>
+</div>
+
+<sc-if value="{{ confirmed }}">
+<div aria-live="polite" style="margin:24px 80px 0;border:1px solid #D9DEE5;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:12px;font-size:15px;max-width:640px">
+<span style="font-size:13px;font-weight:500;color:#4A5565">Split confirmed by you · analysing</span>
+<sc-for list="{{ narration }}" as="s" hint-placeholder-count="4">
+<span style="display:flex;gap:12px;align-items:center">
+<sc-if value="{{ s.done }}"><span style="width:12px;color:#1D5C57;font-weight:600">✓</span></sc-if>
+<sc-if value="{{ s.now }}"><span style="width:10px;height:10px;border-radius:50%;border:2px solid #1D5C57;box-sizing:border-box"></span></sc-if>
+<sc-if value="{{ s.todo }}"><span style="width:10px;height:10px;border-radius:50%;border:1px solid #98A2B3;box-sizing:border-box"></span></sc-if>
+<span>{{ s.label }}</span></span>
+</sc-for>
+<a href="Operating Model.dc.html" style="font-size:14px;font-weight:500">Skip to preview results →</a>
+</div>
+</sc-if>
+
+<footer style="margin-top:auto;padding:24px 80px;font-size:14px;color:#4A5565;border-top:1px solid #E3E7EC;display:flex;justify-content:space-between"><span>Indicative triage, not legal advice. All organizations are fictional.</span><span style="font:400 13px 'IBM Plex Mono',monospace">Synthetic case</span></footer>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;confirmed&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;State&quot;}}">
+class Component extends DCLogic {
+  state = {
+    owners: ['Machine', 'Machine + review', 'Machine', 'Machine + review', 'Human'],
+    confirmed: false, step: 0
+  };
+  base = [
+    { task: 'Classify document', j: 'Low', e: 'Low', v: 'High', ai: 'Machine', reason: 'Rule-like, low cost of error' },
+    { task: 'Extract fields', j: 'Low', e: 'Medium', v: 'High', ai: 'Machine', reason: 'Errors flow into payment' },
+    { task: 'Validate totals and dates', j: 'Low', e: 'Medium', v: 'High', ai: 'Machine', reason: 'Deterministic check; flags go to a person' },
+    { task: 'Check policy eligibility', j: 'Medium', e: 'High', v: 'Medium', ai: 'Machine + review', reason: 'Policy wording needs interpretation' },
+    { task: 'Approve reimbursement', j: 'High', e: 'High', v: 'Medium', ai: 'Human', reason: 'Final decision affects the claimant' }
+  ];
+  componentDidMount() { this.props.confirmed && this.confirm(); }
+  componentWillUnmount() { clearInterval(this.t); }
+  confirm = () => {
+    this.setState({ confirmed: true, step: 0 });
+    clearInterval(this.t);
+    this.t = setInterval(() => this.setState(s => (s.step >= 4 ? (clearInterval(this.t), null) : { step: s.step + 1 })), 1100);
+  };
+  renderVals() {
+    const { owners, confirmed, step } = this.state;
+    const labels = ['Machine', 'Machine + review', 'Human'];
+    const rows = this.base.map((b, i) => ({
+      n: String(i + 1).padStart(2, '0'), task: b.task, reason: b.reason, aiOwner: b.ai,
+      edited: owners[i] !== b.ai,
+      jLow: b.j === 'Low', jMed: b.j === 'Medium', jHigh: b.j === 'High',
+      eLow: b.e === 'Low', eMed: b.e === 'Medium', eHigh: b.e === 'High',
+      vLow: b.v === 'Low', vMed: b.v === 'Medium', vHigh: b.v === 'High',
+      opts: labels.map(l => ({ label: l, on: owners[i] === l, off: owners[i] !== l,
+        pick: () => this.setState(s => { const o = s.owners.slice(); o[i] = l; return { owners: o }; }) }))
+    }));
+    const c = l => owners.filter(o => o === l).length;
+    const steps = ['Matching rules for BC and federal scope', 'Separating proposed rules from rules in force', 'Mapping the split to guardrails', 'Costing the operating model'];
+    return {
+      rows, confirmed, notConfirmed: !confirmed, confirm: this.confirm,
+      summary: `5 subtasks · ${c('Machine')} Machine · ${c('Machine + review')} Machine + review · ${c('Human')} Human`,
+      narration: steps.map((label, i) => ({ label, done: i < step, now: i === step, todo: i > step }))
+    };
+  }
+}
+</script>
+</body>
+</html>

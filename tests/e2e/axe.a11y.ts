@@ -2,7 +2,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
 /** Routes to scan. Extend as routes land (Phase 4: /preset/*, /sources; Phase 8: all). */
-const ROUTES = ["/"];
+const ROUTES = ["/", "/dev/components"];
 
 for (const route of ROUTES) {
   test(`no serious or critical axe violations on ${route}`, async ({ page }) => {

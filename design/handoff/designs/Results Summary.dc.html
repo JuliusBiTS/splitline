@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0;background:#E6E9ED;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#1A2230;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}a{color:#1D5C57}a:hover{color:#123F3B}*:focus-visible{outline:2px solid #1D5C57;outline-offset:2px}button{font-family:inherit}</style>
+</helmet>
+<div style="padding:64px;display:flex;gap:64px;align-items:flex-start">
+
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="font:500 13px 'IBM Plex Mono',monospace;color:#4A5565">Results · Summary · Hiring &amp; sentiment · 1440</div>
+<div data-screen-label="Results desktop" style="width:1440px;background:#FFFFFF;position:relative;overflow:hidden">
+<header style="height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 80px;border-bottom:1px solid #E3E7EC">
+<a href="Landing.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:#1A2230"><span style="display:flex;gap:2px"><span style="width:9px;height:20px;background:#1D5C57;border-radius:2px 0 0 2px"></span><span style="width:9px;height:20px;box-sizing:border-box;border:2px solid #1D5C57;border-radius:0 2px 2px 0"></span></span><span style="font-size:18px;font-weight:600;letter-spacing:-0.01em">Splitline</span></a>
+<span style="display:flex;gap:12px;align-items:center;font-size:14px;color:#4A5565">Preset · edits stay in this session<a href="Intake.dc.html" style="height:36px;padding:0 14px;border-radius:4px;border:1px solid #C3CAD3;color:#1A2230;display:inline-flex;align-items:center;text-decoration:none;font-weight:500">Edit inputs</a></span>
+</header>
+<section style="padding:32px 80px 0;display:flex;flex-direction:column;gap:6px">
+<span style="font:500 12px 'IBM Plex Mono',monospace;color:#4A5565;text-transform:uppercase;letter-spacing:0.04em">HR · Fernhill Staffing (fictional)</span>
+<h1 style="margin:0;font-size:32px;font-weight:600;letter-spacing:-0.015em">Hiring &amp; sentiment scoring</h1>
+</section>
+<nav role="tablist" style="margin:24px 80px 0;display:flex;gap:32px;border-bottom:1px solid #D9DEE5;font-size:15px">
+<span role="tab" aria-selected="true" style="padding:0 0 12px;border-bottom:2px solid #1D5C57;color:#1D5C57;font-weight:600;margin-bottom:-1px">Summary</span>
+<span role="tab" style="padding:0 0 12px;color:#4A5565">Triage</span>
+<a role="tab" href="Operating Model.dc.html" style="padding:0 0 12px;color:#4A5565;text-decoration:none">Operating model</a>
+<span role="tab" style="padding:0 0 12px;color:#4A5565">Rollout</span>
+<span role="tab" style="padding:0 0 12px;color:#4A5565">Export</span>
+</nav>
+
+<div style="padding:32px 80px 48px;display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:40px;align-items:start">
+<div style="display:flex;flex-direction:column;gap:32px">
+<div style="border:1px solid #D9DEE5;border-radius:8px;padding:32px;display:flex;flex-direction:column;gap:16px">
+<span style="font-size:14px;font-weight:500;color:#4A5565">Verdict</span>
+<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap"><span style="display:flex;align-items:center;gap:14px;font-size:40px;font-weight:600;letter-spacing:-0.02em"><sc-if value="{{ isRedesign }}" hint-placeholder-val="{{ true }}"><span style="width:18px;height:18px;border:3px solid #1A2230;transform:rotate(45deg)"></span></sc-if><sc-if value="{{ isConditional }}"><span style="width:24px;height:24px;border-radius:50%;border:3px solid #1A2230;box-sizing:border-box;background:linear-gradient(90deg,#1A2230 50%,transparent 50%)"></span></sc-if>{{ verdict }}</span><span style="height:28px;display:inline-flex;align-items:center;padding:0 10px;border:1px solid #C3CAD3;border-radius:4px;font-size:14px;font-weight:500">{{ tier }}</span></div>
+<p style="margin:0;font-size:17px;line-height:1.55;max-width:720px;text-wrap:pretty">{{ verdictWhy }}</p>
+<div style="display:flex;gap:24px;font-size:14px;color:#4A5565;border-top:1px solid #E3E7EC;padding-top:16px;flex-wrap:wrap"><span>How sure: <strong style="color:#1A2230;font-weight:600">moderate</strong>. Three sourced rules; your description left data retention open.</span><span>2 rules in force · 1 proposed</span></div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<h2 style="margin:0;font-size:20px;font-weight:600">Top conditions</h2>
+<sc-for list="{{ rules }}" as="r" hint-placeholder-count="3">
+<div style="border:1px solid #D9DEE5;border-radius:8px">
+<button onClick="{{ r.toggle }}" aria-expanded="{{ r.open }}" style="width:100%;border:0;background:transparent;text-align:left;padding:20px 24px;display:grid;grid-template-columns:200px minmax(0,1fr) 24px;gap:16px;align-items:start;cursor:pointer;color:#1A2230">
+<span>
+<sc-if value="{{ r.blocker }}" hint-placeholder-val="{{ true }}"><span style="display:inline-flex;align-items:center;gap:8px;height:28px;padding:0 10px;border-radius:4px;background:#FDECEA;color:#B42318;font-size:13px;font-weight:500"><span style="width:12px;height:11px;background:currentColor;clip-path:polygon(50% 0,100% 100%,0 100%)"></span>Blocker</span></sc-if>
+<sc-if value="{{ r.applies }}"><span style="display:inline-flex;align-items:center;gap:8px;height:28px;padding:0 10px;border-radius:4px;background:#EAF1FA;color:#1F4E8C;font-size:13px;font-weight:500"><span style="width:10px;height:10px;border-radius:50%;background:currentColor"></span>Applies</span></sc-if>
+<sc-if value="{{ r.prepare }}"><span style="display:inline-flex;align-items:center;gap:8px;height:28px;padding:0 10px;border-radius:4px;background:#FBF3E4;color:#8A5300;font-size:13px;font-weight:500"><span style="width:11px;height:11px;border-radius:50%;border:2px dashed currentColor;box-sizing:border-box"></span>Prepare for (proposed)</span></sc-if>
+</span>
+<span style="font-size:16px;font-weight:500;line-height:1.45;text-wrap:pretty">{{ r.text }}</span>
+<span style="font-size:18px;color:#4A5565;line-height:1">{{ r.chev }}</span>
+</button>
+<sc-if value="{{ r.open }}">
+<div style="padding:0 24px 20px 240px;display:flex;flex-direction:column;gap:12px;font-size:15px;line-height:1.5">
+<div><strong style="font-weight:600">Why this applies</strong><br><span style="color:#4A5565">{{ r.why }}</span></div>
+<div><strong style="font-weight:600">Consider</strong><br>{{ r.action }}</div>
+<div style="font-size:13px;color:#4A5565;border-top:1px solid #E3E7EC;padding-top:12px;display:flex;gap:16px"><span>{{ r.source }}</span><span>Verified {{ r.verified }}</span><a href="#">Open source</a></div>
+</div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</div>
+
+<aside style="display:flex;flex-direction:column;gap:24px">
+<div style="background:#F5F7F9;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:16px">
+<h2 style="margin:0;font-size:18px;font-weight:600">What this design costs</h2>
+<sc-for list="{{ costs }}" as="c" hint-placeholder-count="4">
+<div style="display:flex;flex-direction:column;gap:2px;border-top:1px solid #D9DEE5;padding-top:12px"><span style="font-size:15px;font-weight:500">{{ c.what }}</span><span style="font-size:14px;line-height:1.45;color:#4A5565">{{ c.detail }}</span></div>
+</sc-for>
+</div>
+<div style="border:1px solid #D9DEE5;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:12px">
+<h2 style="margin:0;font-size:16px;font-weight:600">Next</h2>
+<button onClick="{{ openDrawer }}" style="height:44px;border-radius:4px;border:0;background:#1D5C57;color:#FFFFFF;font-size:15px;font-weight:500;cursor:pointer">Try a what-if</button>
+<a href="Operating Model.dc.html" style="height:44px;border-radius:4px;border:1px solid #C3CAD3;color:#1A2230;font-size:15px;font-weight:500;display:flex;align-items:center;justify-content:center;text-decoration:none">Design the operating model</a>
+</div>
+</aside>
+</div>
+
+<footer style="padding:20px 80px;font-size:14px;color:#4A5565;border-top:1px solid #E3E7EC;display:flex;justify-content:space-between"><span><strong style="color:#1A2230;font-weight:600">Indicative triage, not legal advice.</strong> All organizations are fictional.</span><span style="display:flex;gap:24px"><a href="#">Sources</a><a href="#">Self-assessment</a><a href="#">About</a></span></footer>
+
+<sc-if value="{{ drawerClosed }}" hint-placeholder-val="{{ true }}">
+<button onClick="{{ openDrawer }}" style="position:absolute;right:0;top:240px;width:40px;height:132px;border:1px solid #C3CAD3;border-right:0;border-radius:8px 0 0 8px;background:#FFFFFF;cursor:pointer;writing-mode:vertical-rl;font-size:14px;font-weight:600;color:#1D5C57;box-shadow:0 1px 2px rgba(16,24,40,.06),0 8px 24px rgba(16,24,40,.08)">What if… ‹</button>
+</sc-if>
+<sc-if value="{{ drawerOpen }}">
+<div role="dialog" aria-label="What-if" style="position:absolute;right:0;top:64px;bottom:0;width:440px;background:#FFFFFF;border-left:1px solid #D9DEE5;box-shadow:0 1px 2px rgba(16,24,40,.06),0 8px 24px rgba(16,24,40,.08);padding:32px;box-sizing:border-box;display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0;font-size:20px;font-weight:600">What if…</h2><button onClick="{{ closeDrawer }}" aria-label="Close" style="width:36px;height:36px;border:1px solid #C3CAD3;border-radius:4px;background:#FFFFFF;cursor:pointer;font-size:16px">×</button></div>
+<p style="margin:0;font-size:14px;color:#4A5565;line-height:1.5">Change one design choice and see what moves. Nothing is saved until you apply.</p>
+<sc-for list="{{ toggles }}" as="t" hint-placeholder-count="3">
+<button role="switch" aria-checked="{{ t.on }}" onClick="{{ t.flip }}" style="display:flex;justify-content:space-between;align-items:center;gap:16px;border:0;border-top:1px solid #E3E7EC;background:transparent;padding:14px 0 0;text-align:left;cursor:pointer;color:#1A2230;font-size:15px">
+<span>{{ t.label }}</span>
+<sc-if value="{{ t.on }}"><span style="flex:none;width:40px;height:24px;border-radius:12px;background:#1D5C57;position:relative"><span style="position:absolute;right:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#FFFFFF"></span></span></sc-if>
+<sc-if value="{{ t.off }}"><span style="flex:none;width:40px;height:24px;border-radius:12px;background:#98A2B3;position:relative"><span style="position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#FFFFFF"></span></span></sc-if>
+</button>
+</sc-for>
+<div style="display:flex;flex-direction:column;gap:10px;border-top:1px solid #D9DEE5;padding-top:16px">
+<span style="font-size:13px;font-weight:500;color:#4A5565">Changes</span>
+<sc-if value="{{ noDiff }}"><span style="font-size:14px;color:#4A5565">No change yet.</span></sc-if>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<sc-for list="{{ diffs }}" as="d" hint-placeholder-count="0">
+<span style="font-size:14px;padding:6px 10px;border-radius:4px;border:1px solid #C3CAD3"><s style="color:#667085">{{ d.from }}</s> → <strong style="font-weight:600">{{ d.to }}</strong></span>
+</sc-for>
+</div>
+</div>
+<button style="margin-top:auto;height:44px;border-radius:4px;border:0;background:#1D5C57;color:#FFFFFF;font-size:15px;font-weight:500;cursor:pointer">Apply to design</button>
+</div>
+</sc-if>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="font:500 13px 'IBM Plex Mono',monospace;color:#4A5565">Results · Summary · 375</div>
+<div data-screen-label="Results mobile" style="width:375px;background:#FFFFFF;position:relative;padding-bottom:80px">
+<header style="height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid #E3E7EC">
+<div style="display:flex;align-items:center;gap:8px"><span style="display:flex;gap:2px"><span style="width:8px;height:18px;background:#1D5C57;border-radius:2px 0 0 2px"></span><span style="width:8px;height:18px;box-sizing:border-box;border:2px solid #1D5C57;border-radius:0 2px 2px 0"></span></span><span style="font-size:17px;font-weight:600">Splitline</span></div>
+<button aria-label="Menu" style="width:44px;height:44px;border:1px solid #D9DEE5;border-radius:4px;background:#FFFFFF;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px"><span style="width:18px;height:2px;background:#1A2230"></span><span style="width:18px;height:2px;background:#1A2230"></span><span style="width:18px;height:2px;background:#1A2230"></span></button>
+</header>
+<section style="padding:20px 20px 0;display:flex;flex-direction:column;gap:4px">
+<span style="font:500 11px 'IBM Plex Mono',monospace;color:#4A5565;text-transform:uppercase;letter-spacing:0.04em">HR · Fernhill Staffing (fictional)</span>
+<h1 style="margin:0;font-size:24px;font-weight:600">Hiring &amp; sentiment scoring</h1>
+</section>
+<nav style="margin-top:16px;display:flex;gap:24px;padding:0 20px;border-bottom:1px solid #D9DEE5;font-size:15px;overflow:hidden;white-space:nowrap">
+<span style="padding:12px 0;border-bottom:2px solid #1D5C57;color:#1D5C57;font-weight:600;margin-bottom:-1px">Summary</span><span style="padding:12px 0;color:#4A5565">Triage</span><span style="padding:12px 0;color:#4A5565">Operating model</span><span style="padding:12px 0;color:#4A5565">Rollout</span>
+</nav>
+<div style="padding:20px;display:flex;flex-direction:column;gap:20px">
+<div style="border:1px solid #D9DEE5;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:12px">
+<span style="font-size:13px;font-weight:500;color:#4A5565">Verdict</span>
+<span style="display:flex;align-items:center;gap:12px;font-size:30px;font-weight:600"><span style="width:14px;height:14px;border:3px solid #1A2230;transform:rotate(45deg)"></span>{{ verdict }}</span>
+<span style="align-self:flex-start;height:28px;display:inline-flex;align-items:center;padding:0 10px;border:1px solid #C3CAD3;border-radius:4px;font-size:13px;font-weight:500">{{ tier }}</span>
+<p style="margin:0;font-size:15px;line-height:1.5">{{ verdictWhy }}</p>
+<span style="font-size:13px;color:#4A5565">How sure: <strong style="color:#1A2230;font-weight:600">moderate</strong> · 2 in force · 1 proposed</span>
+</div>
+<h2 style="margin:0;font-size:17px;font-weight:600">Top conditions</h2>
+<sc-for list="{{ rules }}" as="r" hint-placeholder-count="3">
+<div style="border:1px solid #D9DEE5;border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:10px">
+<span>
+<sc-if value="{{ r.blocker }}" hint-placeholder-val="{{ true }}"><span style="display:inline-flex;align-items:center;gap:8px;height:28px;padding:0 10px;border-radius:4px;background:#FDECEA;color:#B42318;font-size:13px;font-weight:500"><span style="width:12px;height:11px;background:currentColor;clip-path:polygon(50% 0,100% 100%,0 100%)"></span>Blocker</span></sc-if>
+<sc-if value="{{ r.applies }}"><span style="display:inline-flex;align-items:center;gap:8px;height:28px;padding:0 10px;border-radius:4px;background:#EAF1FA;color:#1F4E8C;font-size:13px;font-weight:500"><span style="width:10px;height:10px;border-radius:50%;background:currentColor"></span>Applies</span></sc-if>
+<sc-if value="{{ r.prepare }}"><span style="display:inline-flex;align-items:center;gap:8px;height:28px;padding:0 10px;border-radius:4px;background:#FBF3E4;color:#8A5300;font-size:13px;font-weight:500"><span style="width:11px;height:11px;border-radius:50%;border:2px dashed currentColor;box-sizing:border-box"></span>Prepare for (proposed)</span></sc-if>
+</span>
+<span style="font-size:15px;font-weight:500;line-height:1.45">{{ r.text }}</span>
+<span style="font-size:14px;font-weight:500;color:#1D5C57">Why this applies ›</span>
+</div>
+</sc-for>
+<div style="background:#F5F7F9;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:12px">
+<h2 style="margin:0;font-size:17px;font-weight:600">What this design costs</h2>
+<sc-for list="{{ costs }}" as="c" hint-placeholder-count="4">
+<div style="display:flex;flex-direction:column;gap:2px;border-top:1px solid #D9DEE5;padding-top:10px"><span style="font-size:15px;font-weight:500">{{ c.what }}</span><span style="font-size:14px;line-height:1.45;color:#4A5565">{{ c.detail }}</span></div>
+</sc-for>
+</div>
+<span style="font-size:13px;color:#4A5565"><strong style="color:#1A2230;font-weight:600">Indicative triage, not legal advice.</strong> All organizations are fictional.</span>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:0;padding:12px 20px;background:#FFFFFF;border-top:1px solid #D9DEE5"><button style="width:100%;height:48px;border-radius:4px;border:0;background:#1D5C57;color:#FFFFFF;font-size:16px;font-weight:500">What if…</button></div>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;whatIfOpen&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;State&quot;}}">
+class Component extends DCLogic {
+  state = { open: 0, drawer: null, t: [false, false, false] };
+  rulesData = [
+    { kind: 'blocker', text: 'Continuous sentiment monitoring of employees is seldom reasonable under BC PIPA (OIPC guidance) → remove or redesign', why: 'The design scores staff sentiment from workplace messages on an ongoing basis. BC privacy guidance treats continuous monitoring of employees as seldom reasonable for its purpose.', action: 'Remove the sentiment feature, or redesign it as opt-in, aggregate and time-limited with a stated purpose.', source: 'OIPC BC guidance on employee monitoring', verified: '14 Oct 2026' },
+    { kind: 'applies', text: 'Hiring decisions need a human final decision and bias testing (BC Human Rights Code)', why: 'Applicant ranking likely triggers protected-ground obligations when it shapes who is interviewed.', action: 'A recruiter signs off every shortlist; test outcomes by group before launch and each quarter.', source: 'BC Human Rights Code', verified: '14 Oct 2026' },
+    { kind: 'prepare', text: 'Prepare explanation on request (Bill C-36, proposed)', why: 'The bill is proposed, not in force. If passed, candidates could ask how an automated system affected them.', action: 'Keep a plain-language explanation of the ranking factors ready now; it is cheap to write early.', source: 'Bill C-36 (proposed)', verified: '02 Nov 2026' }
+  ];
+  componentDidMount() { if (this.props.whatIfOpen) this.setState({ drawer: true }); }
+  renderVals() {
+    const { open, t } = this.state;
+    const drawer = this.state.drawer ?? !!this.props.whatIfOpen;
+    const [noSent, human, candOnly] = t;
+    const redesign = !noSent;
+    const verdict = redesign ? 'Redesign' : 'Go with conditions';
+    const tier = (redesign || !human) ? 'AIA-inspired indicative tier III' : 'AIA-inspired indicative tier II';
+    const diffs = [];
+    if (noSent) diffs.push({ from: 'Redesign', to: 'Go with conditions' }, { from: '1 Blocker', to: '0 Blockers' });
+    if (noSent && human) diffs.push({ from: 'Tier III', to: 'Tier II' });
+    if (candOnly) diffs.push({ from: 'Employees in scope', to: 'Candidates only' });
+    const labels = ['Remove sentiment monitoring', 'Human final decision on every shortlist', 'Score candidates only, not employees'];
+    return {
+      verdict, tier, isRedesign: redesign, isConditional: !redesign,
+      verdictWhy: redesign ? 'One element of this design is seldom reasonable under BC privacy law. Remove or redesign continuous sentiment monitoring, then re-run triage.' : 'With sentiment monitoring removed, the design can proceed if the remaining conditions are met.',
+      rules: this.rulesData.map((r, i) => ({ ...r, blocker: r.kind === 'blocker', applies: r.kind === 'applies', prepare: r.kind === 'prepare', open: open === i, chev: open === i ? '−' : '+', toggle: () => this.setState({ open: open === i ? -1 : i }) })),
+      costs: [
+        { what: 'Recruiter time', detail: 'Each shortlist needs a documented human decision, which slows time-to-shortlist.' },
+        { what: 'Bias testing', detail: 'Outcome testing by group before launch and every quarter; needs demographic data handled separately.' },
+        { what: 'Lost feature', detail: 'Removing sentiment monitoring drops the retention-risk signal the business asked for.' },
+        { what: 'Explanation upkeep', detail: 'A plain-language factor sheet to maintain whenever the model changes.' }
+      ],
+      drawerOpen: drawer, drawerClosed: !drawer,
+      openDrawer: () => this.setState({ drawer: true }), closeDrawer: () => this.setState({ drawer: false }),
+      toggles: labels.map((label, i) => ({ label, on: t[i], off: !t[i], flip: () => this.setState(s => { const n = s.t.slice(); n[i] = !n[i]; return { t: n }; }) })),
+      diffs, noDiff: diffs.length === 0
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -81,10 +81,10 @@ Phase 3 (design) runs in parallel to Phases 1–2. Phases 1–2 have no UI depen
 
 ## Phase 3: Design in Claude Design (parallel to Phases 1–2; you lead)
 **Goal:** design system + 5 key screens, handed off to Claude Code.
-- [ ] Paste `docs/claude-design-brief.md` into Claude Design; create the design system (tokens, components from `06_*` §3).
-- [ ] Screens: Landing with presets · Intake step 3 (Confirm split) · Results Summary · Operating model (Lever cards) · Lab Review + Dashboard. Use real preset content.
-- [ ] 5-second test with 3 people + 1 think-aloud; note the findings in `docs/decisions/ADR-0005-design-direction.md`.
-- [ ] Hand off to Claude Code (handoff bundle or `/design` import) into `design/` or as tokens + components.
+- [x] Paste `docs/claude-design-brief.md` into Claude Design; create the design system (tokens, components from `06_*` §3).
+- [x] Screens: Landing with presets · Intake step 3 (Confirm split) · Results Summary · Operating model (Lever cards) · Lab Review + Dashboard. Use real preset content.
+- [ ] 5-second test with 3 people + 1 think-aloud; note the findings in `docs/decisions/ADR-0005-design-direction.md`. **Pending:** not run yet; ADR-0005 records the direction and marks the findings as pending.
+- [x] Hand off to Claude Code (handoff bundle or `/design` import) into `design/` or as tokens + components. Bundle in `design/handoff/`; tokens in `src/styles/tokens.css` (test-guarded); the component library from `06_*` §3 (listed under Phase 4) was built here in `src/components/splitline/` with `/dev/components`. Phase 4 wires it into the pages.
 
 **Acceptance**
 - Design tokens exist in code (`src/styles/tokens.css` or the Tailwind theme) and match the design.

@@ -1,9 +1,23 @@
 import type { Metadata } from "next";
+import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
-import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
+import { DisclaimerFooter } from "@/components/splitline/chrome";
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const plexSans = IBM_Plex_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-plex-sans",
+  display: "swap",
+});
+const plexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-plex-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Splitline",
@@ -12,13 +26,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en-CA" className={cn("h-full antialiased", "font-sans", geist.variable)}>
+    <html lang="en-CA" className={cn("h-full", plexSans.variable, plexMono.variable)}>
       <body className="flex min-h-full flex-col">
-        {children}
-        <footer className="border-t border-border px-6 py-4 text-sm text-muted-foreground">
-          <p>Indicative triage, not legal advice.</p>
-          <p>All organizations and people in this demo are fictional.</p>
-        </footer>
+        <TooltipProvider>
+          {children}
+          <DisclaimerFooter />
+          <Toaster />
+        </TooltipProvider>
       </body>
     </html>
   );

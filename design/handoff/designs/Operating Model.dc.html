@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0;background:#E6E9ED;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#1A2230;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}a{color:#1D5C57}a:hover{color:#123F3B}*:focus-visible{outline:2px solid #1D5C57;outline-offset:2px}button{font-family:inherit}</style>
+</helmet>
+<div style="padding:64px;display:flex;flex-direction:column;gap:16px">
+<div style="font:500 13px 'IBM Plex Mono',monospace;color:#4A5565">Results · Operating model · Claims document intake · 1440</div>
+<div data-screen-label="Operating model" style="width:1440px;background:#FFFFFF">
+<header style="height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 80px;border-bottom:1px solid #E3E7EC">
+<a href="Landing.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:#1A2230"><span style="display:flex;gap:2px"><span style="width:9px;height:20px;background:#1D5C57;border-radius:2px 0 0 2px"></span><span style="width:9px;height:20px;box-sizing:border-box;border:2px solid #1D5C57;border-radius:0 2px 2px 0"></span></span><span style="font-size:18px;font-weight:600;letter-spacing:-0.01em">Splitline</span></a>
+<span style="display:flex;gap:12px;align-items:center;font-size:14px;color:#4A5565">Preset<a href="Living Lab.dc.html" style="height:36px;padding:0 14px;border-radius:4px;border:1px solid #1D5C57;color:#1D5C57;display:inline-flex;align-items:center;text-decoration:none;font-weight:500">Try the Living Lab</a></span>
+</header>
+<section style="padding:32px 80px 0;display:flex;flex-direction:column;gap:6px">
+<span style="font:500 12px 'IBM Plex Mono',monospace;color:#4A5565;text-transform:uppercase;letter-spacing:0.04em">Public insurer · Pacific Mutual Health (fictional)</span>
+<div style="display:flex;align-items:center;gap:16px"><h1 style="margin:0;font-size:32px;font-weight:600;letter-spacing:-0.015em">Claims document intake</h1><span style="height:24px;display:inline-flex;align-items:center;padding:0 8px;border:1px solid #C3CAD3;border-radius:4px;font-size:13px;font-weight:500">Tier II</span><span style="height:24px;display:inline-flex;align-items:center;gap:8px;padding:0 8px;border-radius:4px;background:#F2F4F7;font-size:13px;font-weight:500"><span style="width:10px;height:10px;border-radius:50%;border:2px solid #1A2230;box-sizing:border-box;background:linear-gradient(90deg,#1A2230 50%,transparent 50%)"></span>Go with conditions</span></div>
+</section>
+<nav role="tablist" style="margin:24px 80px 0;display:flex;gap:32px;border-bottom:1px solid #D9DEE5;font-size:15px">
+<a role="tab" href="Results Summary.dc.html" style="padding:0 0 12px;color:#4A5565;text-decoration:none">Summary</a>
+<span role="tab" style="padding:0 0 12px;color:#4A5565">Triage</span>
+<span role="tab" aria-selected="true" style="padding:0 0 12px;border-bottom:2px solid #1D5C57;color:#1D5C57;font-weight:600;margin-bottom:-1px">Operating model</span>
+<span role="tab" style="padding:0 0 12px;color:#4A5565">Rollout</span>
+<span role="tab" style="padding:0 0 12px;color:#4A5565">Export</span>
+</nav>
+
+<section style="padding:32px 80px 0;display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px">
+<div style="display:flex;flex-direction:column;gap:6px"><h2 style="margin:0;font-size:24px;font-weight:600">Three levers</h2><p style="margin:0;font-size:16px;color:#4A5565;max-width:720px">Who sets the split, how it stays in sync, and how the teams learn from each other. Each setting is editable.</p></div>
+<span style="font-size:13px;color:#4A5565">Drafted by AI · reviewed by you 18 Nov</span>
+</div>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px">
+<sc-for list="{{ levers }}" as="l" hint-placeholder-count="3">
+<div style="border:1px solid #D9DEE5;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font:500 12px 'IBM Plex Mono',monospace;color:#1D5C57">{{ l.n }}</span><button style="height:28px;padding:0 10px;border:1px solid #C3CAD3;border-radius:4px;background:#FFFFFF;font-size:13px;cursor:pointer">Edit</button></div>
+<div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:20px;font-weight:600">{{ l.name }}</span><span style="font-size:16px;line-height:1.5;text-wrap:pretty">{{ l.setting }}</span></div>
+<div style="display:flex;flex-direction:column;gap:14px;border-top:1px solid #E3E7EC;padding-top:16px;font-size:14px;line-height:1.45">
+<div style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:600">Guardrail</span><span style="color:#3B4554">{{ l.guard }}</span></div>
+<div style="display:flex;flex-direction:column;gap:2px;background:#F5F7F9;margin:0 -12px;padding:10px 12px;border-radius:4px"><span style="font-weight:600">Direct cost</span><span style="color:#3B4554">{{ l.cost }}</span></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px">
+<div style="display:flex;flex-direction:column;gap:4px"><span style="display:flex;align-items:center;gap:6px;font-weight:600"><span style="width:8px;height:8px;border-radius:50%;background:#1D5C57"></span>Monitor</span><span style="color:#3B4554">{{ l.monitor }}</span></div>
+<div style="display:flex;flex-direction:column;gap:4px"><span style="display:flex;align-items:center;gap:6px;font-weight:600"><span style="width:10px;height:9px;background:#B42318;clip-path:polygon(50% 0,100% 100%,0 100%)"></span>Warn if</span><span style="color:#3B4554">{{ l.warn }}</span></div>
+</div>
+</div>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section style="padding:48px 80px 48px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><h2 style="margin:0;font-size:24px;font-weight:600">Split map</h2><span style="font-size:14px;color:#4A5565">Recorded in the shared split register · next review 15 Dec</span></div>
+<div style="border:1px solid #D9DEE5;border-radius:8px;overflow:hidden">
+<div style="display:grid;grid-template-columns:minmax(0,1.3fr) repeat(3,minmax(0,1fr));background:#F5F7F9;border-bottom:1px solid #D9DEE5;font-size:13px;font-weight:500;color:#4A5565">
+<span style="padding:12px 20px">Subtask</span><span style="padding:12px 20px;border-left:1px solid #E3E7EC">Machine</span><span style="padding:12px 20px;border-left:1px solid #E3E7EC">Machine + review</span><span style="padding:12px 20px;border-left:1px solid #E3E7EC">Human</span>
+</div>
+<sc-for list="{{ split }}" as="s" hint-placeholder-count="5">
+<div style="display:grid;grid-template-columns:minmax(0,1.3fr) repeat(3,minmax(0,1fr));border-bottom:1px solid #E3E7EC;font-size:15px;min-height:56px">
+<span style="padding:16px 20px;font-weight:500">{{ s.task }}</span>
+<sc-for list="{{ s.cells }}" as="c" hint-placeholder-count="3">
+<span style="padding:12px 20px;border-left:1px solid #E3E7EC;display:flex;align-items:center;gap:10px">
+<sc-if value="{{ c.on }}"><span style="display:flex;align-items:center;gap:10px"><span aria-label="Owner" style="width:12px;height:12px;border-radius:50%;background:#1D5C57;flex:none"></span><span style="font-size:13px;padding:4px 10px;border-radius:12px;background:#F2F4F7;color:#3B4554">{{ c.reason }}</span></span></sc-if>
+</span>
+</sc-for>
+</div>
+</sc-for>
+</div>
+</section>
+
+<footer style="padding:20px 80px;font-size:14px;color:#4A5565;border-top:1px solid #E3E7EC;display:flex;justify-content:space-between"><span><strong style="color:#1A2230;font-weight:600">Indicative triage, not legal advice.</strong> All organizations are fictional.</span><span style="display:flex;gap:24px"><a href="#">Sources</a><a href="#">Self-assessment</a><a href="#">About</a></span></footer>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const owners = ['Machine', 'Machine + review', 'Human'];
+    const rows = [
+      ['Classify document', 0, 'Rule-like, low cost of error'],
+      ['Extract fields', 1, 'Errors flow into payment'],
+      ['Validate totals and dates', 0, 'Deterministic; flags to a person'],
+      ['Check policy eligibility', 1, 'Policy wording needs interpretation'],
+      ['Approve reimbursement', 2, 'Final decision affects the claimant']
+    ];
+    return {
+      levers: [
+        { n: 'LEVER 1 · DECISION RIGHTS', name: 'Decision rights', setting: 'Claims team sets the split within a shared split register.', guard: 'Moving a subtask toward Machine needs sign-off from the claims lead and the AI product owner.', cost: 'About half a day a month of claims lead time to keep the register current.', monitor: 'Split changes logged per month', warn: 'A subtask moves toward Machine with no logged review' },
+        { n: 'LEVER 2 · COORDINATION', name: 'Coordination', setting: 'Fixed data formats and escalation thresholds; monthly split review.', guard: 'Escalate to a person when extraction confidence is low or totals do not reconcile.', cost: 'A monthly one-hour review; any format change waits for the next release.', monitor: 'Escalation rate by document type', warn: 'Escalations drop sharply with no model change' },
+        { n: 'LEVER 3 · EXCHANGE', name: 'Exchange', setting: 'Weekly joint session of the AI and claims teams; protected expert time.', guard: 'Expert time is protected in the roster, not taken from queue capacity.', cost: 'One expert hour a week per reviewer, plus AI team attendance.', monitor: 'Reinforcement Pulse, A→B and B→A', warn: 'Either direction stays below zero for two episodes' }
+      ],
+      split: rows.map(([task, o, reason]) => ({ task, cells: owners.map((_, i) => ({ on: i === o, reason })) }))
+    };
+  }
+}
+</script>
+</body>
+</html>

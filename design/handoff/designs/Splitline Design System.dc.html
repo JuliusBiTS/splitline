@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0;background:#E6E9ED;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#1A2230;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}a{color:#1D5C57}a:hover{color:#123F3B}*:focus-visible{outline:2px solid #1D5C57;outline-offset:2px}button{font-family:inherit}</style>
+</helmet>
+<div style="padding:64px;display:flex;flex-direction:column;gap:16px">
+<div style="font:500 13px 'IBM Plex Mono',monospace;color:#4A5565">Splitline · Design system · v0.1</div>
+<div style="width:1440px;background:#FFFFFF;box-sizing:border-box;padding:64px 80px;display:flex;flex-direction:column;gap:72px">
+
+<div style="display:flex;flex-direction:column;gap:12px;max-width:760px">
+<div style="display:flex;align-items:center;gap:10px"><span style="display:flex;gap:2px"><span style="width:9px;height:20px;background:#1D5C57;border-radius:2px 0 0 2px"></span><span style="width:9px;height:20px;box-sizing:border-box;border:2px solid #1D5C57;border-radius:0 2px 2px 0"></span></span><span style="font-size:18px;font-weight:600;letter-spacing:-0.01em">Splitline</span></div>
+<h1 style="margin:0;font-size:40px;line-height:1.15;font-weight:600;letter-spacing:-0.02em">Design system</h1>
+<p style="margin:0;font-size:17px;line-height:1.55;color:#4A5565;text-wrap:pretty">Calm enterprise. Slate neutrals on white, one accent, semantic colour reserved for rule status. IBM Plex Sans with tabular numerals, 8-pt grid, 4/8 px radius, one shadow level.</p>
+</div>
+
+<section style="display:flex;flex-direction:column;gap:24px">
+<h2 style="margin:0;font-size:24px;font-weight:600">Accent: three options</h2>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px">
+<div style="border:2px solid #1D5C57;border-radius:8px;overflow:hidden">
+<div style="height:120px;background:#1D5C57;padding:20px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;color:#FFFFFF"><span style="font:500 12px 'IBM Plex Mono',monospace">A · RECOMMENDED</span><span style="font-size:22px;font-weight:600">Evergreen</span></div>
+<div style="padding:20px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;gap:8px"><span style="width:32px;height:32px;border-radius:4px;background:#1D5C57"></span><span style="width:32px;height:32px;border-radius:4px;background:#123F3B"></span><span style="width:32px;height:32px;border-radius:4px;background:#E8F1EF;border:1px solid #D9DEE5"></span></div>
+<div style="font:400 13px 'IBM Plex Mono',monospace;color:#4A5565">#1D5C57 · hover #123F3B · tint #E8F1EF</div>
+<p style="margin:0;font-size:14px;line-height:1.5;color:#4A5565">White text 7.4:1. Quiet nod to BC coastal forest. Distinct from every status hue.</p>
+<div style="border-top:1px solid #E3E7EC;padding-top:16px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;gap:20px;font-size:14px;border-bottom:1px solid #E3E7EC"><span style="padding-bottom:8px;border-bottom:2px solid #1D5C57;color:#1D5C57;font-weight:600">Summary</span><span style="padding-bottom:8px;color:#4A5565">Triage</span><span style="padding-bottom:8px;color:#4A5565">Operating model</span></div>
+<div style="display:flex;align-items:center;gap:12px"><span style="height:40px;padding:0 16px;border-radius:4px;background:#1D5C57;color:#FFFFFF;font-size:14px;font-weight:500;display:inline-flex;align-items:center">Confirm split and analyse</span><span style="font-size:14px;color:#1D5C57;text-decoration:underline">Open preset</span></div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:4px;background:#E8F1EF;font-size:13px;color:#1A2230"><span style="width:8px;height:8px;border-radius:50%;background:#1D5C57"></span>Nothing is analysed until you confirm.</div>
+</div>
+</div></div>
+<div style="border:1px solid #D9DEE5;border-radius:8px;overflow:hidden">
+<div style="height:120px;background:#24456E;padding:20px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;color:#FFFFFF"><span style="font:500 12px 'IBM Plex Mono',monospace">B</span><span style="font-size:22px;font-weight:600">Harbour</span></div>
+<div style="padding:20px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;gap:8px"><span style="width:32px;height:32px;border-radius:4px;background:#24456E"></span><span style="width:32px;height:32px;border-radius:4px;background:#183251"></span><span style="width:32px;height:32px;border-radius:4px;background:#EAF0F7;border:1px solid #D9DEE5"></span></div>
+<div style="font:400 13px 'IBM Plex Mono',monospace;color:#4A5565">#24456E · hover #183251 · tint #EAF0F7</div>
+<p style="margin:0;font-size:14px;line-height:1.5;color:#4A5565">White text 9.6:1. Most conventional. Sits close to “Applies” blue; that status would shift to slate.</p>
+<div style="border-top:1px solid #E3E7EC;padding-top:16px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;gap:20px;font-size:14px;border-bottom:1px solid #E3E7EC"><span style="padding-bottom:8px;border-bottom:2px solid #24456E;color:#24456E;font-weight:600">Summary</span><span style="padding-bottom:8px;color:#4A5565">Triage</span><span style="padding-bottom:8px;color:#4A5565">Operating model</span></div>
+<div style="display:flex;align-items:center;gap:12px"><span style="height:40px;padding:0 16px;border-radius:4px;background:#24456E;color:#FFFFFF;font-size:14px;font-weight:500;display:inline-flex;align-items:center">Confirm split and analyse</span><span style="font-size:14px;color:#24456E;text-decoration:underline">Open preset</span></div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:4px;background:#EAF0F7;font-size:13px;color:#1A2230"><span style="width:8px;height:8px;border-radius:50%;background:#24456E"></span>Nothing is analysed until you confirm.</div>
+</div>
+</div></div>
+<div style="border:1px solid #D9DEE5;border-radius:8px;overflow:hidden">
+<div style="height:120px;background:#6E4227;padding:20px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;color:#FFFFFF"><span style="font:500 12px 'IBM Plex Mono',monospace">C</span><span style="font-size:22px;font-weight:600">Cedar</span></div>
+<div style="padding:20px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;gap:8px"><span style="width:32px;height:32px;border-radius:4px;background:#6E4227"></span><span style="width:32px;height:32px;border-radius:4px;background:#52301C"></span><span style="width:32px;height:32px;border-radius:4px;background:#F5EEE8;border:1px solid #D9DEE5"></span></div>
+<div style="font:400 13px 'IBM Plex Mono',monospace;color:#4A5565">#6E4227 · hover #52301C · tint #F5EEE8</div>
+<p style="margin:0;font-size:14px;line-height:1.5;color:#4A5565">White text 8.9:1. Warmest, most distinctive. Near the diverging-negative orange; charts would need care.</p>
+<div style="border-top:1px solid #E3E7EC;padding-top:16px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;gap:20px;font-size:14px;border-bottom:1px solid #E3E7EC"><span style="padding-bottom:8px;border-bottom:2px solid #6E4227;color:#6E4227;font-weight:600">Summary</span><span style="padding-bottom:8px;color:#4A5565">Triage</span><span style="padding-bottom:8px;color:#4A5565">Operating model</span></div>
+<div style="display:flex;align-items:center;gap:12px"><span style="height:40px;padding:0 16px;border-radius:4px;background:#6E4227;color:#FFFFFF;font-size:14px;font-weight:500;display:inline-flex;align-items:center">Confirm split and analyse</span><span style="font-size:14px;color:#6E4227;text-decoration:underline">Open preset</span></div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:4px;background:#F5EEE8;font-size:13px;color:#1A2230"><span style="width:8px;height:8px;border-radius:50%;background:#6E4227"></span>Nothing is analysed until you confirm.</div>
+</div>
+</div></div>
+</div>
+</section>
+
+<section style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px">
+<div style="display:flex;flex-direction:column;gap:20px">
+<h2 style="margin:0;font-size:24px;font-weight:600">Slate neutrals</h2>
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px">
+<sc-for list="{{ neutrals }}" as="n" hint-placeholder-count="8">
+<div style="display:flex;flex-direction:column;gap:6px"><span style="height:48px;border-radius:4px;border:1px solid #D9DEE5;background:{{ n.hex }}"></span><span style="font-size:13px;font-weight:500">{{ n.name }}</span><span style="font:400 12px 'IBM Plex Mono',monospace;color:#4A5565">{{ n.hex }} {{ n.note }}</span></div>
+</sc-for>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:20px">
+<h2 style="margin:0;font-size:24px;font-weight:600">Rule status · always icon + label</h2>
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;gap:16px"><span style="display:inline-flex;align-items:center;gap:8px;height:28px;padding:0 10px;border-radius:4px;background:#EAF1FA;color:#1F4E8C;font-size:13px;font-weight:500"><span style="width:10px;height:10px;border-radius:50%;background:currentColor"></span>Applies</span><span style="font:400 12px 'IBM Plex Mono',monospace;color:#4A5565">#1F4E8C / #EAF1FA · filled circle · in force</span></div>
+<div style="display:flex;align-items:center;gap:16px"><span style="display:inline-flex;align-items:center;gap:8px;height:28px;padding:0 10px;border-radius:4px;background:#FBF3E4;color:#8A5300;font-size:13px;font-weight:500"><span style="width:11px;height:11px;border-radius:50%;border:2px dashed currentColor;box-sizing:border-box"></span>Prepare for (proposed)</span><span style="font:400 12px 'IBM Plex Mono',monospace;color:#4A5565">#8A5300 / #FBF3E4 · dashed ring · not in force</span></div>
+<div style="display:flex;align-items:center;gap:16px"><span style="display:inline-flex;align-items:center;gap:8px;height:28px;padding:0 10px;border-radius:4px;background:#F1ECFA;color:#5B3A99;font-size:13px;font-weight:500"><span style="width:8px;height:8px;background:currentColor;transform:rotate(45deg)"></span>Regulator expects</span><span style="font:400 12px 'IBM Plex Mono',monospace;color:#4A5565">#5B3A99 / #F1ECFA · diamond · guidance</span></div>
+<div style="display:flex;align-items:center;gap:16px"><span style="display:inline-flex;align-items:center;gap:8px;height:28px;padding:0 10px;border-radius:4px;background:#EAF4EC;color:#2E6B3E;font-size:13px;font-weight:500"><span style="width:10px;height:10px;border:2px solid currentColor;box-sizing:border-box"></span>Good practice</span><span style="font:400 12px 'IBM Plex Mono',monospace;color:#4A5565">#2E6B3E / #EAF4EC · square · voluntary</span></div>
+<div style="display:flex;align-items:center;gap:16px"><span style="display:inline-flex;align-items:center;gap:8px;height:28px;padding:0 10px;border-radius:4px;background:#FDECEA;color:#B42318;font-size:13px;font-weight:500"><span style="width:12px;height:11px;background:currentColor;clip-path:polygon(50% 0,100% 100%,0 100%)"></span>Blocker</span><span style="font:400 12px 'IBM Plex Mono',monospace;color:#4A5565">#B42318 / #FDECEA · triangle · stops the design</span></div>
+</div>
+</div>
+</section>
+
+<section style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px">
+<div style="display:flex;flex-direction:column;gap:20px">
+<h2 style="margin:0;font-size:24px;font-weight:600">Type · IBM Plex Sans / Mono</h2>
+<div style="display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;align-items:baseline;gap:20px"><span style="width:96px;font:400 12px 'IBM Plex Mono',monospace;color:#4A5565">Display 56/60</span><span style="font-size:40px;font-weight:600;letter-spacing:-0.02em;line-height:1.1">Judgment begins</span></div>
+<div style="display:flex;align-items:baseline;gap:20px"><span style="width:96px;font:400 12px 'IBM Plex Mono',monospace;color:#4A5565">H1 32/40</span><span style="font-size:32px;font-weight:600;letter-spacing:-0.015em">Confirm the split</span></div>
+<div style="display:flex;align-items:baseline;gap:20px"><span style="width:96px;font:400 12px 'IBM Plex Mono',monospace;color:#4A5565">H2 24/32</span><span style="font-size:24px;font-weight:600">What this design costs</span></div>
+<div style="display:flex;align-items:baseline;gap:20px"><span style="width:96px;font:400 12px 'IBM Plex Mono',monospace;color:#4A5565">H3 18/24</span><span style="font-size:18px;font-weight:600">Decision rights</span></div>
+<div style="display:flex;align-items:baseline;gap:20px"><span style="width:96px;font:400 12px 'IBM Plex Mono',monospace;color:#4A5565">Body 16/24</span><span style="font-size:16px">Claims team sets the split within a shared split register.</span></div>
+<div style="display:flex;align-items:baseline;gap:20px"><span style="width:96px;font:400 12px 'IBM Plex Mono',monospace;color:#4A5565">Small 14/20</span><span style="font-size:14px;color:#4A5565">Verified 14 Oct 2026</span></div>
+<div style="display:flex;align-items:baseline;gap:20px"><span style="width:96px;font:400 12px 'IBM Plex Mono',monospace;color:#4A5565">Mono 13/20</span><span style="font:400 13px 'IBM Plex Mono',monospace">STP 62% · Automation error 4%</span></div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:20px">
+<h2 style="margin:0;font-size:24px;font-weight:600">Space, radius, elevation</h2>
+<div style="display:flex;align-items:flex-end;gap:16px">
+<sc-for list="{{ spaces }}" as="s" hint-placeholder-count="7">
+<div style="display:flex;flex-direction:column;gap:6px;align-items:center"><span style="background:#E8F1EF;border:1px solid #1D5C57;width:{{ s.px }}px;height:{{ s.px }}px"></span><span style="font:400 12px 'IBM Plex Mono',monospace;color:#4A5565">{{ s.px }}</span></div>
+</sc-for>
+</div>
+<div style="display:flex;gap:24px">
+<div style="width:120px;height:72px;border:1px solid #D9DEE5;border-radius:4px;display:flex;align-items:center;justify-content:center;font:400 12px 'IBM Plex Mono',monospace;color:#4A5565">r4 · controls</div>
+<div style="width:120px;height:72px;border:1px solid #D9DEE5;border-radius:8px;display:flex;align-items:center;justify-content:center;font:400 12px 'IBM Plex Mono',monospace;color:#4A5565">r8 · cards</div>
+<div style="width:120px;height:72px;border-radius:8px;box-shadow:0 1px 2px rgba(16,24,40,.06),0 8px 24px rgba(16,24,40,.08);display:flex;align-items:center;justify-content:center;font:400 12px 'IBM Plex Mono',monospace;color:#4A5565">shadow · drawers</div>
+</div>
+<p style="margin:0;font-size:14px;line-height:1.5;color:#4A5565">Targets ≥ 24 px (36–44 px default). Focus: 2 px accent outline, 2 px offset. Status is never colour alone.</p>
+</div>
+</section>
+
+<section style="display:flex;flex-direction:column;gap:24px">
+<h2 style="margin:0;font-size:24px;font-weight:600">Components</h2>
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:32px;align-items:start">
+
+<div style="display:flex;flex-direction:column;gap:10px"><span style="font:500 12px 'IBM Plex Mono',monospace;color:#4A5565">VerdictCard</span>
+<div style="border:1px solid #D9DEE5;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:12px">
+<span style="font-size:13px;font-weight:500;color:#4A5565">Verdict</span>
+<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span style="display:flex;align-items:center;gap:10px;font-size:28px;font-weight:600"><span style="width:14px;height:14px;border:2px solid #1A2230;transform:rotate(45deg)"></span>Redesign</span><span style="height:24px;display:inline-flex;align-items:center;padding:0 8px;border:1px solid #C3CAD3;border-radius:4px;font-size:13px;font-weight:500">AIA-inspired indicative tier III</span></div>
+<p style="margin:0;font-size:15px;line-height:1.5;color:#4A5565">One element is seldom reasonable under BC privacy law. Confidence: <strong style="color:#1A2230;font-weight:600">moderate</strong>, three sourced rules.</p>
+</div></div>
+
+<div style="display:flex;flex-direction:column;gap:10px"><span style="font:500 12px 'IBM Plex Mono',monospace;color:#4A5565">RuleCard · why → actions → source</span>
+<div style="border:1px solid #D9DEE5;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:12px">
+<span style="align-self:flex-start;display:inline-flex;align-items:center;gap:8px;height:24px;padding:0 8px;border-radius:4px;background:#EAF1FA;color:#1F4E8C;font-size:13px;font-weight:500"><span style="width:10px;height:10px;border-radius:50%;background:currentColor"></span>Applies</span>
+<div style="font-size:16px;font-weight:600;line-height:1.4">Hiring decisions need a human final decision and bias testing</div>
+<div style="font-size:14px;line-height:1.5;color:#4A5565"><strong style="color:#1A2230;font-weight:600">Why this applies</strong> · The tool ranks applicants, which likely triggers protected-ground obligations.</div>
+<div style="font-size:14px;line-height:1.5"><strong style="font-weight:600">Consider</strong> · Recruiter signs off each shortlist; test outcomes by group before launch.</div>
+<div style="font-size:13px;color:#4A5565;border-top:1px solid #E3E7EC;padding-top:12px">BC Human Rights Code · Verified 14 Oct 2026 · <a href="#">Source</a></div>
+</div></div>
+
+<div style="display:flex;flex-direction:column;gap:10px"><span style="font:500 12px 'IBM Plex Mono',monospace;color:#4A5565">DivergingScoreBar · −1..+1, zero line</span>
+<div style="border:1px solid #D9DEE5;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:14px">
+<div style="display:grid;grid-template-columns:110px 1fr 56px;align-items:center;gap:12px"><span style="font-size:14px">A→B</span><span style="position:relative;height:16px;background:#F2F4F7;border-radius:2px"><span style="position:absolute;left:50%;top:0;bottom:0;width:21%;background:#2166AC"></span><span style="position:absolute;left:50%;top:-4px;bottom:-4px;width:1px;background:#1A2230"></span></span><span style="font:500 14px 'IBM Plex Mono',monospace;text-align:right">+0.42</span></div>
+<div style="display:grid;grid-template-columns:110px 1fr 56px;align-items:center;gap:12px"><span style="font-size:14px">Ep 1 · B→A</span><span style="position:relative;height:16px;background:#F2F4F7;border-radius:2px"><span style="position:absolute;right:50%;top:0;bottom:0;width:7.5%;background:#B35806"></span><span style="position:absolute;left:50%;top:-4px;bottom:-4px;width:1px;background:#1A2230"></span></span><span style="font:500 14px 'IBM Plex Mono',monospace;text-align:right">−0.15</span></div>
+<div style="display:flex;justify-content:space-between;margin-left:122px;margin-right:68px;font:400 12px 'IBM Plex Mono',monospace;color:#4A5565"><span>−1 weakens</span><span>0</span><span>strengthens +1</span></div>
+<p style="margin:0;font-size:13px;color:#4A5565">Blue #2166AC / orange #B35806: colour-blind safe; sign also shown in text.</p>
+</div></div>
+
+<div style="display:flex;flex-direction:column;gap:10px"><span style="font:500 12px 'IBM Plex Mono',monospace;color:#4A5565">QuadrantChart · only top-right shaded · episode trail</span>
+<div style="border:1px solid #D9DEE5;border-radius:8px;padding:16px;display:flex;justify-content:center">
+<svg width="300" height="280" viewBox="0 0 300 280" style="font-family:'IBM Plex Sans',sans-serif">
+<rect x="150" y="10" width="130" height="120" fill="#E8F1EF"></rect>
+<rect x="20" y="10" width="260" height="240" fill="none" stroke="#C3CAD3"></rect>
+<line x1="150" y1="10" x2="150" y2="250" stroke="#667085"></line>
+<line x1="20" y1="130" x2="280" y2="130" stroke="#667085"></line>
+<text x="272" y="28" text-anchor="end" font-size="12" font-weight="600" fill="#1D5C57">Mutual reinforcement</text>
+<line x1="163" y1="148" x2="205" y2="108" stroke="#1A2230" stroke-dasharray="3 3"></line>
+<circle cx="163" cy="148" r="5" fill="#FFFFFF" stroke="#1A2230" stroke-width="2"></circle>
+<circle cx="205" cy="108" r="6" fill="#1A2230"></circle>
+<text x="170" y="166" font-size="12" fill="#4A5565">Ep 1</text>
+<text x="213" y="104" font-size="12" font-weight="600" fill="#1A2230">Ep 2</text>
+<text x="280" y="268" text-anchor="end" font-size="12" fill="#4A5565">A→B →</text>
+<text x="20" y="268" font-size="12" fill="#4A5565">↑ B→A</text>
+</svg>
+</div></div>
+
+<div style="display:flex;flex-direction:column;gap:10px"><span style="font:500 12px 'IBM Plex Mono',monospace;color:#4A5565">LeverCard · setting → guardrail → cost → monitor → warn</span>
+<div style="border:1px solid #D9DEE5;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:14px">
+<span style="font:500 12px 'IBM Plex Mono',monospace;color:#1D5C57">LEVER 1</span>
+<div style="font-size:18px;font-weight:600">Decision rights</div>
+<div style="font-size:15px;line-height:1.5">Claims team sets the split within a shared split register.</div>
+<div style="display:grid;grid-template-columns:120px 1fr;gap:8px 12px;font-size:14px;line-height:1.45;border-top:1px solid #E3E7EC;padding-top:14px">
+<span style="color:#4A5565">Guardrail</span><span>Moves toward Machine need two sign-offs.</span>
+<span style="color:#4A5565">Direct cost</span><span>About half a day a month of lead time.</span>
+<span style="color:#4A5565">Monitor</span><span>Split changes logged per month</span>
+<span style="color:#4A5565">Warn if</span><span>A subtask moves without a logged review</span>
+</div></div></div>
+
+<div style="display:flex;flex-direction:column;gap:10px"><span style="font:500 12px 'IBM Plex Mono',monospace;color:#4A5565">SplitMap · subtask × owner + reason chip</span>
+<div style="border:1px solid #D9DEE5;border-radius:8px;overflow:hidden">
+<div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;font-size:13px;font-weight:500;color:#4A5565;background:#F5F7F9;border-bottom:1px solid #D9DEE5"><span style="padding:10px 16px">Subtask</span><span style="padding:10px 16px">Machine</span><span style="padding:10px 16px">Machine + review</span><span style="padding:10px 16px">Human</span></div>
+<div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;font-size:14px;border-bottom:1px solid #E3E7EC;align-items:center"><span style="padding:12px 16px">Classify document</span><span style="padding:12px 16px;display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:50%;background:#1D5C57"></span><span style="font-size:12px;padding:2px 8px;border-radius:12px;background:#F2F4F7;color:#3B4554">Rule-like</span></span><span></span><span></span></div>
+<div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;font-size:14px;align-items:center"><span style="padding:12px 16px">Approve reimbursement</span><span></span><span></span><span style="padding:12px 16px;display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:50%;background:#1D5C57"></span><span style="font-size:12px;padding:2px 8px;border-radius:12px;background:#F2F4F7;color:#3B4554">Affects claimant</span></span></div>
+</div></div>
+
+<div style="display:flex;flex-direction:column;gap:10px"><span style="font:500 12px 'IBM Plex Mono',monospace;color:#4A5565">Stepper · 3 steps</span>
+<div style="border:1px solid #D9DEE5;border-radius:8px;padding:24px;display:flex;align-items:center;gap:12px;font-size:14px">
+<span style="display:flex;align-items:center;gap:8px"><span style="width:24px;height:24px;border-radius:50%;background:#E8F1EF;color:#1D5C57;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600">✓</span>Describe</span><span style="flex:1;height:1px;background:#C3CAD3"></span>
+<span style="display:flex;align-items:center;gap:8px"><span style="width:24px;height:24px;border-radius:50%;background:#E8F1EF;color:#1D5C57;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600">✓</span>Break down</span><span style="flex:1;height:1px;background:#C3CAD3"></span>
+<span style="display:flex;align-items:center;gap:8px;font-weight:600"><span style="width:24px;height:24px;border-radius:50%;background:#1D5C57;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:13px">3</span>Confirm the split</span>
+</div></div>
+
+<div style="display:flex;flex-direction:column;gap:10px"><span style="font:500 12px 'IBM Plex Mono',monospace;color:#4A5565">ProgressNarration · named steps, no spinner</span>
+<div style="border:1px solid #D9DEE5;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:10px;font-size:14px">
+<span style="display:flex;gap:10px;align-items:center"><span style="color:#1D5C57;font-weight:600">✓</span>Matched 14 rules for BC and federal scope</span>
+<span style="display:flex;gap:10px;align-items:center;font-weight:600"><span style="width:10px;height:10px;border-radius:50%;border:2px solid #1D5C57;box-sizing:border-box"></span>Checking which rules are proposed vs in force…</span>
+<span style="display:flex;gap:10px;align-items:center;color:#667085"><span style="width:10px;height:10px;border-radius:50%;border:1px solid #98A2B3;box-sizing:border-box"></span>Costing the operating model</span>
+</div></div>
+
+<div style="display:flex;flex-direction:column;gap:10px"><span style="font:500 12px 'IBM Plex Mono',monospace;color:#4A5565">WhatIfDrawer · toggles + diff chips</span>
+<div style="border-radius:8px;box-shadow:0 1px 2px rgba(16,24,40,.06),0 8px 24px rgba(16,24,40,.08);padding:24px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;justify-content:space-between;align-items:center;font-size:14px"><span>Remove sentiment monitoring</span><span style="width:40px;height:24px;border-radius:12px;background:#1D5C57;position:relative"><span style="position:absolute;right:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#FFFFFF"></span></span></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><span style="font-size:13px;padding:4px 10px;border-radius:4px;border:1px solid #C3CAD3"><s style="color:#667085">Redesign</s> → <strong style="font-weight:600">Go with conditions</strong></span><span style="font-size:13px;padding:4px 10px;border-radius:4px;border:1px solid #C3CAD3">−1 Blocker</span></div>
+</div></div>
+
+<div style="display:flex;flex-direction:column;gap:10px"><span style="font:500 12px 'IBM Plex Mono',monospace;color:#4A5565">ReviewPanel field · flagged reason + snippet + reason codes</span>
+<div style="border:1px solid #D9DEE5;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;justify-content:space-between;font-size:13px;color:#4A5565"><span>Total</span><span style="display:inline-flex;align-items:center;gap:6px;color:#B42318;font-weight:500"><span style="width:12px;height:11px;background:currentColor;clip-path:polygon(50% 0,100% 100%,0 100%)"></span>Total ≠ sum of lines</span></div>
+<div style="height:40px;border:2px solid #B42318;border-radius:4px;display:flex;align-items:center;padding:0 12px;font:500 15px 'IBM Plex Mono',monospace">$289.00</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><span style="font-size:13px;height:28px;display:inline-flex;align-items:center;padding:0 10px;border-radius:14px;background:#1A2230;color:#FFFFFF">1 Total mismatch</span><span style="font-size:13px;height:28px;display:inline-flex;align-items:center;padding:0 10px;border-radius:14px;border:1px solid #C3CAD3">2 Illegible</span></div>
+</div></div>
+
+</div>
+<div style="display:flex;flex-direction:column;gap:10px"><span style="font:500 12px 'IBM Plex Mono',monospace;color:#4A5565">Disclaimer footer · on every result</span>
+<div style="border-top:1px solid #D9DEE5;padding:16px 0;display:flex;justify-content:space-between;font-size:13px;color:#4A5565"><span><strong style="color:#1A2230;font-weight:600">Indicative triage, not legal advice.</strong> Rules are labelled proposed or in force, with sources and verified dates. All organizations are fictional.</span><span style="display:flex;gap:16px"><a href="#">Sources</a><a href="#">Self-assessment</a><a href="#">About</a></span></div>
+</div>
+</section>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      neutrals: [
+        { name: 'Ink', hex: '#1A2230', note: '15.8:1' },
+        { name: 'Secondary', hex: '#4A5565', note: '7.6:1' },
+        { name: 'Muted', hex: '#667085', note: '4.8:1' },
+        { name: 'Border strong', hex: '#C3CAD3', note: '' },
+        { name: 'Border', hex: '#D9DEE5', note: '' },
+        { name: 'Divider', hex: '#E3E7EC', note: '' },
+        { name: 'Subtle', hex: '#F5F7F9', note: '' },
+        { name: 'Surface', hex: '#FFFFFF', note: '' }
+      ],
+      spaces: [4, 8, 16, 24, 32, 48, 64].map(px => ({ px }))
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,144 +1,171 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-/*
- ---break---
- */
-@custom-variant dark (&:is(.dark *));
+@import "../styles/tokens.css";
 
 /*
- * Placeholder tokens (shadcn "nova" neutrals) until the Claude Design handoff (PLAN Phase 3)
- * replaces them via src/styles/tokens.css. Colour values live only here, never in components.
- * Note: --muted is a surface colour (shadcn); use text-muted-foreground for secondary text.
+ * shadcn/ui variables mapped onto the Splitline design tokens (ADR-0005, ADR-0013).
+ * No colour literals here: every value is a token from src/styles/tokens.css.
+ * Note: --muted is a SURFACE colour (shadcn). Secondary text uses text-muted-foreground;
+ * the design's lightest allowed text colour (#667085) is the `faint` utility.
+ * The design is light-only, so there is no .dark block.
  */
 :root {
-  --muted: oklch(0.97 0 0);
-  --border: oklch(0.922 0 0);
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --background: var(--sl-surface);
+  --foreground: var(--sl-ink);
+  --card: var(--sl-surface);
+  --card-foreground: var(--sl-ink);
+  --popover: var(--sl-surface);
+  --popover-foreground: var(--sl-ink);
+  --primary: var(--sl-accent);
+  --primary-foreground: var(--sl-on-accent);
+  --secondary: var(--sl-chip);
+  --secondary-foreground: var(--sl-ink-2);
+  --muted: var(--sl-subtle);
+  --muted-foreground: var(--sl-secondary);
+  --accent: var(--sl-chip);
+  --accent-foreground: var(--sl-ink);
+  --destructive: var(--sl-st-blocker);
+  --border: var(--sl-border);
+  --input: var(--sl-border-strong);
+  --ring: var(--sl-accent);
+  --chart-1: var(--sl-score-pos);
+  --chart-2: var(--sl-score-neg);
+  --chart-3: var(--sl-accent);
+  --chart-4: var(--sl-muted);
+  --chart-5: var(--sl-score-track);
+  --radius: var(--sl-r-card);
+  --sidebar: var(--sl-rail);
+  --sidebar-foreground: var(--sl-ink);
+  --sidebar-primary: var(--sl-accent);
+  --sidebar-primary-foreground: var(--sl-on-accent);
+  --sidebar-accent: var(--sl-chip);
+  --sidebar-accent-foreground: var(--sl-ink);
+  --sidebar-border: var(--sl-border);
+  --sidebar-ring: var(--sl-accent);
 }
 
 @theme inline {
+  /* shadcn semantic colours */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-muted: var(--muted);
-  --color-border: var(--border);
-  --font-sans: var(--font-sans);
-  --font-heading: var(--font-sans);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Splitline design tokens as utilities (bg-*, text-*, border-*) */
+  --color-brand: var(--sl-accent);
+  --color-brand-hover: var(--sl-accent-hover);
+  --color-brand-tint: var(--sl-accent-tint);
+  --color-on-brand: var(--sl-on-accent);
+  --color-ink: var(--sl-ink);
+  --color-ink-2: var(--sl-ink-2);
+  --color-faint: var(--sl-muted);
+  --color-placeholder: var(--sl-placeholder);
+  --color-border-strong: var(--sl-border-strong);
+  --color-divider: var(--sl-divider);
+  --color-chip: var(--sl-chip);
+  --color-subtle: var(--sl-subtle);
+  --color-rail: var(--sl-rail);
+  --color-surface: var(--sl-surface);
+  --color-st-applies: var(--sl-st-applies);
+  --color-st-applies-bg: var(--sl-st-applies-bg);
+  --color-st-prepare: var(--sl-st-prepare);
+  --color-st-prepare-bg: var(--sl-st-prepare-bg);
+  --color-st-regulator: var(--sl-st-regulator);
+  --color-st-regulator-bg: var(--sl-st-regulator-bg);
+  --color-st-good: var(--sl-st-good);
+  --color-st-good-bg: var(--sl-st-good-bg);
+  --color-st-blocker: var(--sl-st-blocker);
+  --color-st-blocker-bg: var(--sl-st-blocker-bg);
+  --color-drift-text: var(--sl-drift-text);
+  --color-flag-field-bg: var(--sl-flag-field-bg);
+  --color-score-pos: var(--sl-score-pos);
+  --color-score-neg: var(--sl-score-neg);
+  --color-score-track: var(--sl-score-track);
+  --color-score-zero: var(--sl-score-zero);
+
+  /* Type */
+  --font-sans: var(--sl-font-sans);
+  --font-heading: var(--sl-font-sans);
+  --font-mono: var(--sl-font-mono);
+
+  /* Radius: control 4 px, card 8 px (no default shadcn radius) */
+  --radius-xs: var(--sl-r-control);
+  --radius-sm: var(--sl-r-control);
+  --radius-md: var(--sl-r-control);
+  --radius-lg: var(--sl-r-card);
+  --radius-xl: var(--sl-r-card);
+  --radius-2xl: var(--sl-r-card);
+  --radius-3xl: var(--sl-r-card);
+  --radius-4xl: var(--sl-r-card);
+  --radius-control: var(--sl-r-control);
+  --radius-card: var(--sl-r-card);
+  --radius-pill: var(--sl-r-pill);
+
+  /* Elevation: one level */
+  --shadow-elevated: var(--sl-shadow);
+  --shadow-doc: var(--sl-shadow-doc);
 }
 
-body {
-  font-family: var(--font-sans);
-}
-/*
- ---break---
- */
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
-}
-/*
- ---break---
- */
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
+  }
+  html {
+    @apply font-sans;
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   body {
     @apply bg-background text-foreground;
   }
-  html {
-    @apply font-sans;
+  a {
+    color: var(--sl-accent);
+  }
+  a:hover {
+    color: var(--sl-accent-hover);
+  }
+  /* Visible focus everywhere: 2px accent outline, 2px offset (handoff, WCAG 2.4.7 / 2.4.13). */
+  :focus-visible {
+    outline: var(--sl-focus);
+    outline-offset: var(--sl-focus-offset);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0;background:#E6E9ED;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#1A2230;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}a{color:#1D5C57}a:hover{color:#123F3B}*:focus-visible{outline:2px solid #1D5C57;outline-offset:2px}button{font-family:inherit}</style>
+</helmet>
+<div style="padding:64px;display:flex;gap:64px;align-items:flex-start">
+
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="font:500 13px 'IBM Plex Mono',monospace;color:#4A5565">Landing · 1440</div>
+<div data-screen-label="Landing desktop" style="width:1440px;background:#FFFFFF">
+<header style="height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 80px;border-bottom:1px solid #E3E7EC">
+<div style="display:flex;align-items:center;gap:10px"><span style="display:flex;gap:2px"><span style="width:9px;height:20px;background:#1D5C57;border-radius:2px 0 0 2px"></span><span style="width:9px;height:20px;box-sizing:border-box;border:2px solid #1D5C57;border-radius:0 2px 2px 0"></span></span><span style="font-size:18px;font-weight:600;letter-spacing:-0.01em">Splitline</span></div>
+<nav style="display:flex;align-items:center;gap:32px;font-size:15px"><a href="#presets" style="color:#1A2230;text-decoration:none">Presets</a><a href="#" style="color:#1A2230;text-decoration:none">Sources</a><a href="#" style="color:#1A2230;text-decoration:none">Self-assessment</a><a href="#" style="color:#1A2230;text-decoration:none">About</a><a href="Intake.dc.html" style="height:40px;padding:0 16px;border-radius:4px;background:#1D5C57;color:#FFFFFF;font-weight:500;display:inline-flex;align-items:center;text-decoration:none">Start your own</a></nav>
+</header>
+
+<section style="padding:80px 80px 56px;display:flex;flex-direction:column;gap:20px;max-width:920px">
+<span style="font-size:14px;font-weight:500;color:#1D5C57">For AI enablement and transformation leads in Canada</span>
+<h1 style="margin:0;font-size:56px;line-height:1.08;font-weight:600;letter-spacing:-0.025em;text-wrap:balance">Design where the machine ends and judgment begins.</h1>
+<p style="margin:0;font-size:20px;line-height:1.5;color:#4A5565;max-width:720px;text-wrap:pretty">Turn an AI idea into a governed, human–AI operating model in 15 minutes, then measure whether it's working.</p>
+</section>
+
+<section id="presets" style="padding:0 80px 24px;display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><h2 style="margin:0;font-size:20px;font-weight:600">Start from a worked case</h2><span style="font-size:14px;color:#4A5565">Each preset opens with full results. Edit anything.</span></div>
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px">
+<sc-for list="{{ presets }}" as="p" hint-placeholder-count="4">
+<a href="{{ p.href }}" style="border:1px solid #D9DEE5;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:16px;min-height:220px;box-sizing:border-box;text-decoration:none;color:#1A2230;background:#FFFFFF" style-hover="border-color:#1D5C57;box-shadow:0 1px 2px rgba(16,24,40,.06),0 8px 24px rgba(16,24,40,.08)">
+<span style="font:500 12px 'IBM Plex Mono',monospace;color:#4A5565;text-transform:uppercase;letter-spacing:0.04em">{{ p.sector }}</span>
+<span style="font-size:20px;font-weight:600;line-height:1.3;flex:1">{{ p.title }}</span>
+<span style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+<sc-if value="{{ p.tier }}" hint-placeholder-val="{{ true }}"><span style="height:24px;display:inline-flex;align-items:center;padding:0 8px;border:1px solid #C3CAD3;border-radius:4px;font-size:13px;font-weight:500">{{ p.tier }}</span></sc-if>
+<span style="height:24px;display:inline-flex;align-items:center;gap:8px;padding:0 8px;border-radius:4px;background:#F2F4F7;font-size:13px;font-weight:500">
+<sc-if value="{{ p.conditional }}" hint-placeholder-val="{{ true }}"><span style="width:10px;height:10px;border-radius:50%;border:2px solid #1A2230;box-sizing:border-box;background:linear-gradient(90deg,#1A2230 50%,transparent 50%)"></span></sc-if>
+<sc-if value="{{ p.redesign }}"><span style="width:8px;height:8px;border:2px solid #1A2230;transform:rotate(45deg)"></span></sc-if>
+{{ p.verdict }}</span>
+</span>
+<span style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid #E3E7EC;padding-top:14px;font-size:14px;font-weight:500;color:#1D5C57"><span>Open preset →</span><sc-if value="{{ p.lab }}"><span style="display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:4px;background:#E8F1EF">Try the Living Lab</span></sc-if></span>
+</a>
+</sc-for>
+</div>
+<a href="Intake.dc.html" style="border:1px dashed #98A2B3;border-radius:8px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;text-decoration:none;color:#1A2230" style-hover="border-color:#1D5C57">
+<span style="display:flex;flex-direction:column;gap:4px"><span style="font-size:17px;font-weight:600">Start your own</span><span style="font-size:15px;color:#4A5565">Describe a use case in plain words. You confirm every step before anything is analysed.</span></span>
+<span style="height:40px;padding:0 16px;border-radius:4px;border:1px solid #1D5C57;color:#1D5C57;font-size:15px;font-weight:500;display:inline-flex;align-items:center">Describe a use case</span>
+</a>
+</section>
+
+<section style="margin-top:72px;padding:64px 80px;background:#F5F7F9;display:flex;flex-direction:column;gap:32px">
+<h2 style="margin:0;font-size:24px;font-weight:600">How it works</h2>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:48px">
+<sc-for list="{{ steps }}" as="s" hint-placeholder-count="3">
+<div style="display:flex;flex-direction:column;gap:12px;border-top:2px solid #1D5C57;padding-top:20px">
+<span style="font:500 13px 'IBM Plex Mono',monospace;color:#1D5C57">{{ s.n }}</span>
+<span style="font-size:18px;font-weight:600">{{ s.title }}</span>
+<span style="font-size:15px;line-height:1.55;color:#4A5565;text-wrap:pretty">{{ s.body }}</span>
+</div>
+</sc-for>
+</div>
+</section>
+
+<footer style="padding:24px 80px;display:flex;justify-content:space-between;align-items:center;font-size:14px;color:#4A5565;border-top:1px solid #E3E7EC">
+<span>Indicative triage, not legal advice. All organizations are fictional.</span>
+<span style="display:flex;gap:24px"><a href="#">Sources</a><a href="#">Self-assessment</a><a href="#">About</a></span>
+</footer>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="font:500 13px 'IBM Plex Mono',monospace;color:#4A5565">Landing · 375</div>
+<div data-screen-label="Landing mobile" style="width:375px;background:#FFFFFF">
+<header style="height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid #E3E7EC">
+<div style="display:flex;align-items:center;gap:8px"><span style="display:flex;gap:2px"><span style="width:8px;height:18px;background:#1D5C57;border-radius:2px 0 0 2px"></span><span style="width:8px;height:18px;box-sizing:border-box;border:2px solid #1D5C57;border-radius:0 2px 2px 0"></span></span><span style="font-size:17px;font-weight:600">Splitline</span></div>
+<button aria-label="Menu" style="width:44px;height:44px;border:1px solid #D9DEE5;border-radius:4px;background:#FFFFFF;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px"><span style="width:18px;height:2px;background:#1A2230"></span><span style="width:18px;height:2px;background:#1A2230"></span><span style="width:18px;height:2px;background:#1A2230"></span></button>
+</header>
+<section style="padding:40px 20px 32px;display:flex;flex-direction:column;gap:16px">
+<span style="font-size:13px;font-weight:500;color:#1D5C57">For AI enablement and transformation leads in Canada</span>
+<h1 style="margin:0;font-size:34px;line-height:1.12;font-weight:600;letter-spacing:-0.02em">Design where the machine ends and judgment begins.</h1>
+<p style="margin:0;font-size:17px;line-height:1.5;color:#4A5565">Turn an AI idea into a governed, human–AI operating model in 15 minutes, then measure whether it's working.</p>
+</section>
+<section style="padding:0 20px;display:flex;flex-direction:column;gap:12px">
+<h2 style="margin:0;font-size:17px;font-weight:600">Start from a worked case</h2>
+<sc-for list="{{ presets }}" as="p" hint-placeholder-count="4">
+<a href="{{ p.href }}" style="border:1px solid #D9DEE5;border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:10px;text-decoration:none;color:#1A2230">
+<span style="font:500 11px 'IBM Plex Mono',monospace;color:#4A5565;text-transform:uppercase;letter-spacing:0.04em">{{ p.sector }}</span>
+<span style="font-size:17px;font-weight:600">{{ p.title }}</span>
+<span style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+<sc-if value="{{ p.tier }}" hint-placeholder-val="{{ true }}"><span style="height:24px;display:inline-flex;align-items:center;padding:0 8px;border:1px solid #C3CAD3;border-radius:4px;font-size:13px;font-weight:500">{{ p.tier }}</span></sc-if>
+<span style="height:24px;display:inline-flex;align-items:center;gap:8px;padding:0 8px;border-radius:4px;background:#F2F4F7;font-size:13px;font-weight:500">
+<sc-if value="{{ p.conditional }}" hint-placeholder-val="{{ true }}"><span style="width:10px;height:10px;border-radius:50%;border:2px solid #1A2230;box-sizing:border-box;background:linear-gradient(90deg,#1A2230 50%,transparent 50%)"></span></sc-if>
+<sc-if value="{{ p.redesign }}"><span style="width:8px;height:8px;border:2px solid #1A2230;transform:rotate(45deg)"></span></sc-if>
+{{ p.verdict }}</span>
+<sc-if value="{{ p.lab }}"><span style="height:24px;display:inline-flex;align-items:center;padding:0 8px;border-radius:4px;background:#E8F1EF;color:#1D5C57;font-size:13px;font-weight:500">Try the Living Lab</span></sc-if>
+</span>
+</a>
+</sc-for>
+<a href="Intake.dc.html" style="height:48px;border-radius:4px;background:#1D5C57;color:#FFFFFF;font-size:16px;font-weight:500;display:flex;align-items:center;justify-content:center;text-decoration:none;margin-top:8px">Start your own</a>
+</section>
+<section style="margin-top:40px;padding:32px 20px;background:#F5F7F9;display:flex;flex-direction:column;gap:24px">
+<h2 style="margin:0;font-size:20px;font-weight:600">How it works</h2>
+<sc-for list="{{ steps }}" as="s" hint-placeholder-count="3">
+<div style="display:grid;grid-template-columns:32px 1fr;gap:4px 8px">
+<span style="font:500 13px 'IBM Plex Mono',monospace;color:#1D5C57;padding-top:2px">{{ s.n }}</span>
+<span style="font-size:16px;font-weight:600">{{ s.title }}</span>
+<span></span><span style="font-size:15px;line-height:1.5;color:#4A5565">{{ s.body }}</span>
+</div>
+</sc-for>
+</section>
+<footer style="padding:20px;display:flex;flex-direction:column;gap:12px;font-size:13px;color:#4A5565;border-top:1px solid #E3E7EC">
+<span style="display:flex;gap:20px;font-size:14px"><a href="#">Sources</a><a href="#">Self-assessment</a><a href="#">About</a></span>
+<span>Indicative triage, not legal advice. All organizations are fictional.</span>
+</footer>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      presets: [
+        { sector: 'Health authority', title: 'Clinical referral triage', tier: 'Tier III', verdict: 'Go with conditions', conditional: true, href: 'Results Summary.dc.html' },
+        { sector: 'Legal tech', title: 'Contract clause review', tier: 'Tier II', verdict: 'Go with conditions', conditional: true, href: 'Results Summary.dc.html' },
+        { sector: 'HR', title: 'Hiring & sentiment scoring', tier: '', verdict: 'Redesign', redesign: true, href: 'Results Summary.dc.html' },
+        { sector: 'Public insurer', title: 'Claims document intake', tier: 'Tier II', verdict: 'Go with conditions', conditional: true, lab: true, href: 'Living Lab.dc.html' }
+      ],
+      steps: [
+        { n: '01', title: 'Triage', body: 'Indicative governance triage against Canada and BC rules. Each rule is labelled in force or proposed, with its source and the date we last verified it.' },
+        { n: '02', title: 'Design the split', body: 'Decide who sets the human–AI split, how it is reviewed, how the teams exchange learning, and what that design costs.' },
+        { n: '03', title: 'Measure', body: 'After launch, the Reinforcement Pulse and the Living Lab show whether people and the AI are improving each other or drifting apart.' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

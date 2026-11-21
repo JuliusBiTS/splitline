@@ -1,0 +1,54 @@
+/* Splitline design tokens (Evergreen accent). Map into Tailwind/shadcn CSS variables. */
+:root {
+  /* Accent */
+  --accent: #1D5C57;          /* white text 7.4:1 */
+  --accent-hover: #123F3B;
+  --accent-tint: #E8F1EF;     /* banners, selected rows, positive quadrant */
+
+  /* Slate neutrals */
+  --ink: #1A2230;             /* primary text */
+  --ink-2: #3B4554;           /* body-on-tint, chip text */
+  --secondary: #4A5565;       /* secondary text, 7.6:1 */
+  --muted: #667085;           /* min. text colour, 4.8:1; axis lines */
+  --placeholder: #98A2B3;     /* off switch track, pending icons (non-text) */
+  --border-strong: #C3CAD3;   /* inputs, buttons, chips */
+  --border: #D9DEE5;          /* cards, tables */
+  --divider: #E3E7EC;
+  --chip: #F2F4F7;
+  --subtle: #F5F7F9;          /* section bg, table header, cost boxes */
+  --rail: #FAFBFC;
+  --surface: #FFFFFF;
+  --desk: #E6E9ED;            /* mock canvas only */
+
+  /* Rule status: fg / bg. ALWAYS icon + label */
+  --st-applies: #1F4E8C;   --st-applies-bg: #EAF1FA;   /* filled circle */
+  --st-prepare: #8A5300;   --st-prepare-bg: #FBF3E4;   /* dashed ring — "Prepare for (proposed)" */
+  --st-regulator: #5B3A99; --st-regulator-bg: #F1ECFA; /* diamond */
+  --st-good: #2E6B3E;      --st-good-bg: #EAF4EC;      /* square outline */
+  --st-blocker: #B42318;   --st-blocker-bg: #FDECEA;   /* triangle */
+  --drift-text: #5C3800;   /* on --st-prepare-bg */
+  --flag-field-bg: #FDF6F5;
+
+  /* Diverging scores −1..+1 (colour-blind safe) */
+  --score-pos: #2166AC;
+  --score-neg: #B35806;
+  --score-track: #EEF1F4;
+  --score-zero: #1A2230;
+
+  /* Type */
+  --font-sans: 'IBM Plex Sans', system-ui, sans-serif;  /* weights 400/500/600; font-variant-numeric: tabular-nums globally */
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace; /* 400/500 */
+
+  /* Space (8-pt) */
+  --s-1: 4px; --s-2: 8px; --s-3: 16px; --s-4: 24px; --s-5: 32px; --s-6: 48px; --s-7: 64px; --s-8: 80px;
+
+  /* Radius */
+  --r-control: 4px; --r-card: 8px; --r-pill: 999px;
+
+  /* Elevation (one level: drawers, hovered cards, drawer handle) */
+  --shadow: 0 1px 2px rgba(16,24,40,.06), 0 8px 24px rgba(16,24,40,.08);
+  --shadow-doc: 0 1px 2px rgba(16,24,40,.06);
+
+  /* Focus */
+  --focus: 2px solid var(--accent); --focus-offset: 2px;
+}
