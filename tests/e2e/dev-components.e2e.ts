@@ -29,7 +29,7 @@ test.describe("/dev/components", () => {
   test("uses the design fonts and accent token", async ({ page }) => {
     const font = await page.locator("body").evaluate((el) => getComputedStyle(el).fontFamily);
     expect(font).toMatch(/IBM Plex Sans/i);
-    const bg = await page.getByRole("button", { name: "Confirm split and analyse" }).evaluate((el) => getComputedStyle(el).backgroundColor);
+    const bg = await page.getByRole("button", { name: "Confirm split and analyze" }).evaluate((el) => getComputedStyle(el).backgroundColor);
     expect(bg).toBe("rgb(29, 92, 87)"); // #1D5C57 Evergreen
   });
 
@@ -54,7 +54,7 @@ test.describe("/dev/components", () => {
     await page.getByRole("button", { name: "What if…" }).click();
     const dialog = page.getByRole("dialog", { name: "What if…" });
     await expect(dialog).toBeVisible();
-    await expect(dialog.getByText("No change yet. Turn on a switch above.")).toBeVisible();
+    await expect(dialog.getByText("No change yet. Change a setting above.")).toBeVisible();
     const sw = dialog.getByRole("switch", { name: "Crisis context (temporary centralization)" });
     await sw.focus();
     await page.keyboard.press("Space");

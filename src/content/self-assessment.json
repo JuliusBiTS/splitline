@@ -1,0 +1,82 @@
+{
+  "slug": "splitline-self-assessment",
+  "organization": "Splitline (this demo)",
+  "verdictExplanation": "Splitline run through its own engine, using its own committed intake.",
+  "intake": {
+    "title": "Splitline: AI-assisted operating-model triage",
+    "processDescription": "Practitioners describe a proposed AI use case in plain words and answer structured context questions. A large language model proposes a breakdown into subtasks with attributes; the user edits and confirms every subtask before anything is analyzed. A deterministic rules engine then computes the indicative tier, the triggered rules, the verdict and the operating model. The language model only writes a short narrative from the engine's facts, and a guard rejects any rule it was not given. Users are told not to enter personal information.",
+    "orgType": "bc_private",
+    "businessFunction": "other",
+    "aiDecisionRole": "recommends",
+    "affectedPeople": ["businesses_only"],
+    "dataCategories": ["no_personal"],
+    "jurisdictions": ["bc", "other_provinces"],
+    "hosting": "us_or_global_api",
+    "aiType": "generative_llm",
+    "customerFacingOutput": true,
+    "monitorsEmployees": false,
+    "teamSetup": "embedded",
+    "readiness": "medium",
+    "proposedKpis": ["Schema-valid model outputs", "User edits per confirmed breakdown", "Narration guard rejections"],
+    "sector": "other",
+    "useCasePatterns": [],
+    "mitigations": ["human_final_decision", "explanation_available", "predeployment_testing"],
+    "genAiToolType": "direct_api"
+  },
+  "decomposition": {
+    "subtasks": [
+      {
+        "id": "s1",
+        "name": "Propose a subtask breakdown",
+        "description": "The language model splits the description into subtasks and proposes attributes for each.",
+        "judgmentIntensity": "medium",
+        "knowledgeType": "tacit",
+        "errorCost": "medium",
+        "volume": "medium",
+        "affectsIndividuals": false,
+        "consequential": false,
+        "rationale": "A proposal only; the user edits and confirms it before analysis."
+      },
+      {
+        "id": "s2",
+        "name": "Confirm the breakdown and split",
+        "description": "The user reviews, edits and confirms every subtask and attribute.",
+        "judgmentIntensity": "high",
+        "knowledgeType": "tacit",
+        "errorCost": "medium",
+        "volume": "medium",
+        "affectsIndividuals": false,
+        "consequential": false,
+        "rationale": "The user knows the process; the tool dogfoods its human-in-the-loop principle."
+      },
+      {
+        "id": "s3",
+        "name": "Check rules and compute the tier",
+        "description": "The deterministic engine evaluates the rule catalogue, the indicative tier, the verdict and the operating model.",
+        "judgmentIntensity": "low",
+        "knowledgeType": "codifiable",
+        "errorCost": "high",
+        "volume": "medium",
+        "affectsIndividuals": false,
+        "consequential": false,
+        "rationale": "Codified rules with sources; tested against golden cases."
+      },
+      {
+        "id": "s4",
+        "name": "Write the narrative",
+        "description": "The language model writes a short explanation from the engine's facts; a guard rejects unknown rules.",
+        "judgmentIntensity": "low",
+        "knowledgeType": "codifiable",
+        "errorCost": "medium",
+        "volume": "medium",
+        "affectsIndividuals": false,
+        "consequential": false,
+        "rationale": "Restates engine facts; falls back to template text when the guard fails."
+      }
+    ],
+    "assumptions": [],
+    "clarifyingQuestions": [],
+    "suggestedUseCasePatterns": [],
+    "confirmedNoConsequential": true
+  }
+}

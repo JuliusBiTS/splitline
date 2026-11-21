@@ -20,7 +20,8 @@
     "test:a11y": "playwright test --project=a11y",
     "eval:engine": "tsx scripts/eval-engine.ts",
     "eval:llm": "tsx scripts/eval-llm.ts",
-    "verify": "pnpm typecheck && pnpm lint && pnpm test"
+    "verify": "pnpm typecheck && pnpm lint && pnpm test",
+    "test:lighthouse": "node scripts/lighthouse.mts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.10.0",
@@ -51,6 +52,7 @@
     "@vitest/coverage-v8": "^5.1.1",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
+    "lighthouse": "^13.6.0",
     "tailwindcss": "4.3.3",
     "tsx": "^4.23.15",
     "typescript": "^5",

@@ -29,7 +29,7 @@ import { computeWhatIf } from "@/engine/whatif";
 import { PrimitivesDemo, ProgressDemo, WhatIfDemo, type WhatIfScenario } from "./demos";
 
 export const metadata: Metadata = {
-  title: "Components · Splitline",
+  title: "Components",
   robots: { index: false, follow: false },
 };
 
@@ -122,7 +122,7 @@ export default function ComponentsPage() {
   const ep2 = scorePulse({ role: "lead", A1: 6, A2: 5, A3: 6, B1: 5, B2: 4, B3: 5, D1: 5, D2: 4, D3: 5 });
 
   return (
-    <main className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col gap-10 px-5 py-8 sm:px-10 lg:px-20">
+    <main id="main" className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col gap-10 px-5 py-8 sm:px-10 lg:px-20">
       <header className="flex flex-col gap-3">
         <Logo />
         <h1 className="text-[34px] leading-tight font-semibold tracking-[-0.025em] text-ink sm:text-[44px]">Components</h1>

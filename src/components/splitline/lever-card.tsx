@@ -1,5 +1,5 @@
 import type { LeverCard as LeverCardData } from "@/engine/types";
-import { LEVER_NAMES } from "@/engine/levers";
+import { LEVER_DRIVERS, LEVER_NAMES } from "@/engine/levers";
 import { cn } from "@/lib/utils";
 import { StatusIcon } from "./status-badge";
 
@@ -24,11 +24,22 @@ export function LeverCard({
         Lever {index} · {name.replace(/\s*\(P\d\)$/, "")}
       </p>
       <h3 className="text-xl font-semibold text-ink">{name}</h3>
+      <p className="-mt-2 text-sm text-muted-foreground">Drives: {LEVER_DRIVERS[lever.lever].toLowerCase()}</p>
       <p className="text-base leading-normal text-ink">{lever.setting}</p>
+      {lever.details.length > 0 && (
+        <ul className="list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-ink-2">
+          {lever.details.map((d) => (
+            <li key={d}>{d}</li>
+          ))}
+        </ul>
+      )}
       <hr className="border-divider" />
       <div>
         <h4 className="text-sm font-semibold text-ink">Guardrail</h4>
         <p className="mt-1 text-[15px] text-ink-2">{lever.guardrail}</p>
+        {lever.lever === "coordination" && (
+          <p className="mt-1 text-sm text-muted-foreground">Standardize the interface, not the task allocation.</p>
+        )}
       </div>
       <div className="rounded-control bg-subtle p-4">
         <h4 className="text-sm font-semibold text-ink">Direct cost</h4>

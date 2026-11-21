@@ -1,6 +1,7 @@
 "use client";
 
 import { ExternalLinkIcon } from "lucide-react";
+import Link from "next/link";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import type { RuleCardModel } from "./rule-card.logic";
 import { StatusBadge } from "./status-badge";
@@ -72,6 +73,12 @@ function RuleCardItem({ rule }: { rule: RuleCardModel }) {
               <span className="sr-only">(opens in a new tab)</span>
             </a>
           ))}
+          <Link
+            href={`/sources#${rule.ruleId}`}
+            className="inline-flex min-h-6 items-center font-medium text-brand underline underline-offset-2"
+          >
+            See {rule.ruleId} on the Governance Map
+          </Link>
         </p>
       </AccordionContent>
     </AccordionItem>

@@ -82,7 +82,7 @@ export function ProgressDemo() {
   return (
     <div className="flex flex-col gap-3">
       <ProgressNarration
-        heading={step >= NARRATION.length ? "Split confirmed by you · analysis ready" : "Split confirmed by you · analysing"}
+        heading={step >= NARRATION.length ? "Split confirmed by you · analysis ready" : "Split confirmed by you · analyzing"}
         steps={NARRATION}
         current={step}
         className="max-w-xl"
@@ -114,7 +114,7 @@ export function PrimitivesDemo() {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-wrap items-center gap-3">
-        <Button>Confirm split and analyse</Button>
+        <Button>Confirm split and analyze</Button>
         <Button variant="outline">Describe a use case</Button>
         <Button variant="ghost">Edit inputs</Button>
         <Button variant="link">Open source</Button>

@@ -82,7 +82,7 @@ function LevelSelect({ value, label, critical = false }: { value: Level; label: 
 
 /**
  * SplitMap (edit view, Intake step 3 "Confirm the split"): every AI proposal is editable, and an
- * edited owner is flagged against the AI proposal. Nothing is analysed until the user confirms.
+ * edited owner is flagged against the AI proposal. Nothing is analyzed until the user confirms.
  */
 export function SplitEditor({ rows }: { rows: SplitEditorRow[] }) {
   const [owners, setOwners] = useState<SplitOwner[]>(rows.map((r) => r.proposedOwner));

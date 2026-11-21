@@ -15,28 +15,42 @@ export function Logo({ className }: { className?: string }) {
   );
 }
 
-/** The handoff's footer links. The routes land in Phase 4; pass them only once they exist. */
+/** Footer info links (SPEC §4): About, Sources, Self-assessment. */
 export const FOOTER_LINKS = [
   { href: "/sources", label: "Sources" },
   { href: "/self-assessment", label: "Self-assessment" },
   { href: "/about", label: "About" },
 ] as const;
 
-/** Footer on every page: the disclaimer, the fictional-organizations note and the info links. */
-export function DisclaimerFooter({ links = [] }: { links?: readonly { href: string; label: string }[] }) {
+/**
+ * Footer on every page: the disclaimer, the fictional-organizations note, the info links and a
+ * small author credit (ADR-0010: the author card itself lives on /about only).
+ */
+export function DisclaimerFooter({
+  links = [],
+  credit,
+}: {
+  links?: readonly { href: string; label: string }[];
+  credit?: string;
+}) {
   return (
-    <footer className="mt-auto border-t border-divider px-5 py-6 sm:px-20">
-      <p className="text-[15px] font-semibold text-ink">{DISCLAIMER_SHORT}</p>
-      <p className="mt-1 text-sm text-muted-foreground">All organizations and people in this demo are fictional.</p>
-      {links.length > 0 && (
-        <nav aria-label="Footer" className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm">
-          {links.map((l) => (
-            <Link key={l.href} href={l.href} className="inline-flex min-h-6 items-center">
-              {l.label}
-            </Link>
-          ))}
-        </nav>
-      )}
+    <footer className="mt-auto border-t border-divider px-4 py-6 sm:px-10 lg:px-20">
+      <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <p className="text-[15px] font-semibold text-ink">{DISCLAIMER_SHORT}</p>
+          <p className="mt-1 text-sm text-muted-foreground">All organizations and people in this demo are fictional.</p>
+          {credit && <p className="mt-1 text-sm text-muted-foreground">{credit}</p>}
+        </div>
+        {links.length > 0 && (
+          <nav aria-label="Footer" className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
+            {links.map((l) => (
+              <Link key={l.href} href={l.href} className="inline-flex min-h-6 items-center underline underline-offset-2">
+                {l.label}
+              </Link>
+            ))}
+          </nav>
+        )}
+      </div>
     </footer>
   );
 }

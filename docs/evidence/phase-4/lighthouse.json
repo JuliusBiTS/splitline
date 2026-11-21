@@ -1,0 +1,30 @@
+{
+  "minScore": 90,
+  "emulation": "Lighthouse default (mobile, simulated throttling)",
+  "results": [
+    {
+      "route": "/",
+      "scores": [
+        100,
+        100,
+        100
+      ],
+      "median": 100,
+      "lcpMs": 912,
+      "tbtMs": 0,
+      "cls": 0
+    },
+    {
+      "route": "/preset/clinical-referral-triage",
+      "scores": [
+        100,
+        100,
+        100
+      ],
+      "median": 100,
+      "lcpMs": 1374,
+      "tbtMs": 0,
+      "cls": 0
+    }
+  ]
+}
