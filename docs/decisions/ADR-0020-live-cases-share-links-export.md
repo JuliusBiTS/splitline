@@ -44,7 +44,7 @@ Phase 6 (PLAN) adds `/case/new`, `/case/[id]`, the export and the first deploy. 
 7. **Manual entry.** Live mode off, any `fallback: "manual"` refusal, or a network error opens the same table with three blank rows. The user can retry the AI proposal from there.
 8. **Print charter.**
    - `/preset/[slug]/charter` (static, `instant = false` as a print page) and `/case/[id]/charter` (client) render a one-page view on A4 and Letter (Playwright PDF check, all presets).
-   - To fit with headroom (at most 90% of a Letter page, tested), the printed plan lists deliverable headlines without owners or phase gates: the rule title for rule deliverables, the text before the first colon for the others.
+   - To fit with headroom (at most 90% of a Letter page, tested), the printed plan lists deliverable headlines without owners or phase gates, and reviewer-time estimates stay in the Markdown: the rule title for rule deliverables, the text before the first colon for the others.
    - The printed rule list shows the first source per rule plus "+n more on the Governance Map". The footer prints the Governance Map address, where every rule lists all its sources.
    - The long disclaimer is the final line of both charters, and both carry the plain thesis scope note.
    - The Markdown charter keeps everything: full deliverables with owners, all sources, the narrative.

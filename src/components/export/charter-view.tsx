@@ -18,7 +18,7 @@ export function CharterView({ m }: { m: CharterModel }) {
   return (
     <article
       aria-label={`Charter: ${m.title}`}
-      className="charter mx-auto flex w-full max-w-[860px] flex-col gap-4 rounded-card border border-border bg-surface p-6 text-[13px] leading-snug text-ink-2 sm:p-8 print:max-w-none print:gap-[4pt] print:rounded-none print:border-0 print:p-0 print:text-[6.2pt] print:leading-[1.2]"
+      className="charter mx-auto flex w-full max-w-[860px] flex-col gap-4 rounded-card border border-border bg-surface p-6 text-[13px] leading-snug text-ink-2 sm:p-8 print:max-w-none print:gap-[4pt] print:rounded-none print:border-0 print:p-0 print:text-[6.2pt] print:leading-[1.15]"
     >
       <header className="flex flex-col gap-1 border-b-2 border-brand pb-2 print:pb-[3pt]">
         <p className="font-mono text-[11px] tracking-[0.04em] text-brand uppercase print:text-[6.5pt]">Splitline charter · {m.date}</p>
@@ -85,7 +85,7 @@ export function CharterView({ m }: { m: CharterModel }) {
             ))}
           </div>
           {m.reviewEstimates.length > 0 && (
-            <p className="mt-1 text-muted-foreground">People checking AI output (estimate): {m.reviewEstimates.join(" ")}</p>
+            <p className="mt-1 text-muted-foreground print:hidden">People checking AI output (estimate): {m.reviewEstimates.join(" ")}</p>
           )}
         </Block>
 
