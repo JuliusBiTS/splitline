@@ -81,3 +81,14 @@ test("missing case message", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible({ timeout: 30_000 });
   await expectClean(page);
 });
+
+test("Pulse survey and result", async ({ page }) => {
+  await page.goto("/pulse");
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible({ timeout: 30_000 });
+  await expectClean(page);
+  await page.getByRole("radio", { name: "Augmentation work" }).check();
+  for (const id of ["A1", "A2", "A3", "B1", "B2", "B3", "D1", "D2", "D3"]) await page.locator("label", { has: page.locator(`input[name="${id}"][value="5"]`) }).click();
+  await page.getByRole("button", { name: "See the result" }).click();
+  await expect(page.getByRole("region", { name: "Your result" })).toContainText("Virtuous");
+  await expectClean(page);
+});

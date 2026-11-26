@@ -23,6 +23,8 @@ const SCALE = [1, 2, 3, 4, 5, 6, 7] as const;
 export interface PulseItemText {
   id: PulseItemId;
   text: string;
+  /** Scale endpoints and midpoint, per item (Table 5). */
+  anchors: { low: string; mid: string; high: string };
 }
 
 function ScaleQuestion({ item, value, onChange }: { item: PulseItemText; value?: number; onChange: (v: number) => void }) {
@@ -34,7 +36,7 @@ function ScaleQuestion({ item, value, onChange }: { item: PulseItemText; value?:
       </legend>
       <div className="flex flex-wrap items-center gap-1.5">
         <span aria-hidden className="mr-1 text-[13px] text-muted-foreground">
-          Strongly disagree
+          1 = {item.anchors.low}
         </span>
         {SCALE.map((n) => (
           <label
@@ -51,15 +53,16 @@ function ScaleQuestion({ item, value, onChange }: { item: PulseItemText; value?:
               checked={value === n}
               onChange={() => onChange(n)}
               className="sr-only"
-              aria-label={`${n}${n === 1 ? " (strongly disagree)" : n === 7 ? " (strongly agree)" : ""}`}
+              aria-label={`${n}${n === 1 ? ` (${item.anchors.low})` : n === 4 ? ` (${item.anchors.mid})` : n === 7 ? ` (${item.anchors.high})` : ""}`}
             />
             <span aria-hidden>{n}</span>
           </label>
         ))}
         <span aria-hidden className="ml-1 text-[13px] text-muted-foreground">
-          Strongly agree
+          7 = {item.anchors.high}
         </span>
       </div>
+      <p aria-hidden className="text-[13px] text-muted-foreground">4 = {item.anchors.mid}</p>
     </fieldset>
   );
 }
@@ -137,7 +140,14 @@ function Result({ r, itemTexts }: { r: PulseResult; itemTexts: Map<PulseItemId, 
   );
 }
 
-export function PulseSurvey({ items }: { items: readonly PulseItemText[] }) {
+export function PulseSurvey({
+  items,
+  stems,
+}: {
+  items: readonly PulseItemText[];
+  /** Table 5 stems that the A and B items complete. */
+  stems: { a: string; b: string };
+}) {
   const [answers, setAnswers] = useState<PulseAnswers>({});
   const [loaded, setLoaded] = useState(false);
   const [result, setResult] = useState<PulseResult | null>(null);
@@ -189,6 +199,7 @@ export function PulseSurvey({ items }: { items: readonly PulseItemText[] }) {
             {g.title}
           </h2>
           <p className="text-sm text-muted-foreground">{g.hint}</p>
+          {(g.id === "a" || g.id === "b") && <p className="text-[15px] font-medium text-ink">{stems[g.id]}</p>}
           {g.items.map((id) => {
             const item = items.find((i) => i.id === id);
             return item ? <ScaleQuestion key={id} item={item} value={answers[id]} onChange={(v) => set({ [id]: v })} /> : null;
