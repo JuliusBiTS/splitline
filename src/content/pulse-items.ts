@@ -33,11 +33,11 @@ const WORSE_BETTER: ScaleAnchors = { low: "become much worse", mid: "unchanged",
 export const PULSE_STEMS = {
   a: {
     verbatim: "Because of the work the AI system automates, …",
-    paraphrased: "Thanks to what the AI system now does automatically, …",
+    paraphrased: "Because of what the AI system now does automatically, …",
   },
   b: {
     verbatim: "Because of the corrections and expertise of the people who work with the AI system, …",
-    paraphrased: "Thanks to the fixes and know-how of the people working with the AI system, …",
+    paraphrased: "Because of the fixes and know-how of the people working with the AI system, …",
   },
   d: { verbatim: "", paraphrased: "" },
 } as const;
@@ -52,7 +52,7 @@ export const PULSE_ITEM_CONTENT: readonly PulseItemContent[] = [
   {
     id: "A2",
     verbatim: "… the information we have for handling difficult or unusual cases has",
-    paraphrased: "… what we know when a hard or unusual case comes in has",
+    paraphrased: "… the information we have when a hard or unusual case comes in has",
     anchors: WORSE_BETTER,
   },
   {
@@ -70,7 +70,7 @@ export const PULSE_ITEM_CONTENT: readonly PulseItemContent[] = [
   {
     id: "B2",
     verbatim: "… the range of tasks the system can take over has",
-    paraphrased: "… the number of tasks the system can handle has",
+    paraphrased: "… the range of tasks the system can handle has",
     anchors: { low: "shrunk strongly", mid: "unchanged", high: "grown strongly" },
   },
   {

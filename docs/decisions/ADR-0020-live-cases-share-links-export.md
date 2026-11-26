@@ -26,7 +26,8 @@ Phase 6 (PLAN) adds `/case/new`, `/case/[id]`, the export and the first deploy. 
    - `v1.` versions the format.
 4. **The narrative stays out of share links** (Julius, 2026-11-26).
    - The recipient sees the engine-built verdict explanation (`verdictReason`), plus a note that the AI-written summary and the description stay with the creator.
-   - A local record wins over the hash, so the creator keeps their description and narrative when they open their own link.
+   - The creator's own local record wins over the hash, so they keep their description and narrative when they open their own link.
+   - A copy saved from an earlier share link does not win: a newer link for the same case replaces it, so results always reproduce from the link in hand. A broken newer link never hides a working saved copy.
 5. **Narrative provenance.**
    - Recorded preset narratives and live-case narratives are shown on the Summary ("In brief") and in the Markdown charter.
    - The label says who drafted the narrative (AI or template) and that the rules engine, not the AI, set the tier, rules and split.
@@ -44,7 +45,8 @@ Phase 6 (PLAN) adds `/case/new`, `/case/[id]`, the export and the first deploy. 
 8. **Print charter.**
    - `/preset/[slug]/charter` (static, `instant = false` as a print page) and `/case/[id]/charter` (client) render a one-page view on A4 and Letter (Playwright PDF check, all presets).
    - To fit, the printed plan lists deliverable headlines without owners: the rule title for rule deliverables, the text before the first colon for the others.
-   - The printed rule list shows the first source per rule plus "+n more on the Governance Map".
+   - The printed rule list shows the first source per rule plus "+n more on the Governance Map". The footer prints the Governance Map address, where every rule lists all its sources.
+   - The long disclaimer is the final line of both charters, and both carry the plain thesis scope note.
    - The Markdown charter keeps everything: full deliverables with owners, all sources, the narrative.
 9. **Analytics.**
    - `<Analytics />` (Vercel Web Analytics, cookieless).

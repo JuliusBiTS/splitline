@@ -17,9 +17,9 @@ export default function PulsePage() {
         <p className="font-mono text-xs font-medium tracking-[0.04em] text-muted-foreground uppercase">After launch · {PULSE_SHORT_LABEL}</p>
         <h1 className="text-[28px] leading-tight font-semibold tracking-[-0.02em] text-ink sm:text-[36px]">Reinforcement Pulse</h1>
         <p className="text-[15px] text-ink-2">
-          Nine questions about a team that works with an AI system. They place the team on a 2×2: is the AI making your people better, and
-          are your people making the AI better? The weaker direction sets the result. If it shows a problem, the lagging driver points to
-          the design lever to adjust, with the guardrail to keep and what it costs.
+          Nine questions about a team that works with an AI system. Six of them place the team on a 2×2: is the AI making your people
+          better, and are your people making the AI better? The weaker direction sets the result. Three more check which driver lags; if
+          the result shows a problem, that driver points to the design lever to adjust, with the guardrail to keep and what it costs.
         </p>
         <p className="text-sm text-muted-foreground">
           Your answers stay in this browser; nothing is sent. One person answers all nine items, so the result is a single-perspective

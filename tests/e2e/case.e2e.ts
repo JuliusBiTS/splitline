@@ -184,3 +184,21 @@ test("intake works by keyboard only", async ({ page }) => {
   await page.keyboard.press("Space");
   await expect(page.getByRole("checkbox", { name: "Patients" })).toBeChecked();
 });
+
+test("a newer share link for the same case replaces the copy saved from an older one", async ({ page }) => {
+  const { encodeShare } = await import("../../src/case/share");
+  const { toStructured } = await import("../../src/engine/structured-intake");
+  const base = { asOf: "2026-11-26", decomposition: preset.decomposition };
+  const linkA = await encodeShare({ ...base, intake: toStructured(preset.intake) });
+  const linkB = await encodeShare({ ...base, intake: { ...toStructured(preset.intake), hosting: "in_canada" } });
+  const json = () => page.getByLabel("Inventory record JSON");
+
+  await page.goto(`/case/sharedcase1?tab=export#${linkA}`);
+  await expect(json()).toContainText('"hosting": "us_or_global_api"', { timeout: 30_000 });
+  await page.goto(`/case/sharedcase1?tab=export#${linkB}`);
+  await page.reload();
+  await expect(json()).toContainText('"hosting": "in_canada"', { timeout: 30_000 });
+  // Without a hash, the latest saved copy still opens.
+  await page.goto("/case/sharedcase1?tab=export");
+  await expect(json()).toContainText('"hosting": "in_canada"', { timeout: 30_000 });
+});

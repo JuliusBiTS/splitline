@@ -87,8 +87,9 @@ function PersonalInfoBanner() {
         <p className="font-semibold">Don&apos;t enter personal information.</p>
         <p className="text-ink-2">
           Describe the process in general terms: no names, contact details, case numbers or health details of real people. When live
-          mode is on, the description is sent to Anthropic&apos;s Claude API (US or global processing) to propose the steps. Splitline
-          does not store it on a server; it stays in this browser and is never part of a share link.
+          mode is on, the title, description and step names are sent to Anthropic&apos;s Claude API, which processes them in the US or
+          globally, never in Canada. Anthropic may keep API inputs for a limited time under its own policy. Splitline keeps no server
+          copy: your case is saved only in this browser, and the description is never part of a share link.
         </p>
       </div>
     </div>

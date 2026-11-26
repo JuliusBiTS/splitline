@@ -37,11 +37,17 @@ export function useCaseRecord(): [CaseState, (r: CaseRecord) => void] {
     (async () => {
       if (!CaseIdSchema.safeParse(id).success) return done({ status: "missing" });
       const local = loadCase(id);
-      if (local) return done({ status: "ready", record: local });
       const hash = window.location.hash;
-      if (!hash || hash.length < 2) return done({ status: "missing" });
+      const hasHash = hash.length > 1;
+      // The creator's own record wins (it holds the description and narrative). A copy saved from an
+      // earlier share link does not: a newer link for the same case replaces it (ADR-0020 §3–4).
+      if (local && (!local.fromShareLink || !hasHash)) return done({ status: "ready", record: local });
+      if (!hasHash) return done({ status: "missing" });
       const decoded = await decodeShare(hash);
-      if (!decoded.ok) return done({ status: "error", message: SHARE_ERROR_MESSAGES[decoded.reason] });
+      if (!decoded.ok) {
+        // A broken new link never hides a working saved copy.
+        return done(local ? { status: "ready", record: local } : { status: "error", message: SHARE_ERROR_MESSAGES[decoded.reason] });
+      }
       const record: CaseRecord = {
         v: 1,
         id,

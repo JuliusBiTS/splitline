@@ -32,6 +32,9 @@ describe("charter (SPEC §11, ADR-0018)", () => {
       for (const cost of Object.values(DIRECT_COST_PLAIN)) expect(md).toContain(cost);
       expect(md.match(/- Keep in place:/g)?.length).toBe(3);
       expect(md).toMatch(/Last verified/);
+      // The long disclaimer is the final line; the thesis scope note travels with the levers.
+      expect(md.trim().split("\n").at(-1)).toBe(`**${DISCLAIMER_LONG}**`);
+      expect(md).toContain("Its propositions are untested.");
     });
 
     it(`shows no IDs, thesis jargon or banned legal wording: ${p.slug}`, () => {
@@ -65,7 +68,8 @@ describe("verdictReason", () => {
   it("explains each preset verdict from engine output with likely-wording", () => {
     for (const p of PRESETS) {
       const text = verdictReason(computePreset(p));
-      expect(text).toMatch(/likely/);
+      expect(text).toMatch(/likely|to consider/);
+      expect(text).not.toMatch(/conditions? likely appl/);
       expect(text).toContain("AIA-inspired indicative tier");
       expect(text).not.toMatch(/\bcompliant\b|you must/i);
     }

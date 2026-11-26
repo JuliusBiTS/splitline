@@ -12,7 +12,7 @@ import type { NarrativeView } from "@/content/presets/narratives";
 import { DISCLAIMER_LONG, type EngineResult } from "@/engine";
 import { CADENCE_LABELS } from "@/engine/cadence";
 import { COST_ESTIMATE_NOTE } from "@/engine/costs";
-import { DIRECT_COST_PLAIN, LEVER_PLAIN_NAMES } from "@/engine/levers";
+import { DIRECT_COST_PLAIN, LEVER_PLAIN_NAMES, THESIS_SCOPE_NOTE_PLAIN } from "@/engine/levers";
 import { TIER_LABEL } from "@/engine/tier";
 import type { ConfirmedDecomposition, Deliverable, KpiKind } from "@/engine/types";
 
@@ -54,6 +54,8 @@ export interface CharterModel {
   notes: string[];
   disclaimer: string;
   url: string;
+  /** Absolute URL of the Governance Map, where every rule lists all its sources. */
+  sourcesUrl: string;
 }
 
 export function charterModel(input: CharterInput): CharterModel {
@@ -103,9 +105,10 @@ export function charterModel(input: CharterInput): CharterModel {
         ? [{ title: meta.title, status: statusOf(t.ruleId), instrument: meta.instrument, sources: meta.sources, verified: formatIsoDate(meta.lastVerified) }]
         : [];
     }),
-    notes: [PLANNING_ESTIMATE_NOTE, COST_ESTIMATE_NOTE],
+    notes: [PLANNING_ESTIMATE_NOTE, COST_ESTIMATE_NOTE, THESIS_SCOPE_NOTE_PLAIN],
     disclaimer: DISCLAIMER_LONG,
     url: input.url,
+    sourcesUrl: `${new URL(input.url).origin}/sources`,
   };
 }
 
@@ -158,7 +161,8 @@ export function charterMarkdown(input: CharterInput): string {
   out.push("## KPIs", "", bullets(m.kpis.map((k) => `${k.kind}: ${k.name}`)), "");
   out.push("## Triggered rules", "", "| Rule | Status | Instrument | Sources | Last verified |", "| --- | --- | --- | --- | --- |");
   out.push(...m.rules.map((r) => `| ${cell(r.title)} | ${cell(r.status)} | ${cell(r.instrument)} | ${r.sources.map((s) => `[${cell(s.label)}](${s.url})`).join(", ")} | ${r.verified} |`), "");
-  out.push("---", "", ...m.notes.map((n) => `_${n}_`), "", `**${m.disclaimer}**`, "", `Made with Splitline: ${m.url}`, "");
+  // The long disclaimer is the final line (legal microcopy rules, `01_*` §0).
+  out.push("---", "", ...m.notes.map((n) => `_${n}_`), "", `Made with Splitline: ${m.url}`, "", `**${m.disclaimer}**`, "");
   return out.join("\n");
 }
 

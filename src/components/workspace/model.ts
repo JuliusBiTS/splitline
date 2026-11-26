@@ -50,13 +50,13 @@ export function verdictReason(result: EngineResult): string {
       result.verdict.verdict === "stop"
         ? "At least one has no redesign path in the catalogue, so reconsider the use case as described."
         : "Each one names a redesign path in the Triage tab; plan that before a pilot.";
-    return `${blockers.length === 1 ? "One rule likely blocks" : `${blockers.length} rules likely block`} this design as described: ${names.join("; ")}. ${fix} ${tier}`;
+    return `${blockers.length === 1 ? "One rule likely blocks" : `${blockers.length} rules likely block`} this design as described (see each rule's status): ${names.join("; ")}. ${fix} ${tier}`;
   }
   if (actions.length > 0) {
     const top = result.verdict.topConditions[0];
-    return `${actions.length === 1 ? "One condition likely applies" : `${actions.length} conditions likely apply`} before a pilot${
+    return `${actions.length === 1 ? "One item to consider" : `${actions.length} items to consider`} before a pilot${
       top ? `, led by: ${title(top).replace(/\.$/, "")}` : ""
-    }. None of them blocks the design as described. ${tier}`;
+    }. None of them likely blocks the design as described. ${tier}`;
   }
   return `No rule here likely adds a condition before a pilot; the Triage tab lists good-practice items to consider. ${tier}`;
 }

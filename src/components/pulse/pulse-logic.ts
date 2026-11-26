@@ -22,7 +22,7 @@ export const PULSE_GROUPS: { id: string; title: string; hint: string; items: rea
   {
     id: "d",
     title: "What drives the coupling?",
-    hint: "Driver check: shows which driver lags; it does not place your team on the 2×2. Table 5 intends these items for both sides.",
+    hint: "Driver check: shows which driver lags; it does not place your team on the 2×2. Table 5 marks these items as optional and intends them for both sides; Splitline asks them to name the lagging driver.",
     items: ["D1", "D2", "D3"],
   },
 ];

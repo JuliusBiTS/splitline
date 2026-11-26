@@ -127,8 +127,10 @@ export function CharterView({ m }: { m: CharterModel }) {
 
       <footer className="flex flex-col gap-0.5 border-t border-divider pt-2 text-[12px] text-muted-foreground print:pt-[3pt] print:text-[6.5pt]">
         <p>{[...m.notes, "The full plan with likely owners is in the Markdown charter and the Rollout tab."].join(" ")}</p>
+        <p>
+          Made with Splitline · {m.url} · All sources per rule: {m.sourcesUrl}
+        </p>
         <p className="font-semibold text-ink">{m.disclaimer}</p>
-        <p>Made with Splitline · {m.url}</p>
       </footer>
     </article>
   );
