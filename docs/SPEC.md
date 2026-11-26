@@ -1,6 +1,6 @@
 # Splitline: Product Specification
 
-**Version:** 1.1 (manager copy pass, ADR-0018; v1.0 locked after the Phase 0 interview) · **Date:** 2026-11-26 · **Owner:** Julius Wölki
+**Version:** 1.2 (LLM layer, ADR-0019; v1.1 manager copy pass, ADR-0018; v1.0 locked after the Phase 0 interview) · **Date:** 2026-11-26 · **Owner:** Julius Wölki
 **Tagline:** *Design where the machine ends and judgment begins.*
 
 > This spec is the source of truth for *what* to build. `docs/PLAN.md` says *in which order*. `docs/research/*` holds the evidence. If this spec and the research disagree, raise it; do not silently pick one. Section 14 records the interview decisions and the items explicitly deferred (each with an ADR). Changes since v0.9 are summarized in §15.
@@ -316,7 +316,10 @@ Toggles: hosting, AI decision role, Quebec/Ontario affected, crisis, dynamism, c
 - **Prompt caching** on the system prompt and rule context.
 - **Endpoints:**
   - `POST /api/decompose`: IntakeInput → Decomposition.
-  - `POST /api/narrate`: EngineResult → Narrative `{ executiveSummary, splitNarrative, leverNarratives[3], rolloutNarrative }`. **Guard:** every rule ID or statute name in the text must be in the triggered set; otherwise retry once, then use template text. The statute lexicon is built from the catalogue (`id` plus a short-name list per `instrument`, e.g. "PIPEDA", "FIPPA", "Law 25", "C-36"), so a statute counts as mentioned when any of its names appears.
+  - `POST /api/narrate`: structured intake (no `processDescription`) + confirmed decomposition (+ optional case token) → Narrative; the server recomputes the EngineResult (ADR-0019) `{ executiveSummary, splitNarrative, leverNarratives[3], rolloutNarrative }`. **Guard:** every rule ID or statute name in the text must be in the triggered set; otherwise retry once, then use template text. The statute lexicon is built from the catalogue (`id` plus a short-name list per `instrument`, e.g. "PIPEDA", "FIPPA", "Law 25", "C-36"), so a statute counts as mentioned when any of its names appears.
+  - `GET /api/live-status`: whether live mode is available (Phase 6 uses it to offer the live path or manual entry).
+  - Decompose output carries `sourceQuote` per subtask (verbatim from the description, checked locally); quotes are shown in step 3 and never stored in the decomposition (ADR-0019).
+  - The guard also rejects rule and subtask IDs, "compliant", "you must", "must comply", "legal advice", and a proposed bill named without "proposed" (ADR-0019).
   - `POST /api/lab/extract` (live demo only): synthetic document → Extraction (see §9).
 - **Injection hygiene:** user text sits in delimited blocks and is declared as data in the system prompt; the output is schema-validated.
 - **Resilience:**
@@ -348,7 +351,7 @@ Toggles: hosting, AI decision role, Quebec/Ontario affected, crisis, dynamism, c
 
 ## 10. Presets (golden cases)
 
-Committed as JSON (intake + confirmed decomposition + recorded narration). Golden expectations, asserted by tests:
+Committed as JSON (intake + confirmed decomposition); the recorded LLM proposal, the reviewed confirmation edits and the recorded narration sit in `src/content/presets/recorded/` (ADR-0019). Golden expectations, asserted by tests:
 
 | Slug | Org | Expected tier | Verdict | Must trigger | Must NOT trigger |
 |---|---|---|---|---|---|
@@ -391,7 +394,7 @@ Next.js 16.4 (App Router, TypeScript strict + `noUncheckedIndexedAccess`) · pnp
 - **Optional later:** shadcn Drawer (Vaul) for the mobile What-if drawer; shadcn Command (cmdk) for a ⌘K palette.
 - **Not allowed:** Radix as a separate dependency, Magic UI, Aceternity, RareUI, Beautiful UI, 21st.dev components, or any decorative effect library.
 
-Env: `ANTHROPIC_API_KEY`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, `LIVE_MODE_ENABLED`, `DAILY_LIVE_RUN_CAP`, `NEXT_PUBLIC_SITE_URL`.
+Env: `ANTHROPIC_API_KEY`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, `LIVE_MODE_ENABLED`, `DAILY_LIVE_RUN_CAP`, `CASE_TOKEN_SECRET` (ADR-0019), `NEXT_PUBLIC_SITE_URL`.
 
 ## 14. Decisions from the spec interview (2026-11-20)
 
@@ -420,6 +423,8 @@ Env: `ANTHROPIC_API_KEY`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, 
 - Written thesis permission → before M3, ADR-0009.
 
 ## 15. Changes since v0.9
+
+**v1.2 (2026-11-26, ADR-0019, LLM layer):** §8 narrate input is structured intake + confirmed decomposition (server recomputes); `sourceQuote` grounding; stricter guard; `GET /api/live-status`; §10 presets hold recorded decompositions with reviewed confirmation edits; §13 `CASE_TOKEN_SECRET`.
 
 **v1.1 (2026-11-26, ADR-0018, manager copy pass):** §7.1 rule `ownerRole`/`effort`; §7.4 two-layer language, plain owner labels, `costEstimates`; §7.5 `Deliverable.ownerRole`; §11 charter content. The tier rationale names consequential steps without IDs and lists the ticked mitigations.
 

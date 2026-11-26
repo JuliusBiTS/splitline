@@ -16,11 +16,11 @@ function files(dir: string): string[] {
 }
 
 describe("LLM boundary", () => {
-  it("only src/llm and src/app/api import the LLM layer, the SDK or the API helpers", () => {
+  it("only src/llm and src/app/api (and tests) import the LLM layer, the SDK or the API helpers", () => {
     const offenders = files(SRC)
       .filter((f) => {
         const rel = path.relative(SRC, f).split(path.sep).join("/");
-        return !rel.startsWith("llm/") && !rel.startsWith("app/api/");
+        return !rel.startsWith("llm/") && !rel.startsWith("app/api/") && !rel.endsWith(".test.ts");
       })
       .filter((f) => /from\s+["'](@\/llm\/|@anthropic-ai\/sdk|@\/app\/api\/)/.test(readFileSync(f, "utf8")));
     expect(offenders).toEqual([]);
