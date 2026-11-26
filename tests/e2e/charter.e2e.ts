@@ -20,3 +20,8 @@ test.describe("charter print view (SPEC §11)", () => {
     });
   }
 });
+
+test("an unknown preset charter is a real 404", async ({ request }) => {
+  expect((await request.get("/preset/no-such-preset/charter")).status()).toBe(404);
+  expect((await request.get("/preset/clinical-referral-triage/charter")).status()).toBe(200);
+});

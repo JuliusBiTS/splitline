@@ -11,4 +11,4 @@ export function proxy(request: NextRequest) {
   return NextResponse.rewrite(new URL("/__unknown-preset", request.url));
 }
 
-export const config = { matcher: "/preset/:slug" };
+export const config = { matcher: ["/preset/:slug", "/preset/:slug/charter"] };
