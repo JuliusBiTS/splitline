@@ -31,7 +31,8 @@ export interface GoldenExpectation {
 export const GOLDEN: readonly GoldenExpectation[] = [
   {
     slug: "clinical-referral-triage",
-    split: { s1: "machine", s2: "machine", s3: "human", s4: "machine_review", s5: "human" },
+    // Recorded decomposition (ADR-0019): s4 suggests the urgency category, s6 confirms and books.
+    split: { s1: "machine", s2: "machine", s3: "machine_review", s4: "human", s5: "machine_review", s6: "human" },
     driftMissing: ["augmentation_value", "learning_loop"],
     tier: "III",
     verdict: "go_with_conditions",
@@ -45,7 +46,8 @@ export const GOLDEN: readonly GoldenExpectation[] = [
   },
   {
     slug: "contract-clause-review",
-    split: { s1: "machine", s2: "machine_review", s3: "machine_review", s4: "machine_review" },
+    // Recorded decomposition (ADR-0019): s2 compares with the playbook at medium error cost, so the AI does it.
+    split: { s1: "machine", s2: "machine", s3: "machine_review", s4: "machine_review", s5: "machine_review", s6: "machine_review" },
     driftMissing: ["augmentation_value", "learning_loop"],
     tier: "II",
     verdict: "go_with_conditions",
@@ -58,7 +60,9 @@ export const GOLDEN: readonly GoldenExpectation[] = [
   },
   {
     slug: "hiring-and-sentiment",
-    split: { s1: "machine", s2: "human", s3: "human", s4: "machine_review", s5: "human" },
+    // Recorded decomposition (ADR-0019): the hiring and sentiment-scoring steps stay with people; only the
+    // one-to-one disengagement notes are AI-drafted and signed off.
+    split: { s1: "machine", s2: "human", s3: "human", s4: "human", s5: "machine_review", s6: "human", s7: "human" },
     // HR preset KPIs are efficiency-only ("Time to shortlist", "Cost per hire") → drift warning.
     driftMissing: ["augmentation_value", "learning_loop"],
     tier: "IV",

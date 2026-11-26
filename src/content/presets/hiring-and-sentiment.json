@@ -8,85 +8,131 @@
     "orgType": "bc_private",
     "businessFunction": "hr",
     "aiDecisionRole": "decides_alone",
-    "affectedPeople": ["employees_applicants"],
-    "dataCategories": ["employee_hr"],
-    "jurisdictions": ["bc"],
+    "affectedPeople": [
+      "employees_applicants"
+    ],
+    "dataCategories": [
+      "employee_hr"
+    ],
+    "jurisdictions": [
+      "bc"
+    ],
     "hosting": "in_canada",
     "aiType": "classical_ml",
     "customerFacingOutput": false,
     "monitorsEmployees": true,
     "teamSetup": "vendor_run",
     "readiness": "medium",
-    "proposedKpis": ["Time to shortlist", "Cost per hire"],
+    "proposedKpis": [
+      "Time to shortlist",
+      "Cost per hire"
+    ],
     "sector": "other",
-    "useCasePatterns": ["hiring_selection", "performance_management"],
+    "useCasePatterns": [
+      "hiring_selection",
+      "performance_management"
+    ],
     "mitigations": []
   },
   "decomposition": {
     "subtasks": [
       {
         "id": "s1",
-        "name": "Parse applications",
-        "description": "Extract work history, licences and availability from each application.",
+        "name": "Review incoming applications",
+        "description": "Recruiters read the several hundred applications received for each warehouse and driver posting to understand who has applied.",
         "judgmentIntensity": "low",
         "knowledgeType": "codifiable",
         "errorCost": "medium",
         "volume": "high",
         "affectsIndividuals": true,
         "consequential": false,
-        "rationale": "Field extraction; errors can unfairly drop an applicant if not checked."
+        "rationale": "Reading and sorting applications is routine and high in volume. Errors here are caught when candidates are shortlisted."
       },
       {
         "id": "s2",
-        "name": "Score and rank applicants",
-        "description": "Score each applicant against the role profile and rank the pool.",
+        "name": "Shortlist candidates by hand",
+        "description": "Recruiters currently pick which applicants move forward by hand, weighing experience and fit for the posting.",
         "judgmentIntensity": "high",
         "knowledgeType": "tacit",
         "errorCost": "high",
         "volume": "high",
         "affectsIndividuals": true,
         "consequential": true,
-        "rationale": "The ranking decides who is considered for the job."
+        "rationale": "Shortlisting shapes who gets a job chance. It relies on recruiter experience, and people could reasonably disagree."
       },
       {
         "id": "s3",
-        "name": "Auto-reject below cut-off",
-        "description": "Send a rejection to applicants whose score falls below the cut-off.",
+        "name": "Rank applicants with ML tool",
+        "description": "A vendor's machine-learning tool would score and rank applicants for each posting so that the best-fitting ones rise to the top.",
         "judgmentIntensity": "high",
-        "knowledgeType": "tacit",
-        "errorCost": "critical",
-        "volume": "high",
-        "affectsIndividuals": true,
-        "consequential": true,
-        "rationale": "A rejection is a decision about a person with no human in the loop."
-      },
-      {
-        "id": "s4",
-        "name": "Score employee sentiment",
-        "description": "Score sentiment continuously from workplace chat messages for each employee.",
-        "judgmentIntensity": "medium",
         "knowledgeType": "tacit",
         "errorCost": "high",
         "volume": "high",
         "affectsIndividuals": true,
         "consequential": true,
-        "rationale": "Continuous monitoring of individual employees that feeds HR follow-up."
+        "rationale": "The ranking directly drives who is considered for hiring. Errors or bias would change outcomes for many applicants."
+      },
+      {
+        "id": "s4",
+        "name": "Reject applicants below cut-off",
+        "description": "The tool would automatically reject applicants whose score falls below a set cut-off, with no person reviewing the result.",
+        "judgmentIntensity": "high",
+        "knowledgeType": "codifiable",
+        "errorCost": "high",
+        "volume": "high",
+        "affectsIndividuals": true,
+        "consequential": true,
+        "rationale": "An automatic rejection is a hiring decision affecting livelihood. The cut-off rule is simple but its effects are significant."
       },
       {
         "id": "s5",
-        "name": "Flag low performers",
-        "description": "Combine sentiment and productivity signals to flag employees for HR follow-up.",
+        "name": "Spot disengagement in one-to-ones",
+        "description": "Team leads currently try to notice signs of disengagement in staff through their regular one-to-one conversations.",
+        "judgmentIntensity": "high",
+        "knowledgeType": "tacit",
+        "errorCost": "medium",
+        "volume": "medium",
+        "affectsIndividuals": true,
+        "consequential": false,
+        "rationale": "Reading people draws on experience and is hard to write down. Informal observation alone does not decide anything formally."
+      },
+      {
+        "id": "s6",
+        "name": "Score employee sentiment from chat",
+        "description": "The tool would continuously analyze workplace chat messages and give each employee a sentiment score.",
+        "judgmentIntensity": "high",
+        "knowledgeType": "tacit",
+        "errorCost": "high",
+        "volume": "high",
+        "affectsIndividuals": true,
+        "consequential": true,
+        "rationale": "Scores about identifiable staff feed HR follow-up. Errors could harm trust and employment standing, and the monitoring runs constantly."
+      },
+      {
+        "id": "s7",
+        "name": "Flag low performers and disengaged staff",
+        "description": "HR uses the sentiment scores to flag employees seen as low performers or disengaged and to select them for follow-up.",
         "judgmentIntensity": "high",
         "knowledgeType": "tacit",
         "errorCost": "high",
         "volume": "medium",
         "affectsIndividuals": true,
         "consequential": true,
-        "rationale": "A flag can lead to performance action against an employee."
+        "rationale": "Flagging shapes how managers treat employees and may lead to performance management. A wrong flag can hurt livelihood and trust."
       }
     ],
-    "assumptions": ["The vendor hosts the tool in Canada.", "Workplace chat is company-owned."],
-    "clarifyingQuestions": ["Are employees told that their messages are scored?"],
-    "suggestedUseCasePatterns": ["hiring_selection", "performance_management"]
+    "assumptions": [
+      "The tool scores applicants using the content of their applications.",
+      "Rejected applicants are not reviewed by a person before being told.",
+      "Sentiment scores are linked to named employees, not only to teams.",
+      "HR relies on the scores when choosing whom to follow up with.",
+      "Employees may not be fully aware their chat messages are analyzed."
+    ],
+    "clarifyingQuestions": [
+      "Does anyone review applicants rejected below the cut-off before they are notified?",
+      "Are sentiment scores shown for individual employees or only for teams?",
+      "What does follow-up involve for a flagged employee, and could it affect their performance record?"
+    ],
+    "suggestedUseCasePatterns": []
   }
 }

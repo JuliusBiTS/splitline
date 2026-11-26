@@ -77,11 +77,11 @@ Base by decision role, then +1 step for `hiring_selection`, `clinical_triage` or
 | Preset | Role | Consq. | Data | Affected | Reversibility | Scale | CF-gen | Raw | Mitigations | Score | % | Tier |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | clinical-referral-triage | recommends 3 | 4 | health 5 | patients 4 | short_term +1 clinical → hard_to_reverse 4 | 3 | 0 | 23 | 3 of 5, no deduction | 23 | 71.9 | **III** |
-| contract-clause-review | recommends 3 | 4 | customer_pi 2 | businesses_only 0 | short_term 2 | 0 | 0 | 11 | 1 of 5 | 11 | 34.4 | **II** |
+| contract-clause-review | recommends 3 | 4 | customer_pi 2 | businesses_only 0 | short_term 2 | 1 | 0 | 12 | 1 of 5 | 12 | 37.5 | **II** |
 | hiring-and-sentiment | decides_alone 8 | 4 | employee_hr 4 | employees_applicants 3 | hard_to_reverse +1 hiring → irreversible 6 | 1 | 0 | 26 | 0 of 5 | 26 | 81.3 | **IV** |
 | claims-document-intake | recommends 3 | 4 | health 5 | public_customers 2 | short_term +1 claims −1 appeal → short_term 2 | 2 | 0 | 18 | 4 of 5 → −15 % | 15.3 | 47.8 | **II** |
 
-Scale: clinical = patients (vulnerability) + patients (reach) + high-volume step affecting individuals; hiring = high-volume step only; claims = public customers + high-volume step.
+Scale: clinical = patients (vulnerability) + patients (reach) + high-volume step affecting individuals; hiring = high-volume step only; claims = public customers + high-volume step; contract = high-volume step affecting individuals (since the Phase 5 recorded decomposition, ADR-0019; it was raw 11 with scale 0 before).
 
 ### Pinned hiring tier
 **`hiring-and-sentiment` is pinned at tier IV** and asserted exactly in `tests/golden/expectations.ts`.

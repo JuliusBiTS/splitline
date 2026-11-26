@@ -75,6 +75,7 @@ Phase 5 adds the only model-facing code: `/api/decompose` (description → propo
    - A test asserts `applyConfirmationEdits(raw, edits)` equals the preset decomposition and that the recorded narrative passes the guard.
    - Golden tiers stay exact. Golden split expectations may be re-keyed to the new subtask IDs when the same step moved.
    - The recorded narrative is stored but not rendered until Phase 6 (Summary and charter).
+   - **Outcome of the 2026-11-26 recording:** clinical and hiring needed no edits (tier III and IV as recorded). Claims: one edit removes "Key in amounts and dates" (replaced by the AI extraction). Contract: one edit marks "Recommend a position on non-standard clauses" consequential, as the hand-confirmed preset did; without it the case is tier I. All four tiers and verdicts stay exact. The golden split expectations are re-keyed to the new subtask IDs (one entry per subtask). Contract raw score is now 12 (ADR-0004 table updated). Narration passed the guard on the first attempt for all four.
 10. **Eval metrics** (`scripts/eval-llm.lib.ts`):
     - "schema-valid" = the last attempt parsed into the strict schema within the one retry (a guard rejection still counts as schema-valid);
     - "guard violations 0" = no narration had to fall back to the template because the guard still rejected it after the retry. First-attempt findings are reported separately.

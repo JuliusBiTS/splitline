@@ -36,6 +36,13 @@ describe("applyConfirmationEdits", () => {
   });
 });
 
+describe("recorded presets (PLAN Phase 5)", () => {
+  it("every preset has a recording with an LLM narration: presets use the recorded decompositions", () => {
+    expect(recordings.map((r) => r.slug).sort()).toEqual(PRESETS.map((p) => p.slug).sort());
+    for (const r of recordings) expect(r.narrate?.source).toBe("llm");
+  });
+});
+
 describe.each(recordings.map((r) => [r.slug, r] as const))("recording %s", (slug, r) => {
   const preset = getPreset(slug)!;
 

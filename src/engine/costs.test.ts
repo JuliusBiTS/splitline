@@ -49,10 +49,10 @@ describe("cost estimates (ADR-0018)", () => {
   it("claims: monthly review hours, the 60-day STP ramp and reviewer time on the 3 checked steps", () => {
     const r = preset("claims");
     expect(text(r, "coordination")).toContain("monthly split review");
-    expect(text(r, "coordination")).toContain("Classify documents and Extract receipt fields run without a person only from Day 61");
+    expect(text(r, "coordination")).toContain("Receive and sort claim documents and Extract receipt fields with source text run without a person only from Day 61");
     expect(text(r, "exchange")).toContain("weekly 1-hour joint session");
     expect(text(r, "review")).toContain(
-      "every AI output on 3 steps: Validate against coverage rules (high volume); Recommend eligibility and Decide and write to claimant (medium volume)",
+      "every AI output on 3 steps: Validate expenses against coverage rules and Recommend reimbursement eligibility (high volume); Decide on the claim and write to claimant (medium volume)",
     );
     expect(text(r, "review")).toContain("largest ongoing time cost");
   });
@@ -67,10 +67,10 @@ describe("cost estimates (ADR-0018)", () => {
 
   it("names the human final decision at tier III or above, and STP is zero when no step runs alone", () => {
     const clinical = preset("clinical");
-    expect(text(clinical, "decision_rights")).toContain("A person makes the final decision on Suggest urgency category and Confirm triage and book");
+    expect(text(clinical, "decision_rights")).toContain("A person makes the final decision on Check required tests and history are attached, Suggest an urgency category with reasons");
     expect(text(clinical, "review")).toContain("People keep doing 2 steps themselves");
     const hiring = preset("hiring");
-    expect(text(hiring, "coordination")).toContain("Parse applications runs without a person only from Day 61");
+    expect(text(hiring, "coordination")).toContain("Review incoming applications runs without a person only from Day 61");
   });
 
   it("crisis and central guardrails change the decision-rights cost", () => {

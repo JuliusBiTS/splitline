@@ -127,12 +127,12 @@ Phase 3 (design) runs in parallel to Phases 1–2. Phases 1–2 have no UI depen
 
 ## Phase 5: LLM layer (decompose, narrate) with guards and evals
 **Goal:** live runs that are safe, cheap and graceful when unavailable.
-- [ ] `src/llm/client.ts`: model constant, prompt caching, error mapping (429 rate / ramp / spend cap).
-- [ ] `src/llm/decompose.ts` and `src/llm/narrate.ts` with Zod schemas + `messages.parse()`; system prompts in `src/llm/prompts/*.md`.
-- [ ] Narration guard: only triggered rule IDs or statutes may appear; retry once → template fallback.
-- [ ] `src/app/api/*`: route handlers; Upstash rate limit; `LIVE_MODE_ENABLED` and `DAILY_LIVE_RUN_CAP`; no body logging.
-- [ ] `scripts/record-presets.ts`: run decompose + narrate for the 4 presets, commit the outputs (model ID + date); presets now use the recorded decompositions.
-- [ ] `scripts/eval-llm.ts`: 6 sample intakes × 3 runs → schema-valid rate, required-field completeness, decomposition stability (subtask count ± 1, attribute agreement), guard violations.
+- [x] `src/llm/client.ts`: model constant, prompt caching, error mapping (429 rate / ramp / spend cap).
+- [x] `src/llm/decompose.ts` and `src/llm/narrate.ts` with Zod schemas + `messages.parse()`; system prompts in `src/llm/prompts/*.md`.
+- [x] Narration guard: only triggered rule IDs or statutes may appear; retry once → template fallback (stricter checks in ADR-0019).
+- [x] `src/app/api/*`: route handlers; Upstash rate limit; `LIVE_MODE_ENABLED` and `DAILY_LIVE_RUN_CAP`; no body logging.
+- [x] `scripts/record-presets.ts`: run decompose + narrate for the 4 presets, commit the outputs (model ID + date); presets now use the recorded decompositions (with reviewed confirmation edits, ADR-0019).
+- [x] `scripts/eval-llm.ts`: 6 sample intakes × 3 runs → schema-valid rate, required-field completeness, decomposition stability (subtask count ± 1, attribute agreement), guard violations.
 
 **Acceptance**
 - Unit tests with a mocked SDK cover: success, schema failure → retry → fallback, 429 with retry-after, `ramp_limit_exceeded`, `enforced_spend_limit_reached` (live mode disabled message).
