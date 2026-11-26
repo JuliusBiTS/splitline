@@ -21,7 +21,8 @@ export type GuardViolationKind =
   | "never_allowed_statute"
   | "thesis_jargon"
   | "lever_missing_guardrail"
-  | "lever_missing_direct_cost";
+  | "lever_missing_direct_cost"
+  | "flat_conclusion";
 
 export interface GuardViolation {
   kind: GuardViolationKind;
@@ -50,6 +51,12 @@ const NEVER_ALLOWED: readonly RegExp[] = [
   /\bEU AI Act\b/gi,
   /(?<![A-Za-z0-9])GDPR(?![A-Za-z0-9])/g,
 ];
+
+/** "applies"/"apply" without "likely" (and not "applies from <date>") in a sentence that names a statute. */
+const FLAT_APPLIES = /(?<!\blikely\s)\bappl(?:y|ies)\b(?!\s+from\b)/gi;
+
+/** Lower case, punctuation removed, spaces collapsed: "a, b, and c" matches "a, b and c". */
+const loose = (s: string) => s.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, " ").replace(/\band\b/g, " ").replace(/\s+/g, " ").trim();
 
 /** Thesis vocabulary that belongs in "Research basis", not on the main view (ADR-0018). */
 const THESIS_JARGON = /(?<![A-Za-z0-9])P[1-4](?![A-Za-z0-9])|\bTable 4\b|\bSection \d|\breinforcement\b|\bmutual adjustment\b|\bdecision rights\b/gi;
@@ -128,6 +135,9 @@ export function checkNarrative(
       for (const m of text.matchAll(n.pattern)) out.push({ kind: "untriggered_statute", field, match: m[0] });
     }
     for (const sentence of sentences(text)) {
+      if (names.some((n) => new RegExp(n.pattern.source, n.pattern.flags.replace("g", "")).test(sentence))) {
+        for (const m of sentence.matchAll(FLAT_APPLIES)) out.push({ kind: "flat_conclusion", field, match: m[0] });
+      }
       if (/\bpropos/i.test(sentence)) continue;
       for (const n of proposedNames) {
         const m = sentence.match(new RegExp(n.pattern.source, n.pattern.flags.replace("g", "")));
@@ -141,10 +151,15 @@ export function checkNarrative(
   }
   (opts.levers ?? []).forEach((lever, i) => {
     const field = `leverNarratives.${i}`;
-    const text = (narrative.leverNarratives[i] ?? "").toLowerCase();
+    const raw = narrative.leverNarratives[i] ?? "";
+    const text = raw.toLowerCase();
     const g = guardrailKey(lever.guardrail);
     const c = directCostKey(lever.directCost);
-    if (!text.includes(g)) out.push({ kind: "lever_missing_guardrail", field, match: g });
+    // The label alone is not enough: its content ("common tools, common labels, and visible splits") must be there too.
+    const body = lever.guardrail.includes(":") ? lever.guardrail.slice(lever.guardrail.indexOf(":") + 1) : "";
+    if (!text.includes(g) || (body.trim() && !loose(raw).includes(loose(body)))) {
+      out.push({ kind: "lever_missing_guardrail", field, match: lever.guardrail });
+    }
     if (!text.includes(c)) out.push({ kind: "lever_missing_direct_cost", field, match: c });
   });
   return out;

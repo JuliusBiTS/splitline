@@ -108,8 +108,7 @@
       "The adjuster remains the final decision-maker and the model only recommends.",
       "Receipts arrive as scanned images or PDFs that the model can read.",
       "Coverage rules are written down and available for the model to use.",
-      "Claim volume is high because the insurer is public and serves many claimants.",
-      "Staff still review extracted fields before the recommendation goes to the adjuster."
+      "Claim volume is high because the insurer is public and serves many claimants."
     ],
     "clarifyingQuestions": [
       "Do adjusters see the model's reasons and the source text, or only the recommendation?",

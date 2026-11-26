@@ -43,7 +43,7 @@ describe("checkNarrative", () => {
   });
 
   it("does not confuse PIPA with PIPEDA, or the tier label with an official AIA", () => {
-    expect(checkNarrative(n("PIPEDA applies."), ["FED-PIPEDA-XB"])).toEqual([]);
+    expect(checkNarrative(n("PIPEDA likely applies."), ["FED-PIPEDA-XB"])).toEqual([]);
     expect(checkNarrative(n("AIA-inspired indicative tier II."), [])).toEqual([]);
     expect(checkNarrative(n("An official AIA is needed."), [])[0]).toMatchObject({ kind: "untriggered_statute", match: "AIA" });
   });
@@ -68,6 +68,21 @@ describe("checkNarrative", () => {
   it("does not let the always-triggered tier reference allow DADM names", () => {
     expect(checkNarrative(n("DADM requires a human final decision."), ["REF-AIA-TIER"])[0]?.kind).toBe("untriggered_statute");
     expect(checkNarrative(n("PPCDA requires an assessment."), ["FED-C36-XB"])[0]?.kind).toBe("proposed_as_binding");
+  });
+
+  it("flags a flat 'X applies' conclusion but allows 'likely applies' and 'applies from'", () => {
+    expect(checkNarrative(n("BC FIPPA applies, so consider a PIA."), ["BC-FIPPA-01"])[0]?.kind).toBe("flat_conclusion");
+    expect(checkNarrative(n("BC FIPPA likely applies."), ["BC-FIPPA-01"])).toEqual([]);
+    expect(checkNarrative(n("Quebec Law 25 applies from 2027."), ["QC-L25-121"])).toEqual([]);
+  });
+
+  it("a lever text must keep the guardrail content, not only its label", () => {
+    const levers = [{ guardrail: "Shared platform: common tools, common labels, and visible splits", directCost: "Some automation efficiency: x" }];
+    const base = { ...n("x"), leverNarratives: ["", "Two.", "Three."] as [string, string, string] };
+    const label = { ...base, leverNarratives: ["Keep the Shared platform. Cost: automation efficiency.", "Two.", "Three."] as [string, string, string] };
+    const full = { ...base, leverNarratives: ["Keep the Shared platform in place: common tools, common labels and visible splits. Cost: automation efficiency.", "Two.", "Three."] as [string, string, string] };
+    expect(checkNarrative(label, [], { levers }).map((v) => v.kind)).toEqual(["lever_missing_guardrail"]);
+    expect(checkNarrative(full, [], { levers })).toEqual([]);
   });
 
   it("requires 'proposed' in any sentence naming a proposed bill", () => {

@@ -60,7 +60,9 @@ export function describeViolation(v: GuardViolation): string {
     case "thesis_jargon":
       return `${v.field}: uses the research term "${v.match}". Use the plain lever names and labels from the facts.`;
     case "lever_missing_guardrail":
-      return `${v.field}: does not name the guardrail "${v.match}". Name it as written before its colon.`;
+      return `${v.field}: does not keep the guardrail "${v.match}". Give its name and its full content as written.`;
+    case "flat_conclusion":
+      return `${v.field}: says a source "${v.match}" as a flat conclusion. Write "likely triggers" or "likely applies".`;
     case "lever_missing_direct_cost":
       return `${v.field}: does not state the direct cost ("${v.match}"). Include it in plain words from the facts.`;
   }

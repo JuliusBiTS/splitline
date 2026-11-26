@@ -127,6 +127,11 @@
       "op": "remove",
       "subtaskId": "s3",
       "reason": "Keying in amounts and dates is the current manual step that the AI extraction (s2) replaces; the intended process has no separate keying step."
+    },
+    {
+      "op": "removeAssumption",
+      "text": "Staff still review extracted fields before the recommendation goes to the adjuster.",
+      "reason": "Contradicts the confirmed split: extraction is spot-checked, and the manual keying step is removed."
     }
   ],
   "narrate": {
@@ -134,14 +139,14 @@
     "attempts": 1,
     "source": "llm",
     "narrative": {
-      "executiveSummary": "The verdict is Go with conditions, at the AIA-inspired indicative tier II. BC FIPPA likely triggers a supplementary assessment for storage outside Canada (the privacy office prepares it) and a privacy impact assessment with reasonable security, while the BC Human Rights Code likely triggers testing for adverse impact of algorithmic decisions (product owner, with legal counsel, is the likely owner).",
-      "splitNarrative": "AI does it (spot-checked) for Receive and sort claim documents and Extract receipt fields with source text. AI drafts, a person checks and signs off for Validate expenses against coverage rules, Recommend reimbursement eligibility, and Decide on the claim and write to claimant. This is a starting split that the team will move as evidence comes in, with the next split review on 2026-12-26 and monthly after that.",
+      "executiveSummary": "Verdict: go with conditions, at the AIA-inspired indicative tier II. The case likely triggers BC FIPPA requirements on a privacy impact assessment, reasonable security and storage outside Canada, and the BC Human Rights Code on algorithmic decisions about people; Splitline rates each an action to complete before a pilot. The privacy office, with the product owner, is the likely owner of the FIPPA items, and the product owner with legal counsel for the Human Rights Code item.",
+      "splitNarrative": "AI does it (spot-checked): Receive and sort claim documents, and Extract receipt fields with source text. AI drafts, a person checks and signs off: Validate expenses against coverage rules, Recommend reimbursement eligibility, and Decide on the claim and write to claimant. This is a starting split that the team will move as evidence comes in. The next split review is on 2026-12-26, then monthly.",
       "leverNarratives": [
-        "Let the team doing the work decide which steps the AI does, using tools and labels shared with other teams. Keep the guardrail in place: Shared platform, meaning common tools, common labels and visible splits. The direct cost is some automation efficiency, because you give up part of the consistency and scale of one split shared by all teams.",
-        "Let the team adjust the split as it learns, and re-check it monthly. Keep the guardrail in place: Standardized base, meaning agreed data formats, handoff points and escalation thresholds. The direct cost is some automation efficiency, as the team spends attention adjusting the split and outputs vary more above the fixed base.",
-        "Hold a weekly joint working session between the AI team and the operating unit. Keep the guardrail in place: Retained differentiation, meaning dedicated time for technical and for domain work. The direct cost is some standalone depth on each side, as experts and AI specialists spend time on each other's work."
+        "Let the team that does the work decide which steps the AI does, and change that over time. Keep this guardrail in place: Shared platform: common tools, common labels, and visible splits. The direct cost is some automation efficiency: you give up part of the consistency and scale you would get from one split shared by all teams.",
+        "Let the team adjust the split as it learns, on a fixed base, and re-check it monthly. Keep this guardrail in place: Standardized base: agreed data formats, handoff points, and escalation thresholds. The direct cost is some automation efficiency: the team spends attention adjusting the split, and outputs vary more above the fixed base.",
+        "Hold a weekly joint working session between the AI team and the operating unit. Keep this guardrail in place: Retained differentiation: dedicated time for technical and for domain work. The direct cost is some standalone depth on each side: experts and AI specialists spend time on each other's work."
       ],
-      "rolloutNarrative": "Days 1–30 are Foundation & guardrails: set up the shared platform, agree the standardized base, start the joint sessions and correction channel, and give every condition an owner and dated plan. Days 31–60 are Shadow pilot & calibration: run the AI alongside the current process and calibrate escalation thresholds. Days 61–90 are Controlled scale & audit: go live in increments, hold the first split review and audit sampled decisions. Track Straight-through processing rate, Decision quality on non-routine cases (sampled expert review), and Adjuster corrections per 100 claims."
+      "rolloutNarrative": "Days 1–30, Foundation & guardrails: set up the privacy, security and Human Rights Code conditions, the shared platform and the standardized base, and measure baselines. Days 31–60, Shadow pilot & calibration: run the AI in shadow mode, calibrate escalation thresholds and feed corrections back. Days 61–90, Controlled scale & audit: go live in controlled increments, hold the first split review and audit a sample of decisions. Track three KPIs: Straight-through processing rate; Decision quality on non-routine cases (sampled expert review); Adjuster corrections per 100 claims."
     },
     "engineVersion": "0.3.0",
     "ruleCatalogueVersion": "2026-11-26.1"

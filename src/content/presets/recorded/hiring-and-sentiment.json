@@ -136,20 +136,31 @@
       }
     ]
   },
-  "confirmationEdits": [],
+  "confirmationEdits": [
+    {
+      "op": "remove",
+      "subtaskId": "s2",
+      "reason": "Shortlisting by hand is the current process that the ML ranking (s3) replaces; the intended process has no separate manual shortlist."
+    },
+    {
+      "op": "remove",
+      "subtaskId": "s5",
+      "reason": "Spotting disengagement in one-to-ones is the current informal practice that continuous sentiment scoring (s6) replaces; the AI is not planned for one-to-ones."
+    }
+  ],
   "narrate": {
     "recordedAt": "2026-11-26",
     "attempts": 1,
     "source": "llm",
     "narrative": {
-      "executiveSummary": "The verdict is Redesign, with an AIA-inspired indicative tier of IV, because the case scores applicants and employee sentiment, which bears on decisions about people. The OIPC BC guidance under BC PIPA is a blocker: the regulator expects ongoing sentiment scoring to be replaced by a narrow, overt, time-limited measure, and the privacy officer, with HR and the product owner, is the likely owner. BC PIPA and the BC Human Rights Code likely apply, so the team should consider notice, proportionality and bias testing before a pilot.",
-      "splitNarrative": "AI does it (spot-checked) for Review incoming applications. AI drafts, a person checks and signs off for Spot disengagement in one-to-ones. A person does it (AI may assist) for Shortlist candidates by hand, Rank applicants with ML tool, Reject applicants below cut-off, Score employee sentiment from chat, and Flag low performers and disengaged staff. This is a starting split that the team will move as evidence comes in. The next split review is 2027-02-26, then quarterly.",
+      "executiveSummary": "The verdict is Redesign, with an AIA-inspired indicative tier of IV. The OIPC BC guidance under BC PIPA on employee monitoring and sentiment scoring is one the regulator expects the team to address, and Splitline rates this a blocker, so consider narrowing or dropping the scoring; BC PIPA and the BC Human Rights Code likely apply to employee and applicant information and to decisions about people. Likely owners are the privacy officer, with HR and the product owner.",
+      "splitNarrative": "The AI does Review incoming applications (AI does it (spot-checked)). A person does it (AI may assist) for Rank applicants with ML tool, Reject applicants below cut-off, Score employee sentiment from chat, and Flag low performers and disengaged staff. This is a starting split that the team will move as evidence comes in. The next split review is quarterly, on 2027-02-26.",
       "leverNarratives": [
-        "Let the team that does the work decide which steps the AI does and change that over time, using tools and labels shared with other teams. Keep the guardrail Shared platform in place: common tools, common labels and visible splits. The direct cost is some automation efficiency, since you give up part of the consistency and scale of one split shared by all teams.",
-        "Let the team adjust the split as it learns, on top of a fixed base of data formats, hand-off points and escalation thresholds, and re-check it quarterly. Keep the guardrail Standardized base in place: agreed data formats, handoff points and escalation thresholds. The direct cost is some automation efficiency, because the team spends attention adjusting and outputs vary more above the base.",
-        "Hold regular joint working sessions with the vendor's delivery team, with an internal AI steward who owns the correction channel. Keep the guardrail Retained differentiation in place: dedicated time for technical and for domain work. The direct cost is some standalone depth on each side, as experts and AI specialists spend time on each other's work."
+        "Let the team that does the work decide which steps the AI does, using tools and labels shared with other teams. Keep this guardrail in place: Shared platform: common tools, common labels, and visible splits. The direct cost is some automation efficiency: you give up part of the consistency and scale you would get from one split shared by all teams.",
+        "Let the team adjust the split as it learns, on top of a fixed base, and re-check it quarterly. Keep this guardrail in place: Standardized base: agreed data formats, handoff points, and escalation thresholds. The direct cost is some automation efficiency: the team spends attention adjusting the split, and outputs vary more above the fixed base.",
+        "Hold regular joint working sessions with the vendor's delivery team, with an internal AI steward who owns the correction channel. Keep this guardrail in place: Retained differentiation: dedicated time for technical and for domain work. The direct cost is some standalone depth on each side: experts and AI specialists spend time on each other's work."
       ],
-      "rolloutNarrative": "Days 1–30, Foundation & guardrails: redesign the scoring, clear every blocker, assign owners, set up the shared platform and standardized base, and measure baselines. Days 31–60, Shadow pilot & calibration: run the AI in shadow mode, calibrate thresholds, feed corrections back, and keep people on consequential steps. Days 61–90, Controlled scale & audit: go live in controlled increments, hold the first split review and audit a sample of decisions. KPIs to track: Time to shortlist; Decision quality on non-routine cases (sampled expert review); Corrections fed back into the system per month."
+      "rolloutNarrative": "Days 1–30, Foundation & guardrails: clear every blocker through its redesign path, set up the shared platform and standardized base, and measure baselines. Days 31–60, Shadow pilot & calibration: run the AI in shadow mode, calibrate thresholds and feed back corrections. Days 61–90, Controlled scale & audit: go live in controlled increments, hold the first split review and audit a sample of decisions. Track three KPIs: Time to shortlist; Decision quality on non-routine cases (sampled expert review); Corrections fed back into the system per month."
     },
     "engineVersion": "0.3.0",
     "ruleCatalogueVersion": "2026-11-26.1"

@@ -60,9 +60,8 @@ export const GOLDEN: readonly GoldenExpectation[] = [
   },
   {
     slug: "hiring-and-sentiment",
-    // Recorded decomposition (ADR-0019): the hiring and sentiment-scoring steps stay with people; only the
-    // one-to-one disengagement notes are AI-drafted and signed off.
-    split: { s1: "machine", s2: "human", s3: "human", s4: "human", s5: "machine_review", s6: "human", s7: "human" },
+    // Recorded decomposition (ADR-0019): ranking, rejection, sentiment scoring and flagging stay with people.
+    split: { s1: "machine", s2: "human", s3: "human", s4: "human", s5: "human" },
     // HR preset KPIs are efficiency-only ("Time to shortlist", "Cost per hire") → drift warning.
     driftMissing: ["augmentation_value", "learning_loop"],
     tier: "IV",

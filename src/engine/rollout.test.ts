@@ -76,7 +76,7 @@ describe("90-day rollout (SPEC §7.5)", () => {
     expect(f.deliverables.some((d) => d.text.startsWith("Redesign for") && d.source.kind === "rule" && d.source.ruleId === "BC-PIPA-MON")).toBe(true);
     expect(f.gateCriteria[0]).toContain("Every blocker is cleared through its redesign path");
     // Human steps stay with people in the pilot.
-    expect(r.rollout.phases[1].deliverables.some((d) => d.text.startsWith("Keep Shortlist candidates by hand, Rank applicants with ML tool, Reject applicants below cut-off, Score employee sentiment from chat, Flag low performers and disengaged staff with people"))).toBe(true);
+    expect(r.rollout.phases[1].deliverables.some((d) => d.text.startsWith("Keep Rank applicants with ML tool, Reject applicants below cut-off, Score employee sentiment from chat, Flag low performers and disengaged staff with people"))).toBe(true);
   });
 
   it("no blockers → no redesign gate; info-only case → no 'owner and dated plan' gate", () => {

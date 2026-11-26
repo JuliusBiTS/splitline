@@ -47,8 +47,9 @@ Phase 5 adds the only model-facing code: `/api/decompose` (description → propo
    - a PROPOSED bill named in a sentence without "proposed" (C-36 also matches "PPCDA");
    - "required by law", "legally required" and "AIA tier/level/score";
    - laws that never apply here, whatever triggered: AIDA, Artificial Intelligence and Data Act, Bill C-27, EU AI Act, GDPR;
+   - "applies" without "likely" (except "applies from <date>") in a sentence that names a statute;
    - thesis jargon on the main view: P1–P4, Table 4, Section n, reinforcement, mutual adjustment, decision rights (ADR-0018);
-   - a lever text that does not name its guardrail (the words before the colon) or its direct cost (opening words of `DIRECT_COST_PLAIN`), since `02_*` §1.7 says the cost is never hidden.
+   - a lever text that does not keep its full guardrail (the label and its content) or its direct cost (opening words of `DIRECT_COST_PLAIN`), since `02_*` §1.7 says the cost is never hidden.
 
    REF-AIA-TIER always triggers, so its lexicon entry allows no names: "DADM" and "Algorithmic Impact Assessment" count only when a DADM rule triggered. HC-SAMD-01 is worded "likely triggers a classification check" in the facts (research §2.9), not "applies". The template shortens only the lever setting, never the guardrail or the direct cost.
 
@@ -75,7 +76,13 @@ Phase 5 adds the only model-facing code: `/api/decompose` (description → propo
    - A test asserts `applyConfirmationEdits(raw, edits)` equals the preset decomposition and that the recorded narrative passes the guard.
    - Golden tiers stay exact. Golden split expectations may be re-keyed to the new subtask IDs when the same step moved.
    - The recorded narrative is stored but not rendered until Phase 6 (Summary and charter).
-   - **Outcome of the 2026-11-26 recording:** clinical and hiring needed no edits (tier III and IV as recorded). Claims: one edit removes "Key in amounts and dates" (replaced by the AI extraction). Contract: one edit marks "Recommend a position on non-standard clauses" consequential, as the hand-confirmed preset did; without it the case is tier I. All four tiers and verdicts stay exact. The golden split expectations are re-keyed to the new subtask IDs (one entry per subtask). Contract raw score is now 12 (ADR-0004 table updated). Narration passed the guard on the first attempt for all four.
+   - **Outcome of the 2026-11-26 recording** (after the legal and thesis reviews of the first recording):
+     - Clinical: no edits; tier III as recorded.
+     - Hiring: two edits remove "Shortlist candidates by hand" and "Spot disengagement in one-to-ones", the current manual practices that the ML ranking and the sentiment scoring replace. Without the removal, the default split branch would put the AI into managers' one-to-ones, which nobody planned. Tier IV.
+     - Claims: one edit removes "Key in amounts and dates" (replaced by the AI extraction); one removes the assumption "Staff still review extracted fields", which contradicted the confirmed split. Tier II.
+     - Contract: one edit marks "Recommend a position on non-standard clauses" consequential, as the hand-confirmed preset and the ADR-0004 calibration did (consequential 4 points). Without it the case is tier I. **Open question for Julius:** the model marked the step not consequential because only businesses are affected, which matches the SPEC §6 definition (an effect on a person). The golden tier II rests on this confirmation; either keep it (the contracts carry personal information of named contacts) or re-pin the golden at tier I in a later ADR.
+     - All four tiers and verdicts stay exact. Golden split expectations are re-keyed to the new subtask IDs (one entry per subtask). Contract raw score is now 12 (ADR-0004 table updated).
+     - The narrations were re-recorded after adding the flat-"applies" check, the full-guardrail check and the rule that Splitline's severity and redesign paths are never attributed to a regulator. All four passed the guard on the first attempt.
 10. **Eval metrics** (`scripts/eval-llm.lib.ts`):
     - "schema-valid" = the last attempt parsed into the strict schema within the one retry (a guard rejection still counts as schema-valid);
     - "guard violations 0" = no narration had to fall back to the template because the guard still rejected it after the retry. First-attempt findings are reported separately.

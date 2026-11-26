@@ -47,6 +47,8 @@ export const ConfirmationEditSchema = z.discriminatedUnion("op", [
     reason: z.string().min(1),
   }),
   z.object({ op: z.literal("confirmNoConsequential"), reason: z.string().min(1) }),
+  /** Removes a proposed assumption (matched by its exact text). */
+  z.object({ op: z.literal("removeAssumption"), text: z.string(), reason: z.string().min(1) }),
 ]);
 export type ConfirmationEdit = z.infer<typeof ConfirmationEditSchema>;
 
@@ -79,6 +81,7 @@ export function applyConfirmationEdits(raw: Decomposition, edits: readonly Confi
   let subtasks: WorkingSubtask[] = raw.subtasks.map((s) => ({ ...s }));
   let confirmedNoConsequential = false;
   let added = 0;
+  let assumptions = [...raw.assumptions];
   for (const e of edits) {
     switch (e.op) {
       case "set": {
@@ -100,11 +103,15 @@ export function applyConfirmationEdits(raw: Decomposition, edits: readonly Confi
       case "confirmNoConsequential":
         confirmedNoConsequential = true;
         break;
+      case "removeAssumption":
+        if (!assumptions.includes(e.text)) throw new Error(`Edit refers to unknown assumption "${e.text}"`);
+        assumptions = assumptions.filter((a) => a !== e.text);
+        break;
     }
   }
   const renumbered = subtasks.map((s, i) => ({ ...s, id: `s${i + 1}` }));
   return {
-    ...DecompositionSchema.parse({ ...raw, subtasks: renumbered }),
+    ...DecompositionSchema.parse({ ...raw, assumptions, subtasks: renumbered }),
     ...(confirmedNoConsequential ? { confirmedNoConsequential: true } : {}),
   };
 }
