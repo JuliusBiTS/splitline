@@ -1,0 +1,168 @@
+{
+  "slug": "hiring-and-sentiment",
+  "model": "claude-sonnet-5-5",
+  "decompose": {
+    "recordedAt": "2026-11-26",
+    "attempts": 2,
+    "decomposition": {
+      "subtasks": [
+        {
+          "id": "s1",
+          "name": "Review incoming applications",
+          "description": "Recruiters read the several hundred applications received for each warehouse and driver posting to understand who has applied.",
+          "judgmentIntensity": "low",
+          "knowledgeType": "codifiable",
+          "errorCost": "medium",
+          "volume": "high",
+          "affectsIndividuals": true,
+          "consequential": false,
+          "rationale": "Reading and sorting applications is routine and high in volume. Errors here are caught when candidates are shortlisted."
+        },
+        {
+          "id": "s2",
+          "name": "Shortlist candidates by hand",
+          "description": "Recruiters currently pick which applicants move forward by hand, weighing experience and fit for the posting.",
+          "judgmentIntensity": "high",
+          "knowledgeType": "tacit",
+          "errorCost": "high",
+          "volume": "high",
+          "affectsIndividuals": true,
+          "consequential": true,
+          "rationale": "Shortlisting shapes who gets a job chance. It relies on recruiter experience, and people could reasonably disagree."
+        },
+        {
+          "id": "s3",
+          "name": "Rank applicants with ML tool",
+          "description": "A vendor's machine-learning tool would score and rank applicants for each posting so that the best-fitting ones rise to the top.",
+          "judgmentIntensity": "high",
+          "knowledgeType": "tacit",
+          "errorCost": "high",
+          "volume": "high",
+          "affectsIndividuals": true,
+          "consequential": true,
+          "rationale": "The ranking directly drives who is considered for hiring. Errors or bias would change outcomes for many applicants."
+        },
+        {
+          "id": "s4",
+          "name": "Reject applicants below cut-off",
+          "description": "The tool would automatically reject applicants whose score falls below a set cut-off, with no person reviewing the result.",
+          "judgmentIntensity": "high",
+          "knowledgeType": "codifiable",
+          "errorCost": "high",
+          "volume": "high",
+          "affectsIndividuals": true,
+          "consequential": true,
+          "rationale": "An automatic rejection is a hiring decision affecting livelihood. The cut-off rule is simple but its effects are significant."
+        },
+        {
+          "id": "s5",
+          "name": "Spot disengagement in one-to-ones",
+          "description": "Team leads currently try to notice signs of disengagement in staff through their regular one-to-one conversations.",
+          "judgmentIntensity": "high",
+          "knowledgeType": "tacit",
+          "errorCost": "medium",
+          "volume": "medium",
+          "affectsIndividuals": true,
+          "consequential": false,
+          "rationale": "Reading people draws on experience and is hard to write down. Informal observation alone does not decide anything formally."
+        },
+        {
+          "id": "s6",
+          "name": "Score employee sentiment from chat",
+          "description": "The tool would continuously analyze workplace chat messages and give each employee a sentiment score.",
+          "judgmentIntensity": "high",
+          "knowledgeType": "tacit",
+          "errorCost": "high",
+          "volume": "high",
+          "affectsIndividuals": true,
+          "consequential": true,
+          "rationale": "Scores about identifiable staff feed HR follow-up. Errors could harm trust and employment standing, and the monitoring runs constantly."
+        },
+        {
+          "id": "s7",
+          "name": "Flag low performers and disengaged staff",
+          "description": "HR uses the sentiment scores to flag employees seen as low performers or disengaged and to select them for follow-up.",
+          "judgmentIntensity": "high",
+          "knowledgeType": "tacit",
+          "errorCost": "high",
+          "volume": "medium",
+          "affectsIndividuals": true,
+          "consequential": true,
+          "rationale": "Flagging shapes how managers treat employees and may lead to performance management. A wrong flag can hurt livelihood and trust."
+        }
+      ],
+      "assumptions": [
+        "The tool scores applicants using the content of their applications.",
+        "Rejected applicants are not reviewed by a person before being told.",
+        "Sentiment scores are linked to named employees, not only to teams.",
+        "HR relies on the scores when choosing whom to follow up with.",
+        "Employees may not be fully aware their chat messages are analyzed."
+      ],
+      "clarifyingQuestions": [
+        "Does anyone review applicants rejected below the cut-off before they are notified?",
+        "Are sentiment scores shown for individual employees or only for teams?",
+        "What does follow-up involve for a flagged employee, and could it affect their performance record?"
+      ],
+      "suggestedUseCasePatterns": []
+    },
+    "grounding": [
+      {
+        "subtaskId": "s1",
+        "sourceQuote": "read several hundred applications for each warehouse and driver posting"
+      },
+      {
+        "subtaskId": "s2",
+        "sourceQuote": "shortlist candidates by hand"
+      },
+      {
+        "subtaskId": "s3",
+        "sourceQuote": "rank applicants and automatically reject those below a cut-off"
+      },
+      {
+        "subtaskId": "s4",
+        "sourceQuote": "automatically reject those below a cut-off"
+      },
+      {
+        "subtaskId": "s5",
+        "sourceQuote": "team leads try to spot disengagement through one-to-ones"
+      },
+      {
+        "subtaskId": "s6",
+        "sourceQuote": "score employee sentiment continuously from workplace chat messages"
+      },
+      {
+        "subtaskId": "s7",
+        "sourceQuote": "HR can flag low performers and disengaged staff for follow-up"
+      }
+    ]
+  },
+  "confirmationEdits": [
+    {
+      "op": "remove",
+      "subtaskId": "s2",
+      "reason": "Shortlisting by hand is the current process that the ML ranking (s3) replaces; the intended process has no separate manual shortlist."
+    },
+    {
+      "op": "remove",
+      "subtaskId": "s5",
+      "reason": "Spotting disengagement in one-to-ones is the current informal practice that continuous sentiment scoring (s6) replaces; the AI is not planned for one-to-ones."
+    }
+  ],
+  "narrate": {
+    "recordedAt": "2026-11-26",
+    "attempts": 1,
+    "source": "llm",
+    "narrative": {
+      "executiveSummary": "The verdict is Redesign, with an AIA-inspired indicative tier of IV. The OIPC BC guidance under BC PIPA on employee monitoring and sentiment scoring is one the regulator expects the team to address, and Splitline rates this a blocker, so consider narrowing or dropping the scoring; BC PIPA and the BC Human Rights Code likely apply to employee and applicant information and to decisions about people. Likely owners are the privacy officer, with HR and the product owner.",
+      "splitNarrative": "The AI does Review incoming applications (AI does it (spot-checked)). A person does it (AI may assist) for Rank applicants with ML tool, Reject applicants below cut-off, Score employee sentiment from chat, and Flag low performers and disengaged staff. This is a starting split that the team will move as evidence comes in. The next split review is quarterly, on 2027-02-26.",
+      "leverNarratives": [
+        "Let the team that does the work decide which steps the AI does, using tools and labels shared with other teams. Keep this guardrail in place: Shared platform: common tools, common labels, and visible splits. The direct cost is some automation efficiency: you give up part of the consistency and scale you would get from one split shared by all teams.",
+        "Let the team adjust the split as it learns, on top of a fixed base, and re-check it quarterly. Keep this guardrail in place: Standardized base: agreed data formats, handoff points, and escalation thresholds. The direct cost is some automation efficiency: the team spends attention adjusting the split, and outputs vary more above the fixed base.",
+        "Hold regular joint working sessions with the vendor's delivery team, with an internal AI steward who owns the correction channel. Keep this guardrail in place: Retained differentiation: dedicated time for technical and for domain work. The direct cost is some standalone depth on each side: experts and AI specialists spend time on each other's work."
+      ],
+      "rolloutNarrative": "Days 1–30, Foundation & guardrails: clear every blocker through its redesign path, set up the shared platform and standardized base, and measure baselines. Days 31–60, Shadow pilot & calibration: run the AI in shadow mode, calibrate thresholds and feed back corrections. Days 61–90, Controlled scale & audit: go live in controlled increments, hold the first split review and audit a sample of decisions. Track three KPIs: Time to shortlist; Decision quality on non-routine cases (sampled expert review); Corrections fed back into the system per month."
+    },
+    "engineVersion": "0.3.0",
+    "ruleCatalogueVersion": "2026-11-26.1"
+  }
+}

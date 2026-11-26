@@ -590,6 +590,25 @@ export const PulseResultSchema = z.object({
 export type PulseResult = z.infer<typeof PulseResultSchema>;
 
 // ---------------------------------------------------------------------------
+// §8 Narrative (LLM-written from engine facts, guarded; or the template fallback)
+// ---------------------------------------------------------------------------
+
+const NarrativeText = (max: number) => z.string().trim().min(1).max(max);
+
+/** SPEC §8: `{ executiveSummary, splitNarrative, leverNarratives[3], rolloutNarrative }`. Levers in `OperatingModel.levers` order. */
+export const NarrativeSchema = z.object({
+  executiveSummary: NarrativeText(700),
+  splitNarrative: NarrativeText(700),
+  leverNarratives: z.tuple([NarrativeText(500), NarrativeText(500), NarrativeText(500)]),
+  rolloutNarrative: NarrativeText(700),
+});
+export type Narrative = z.infer<typeof NarrativeSchema>;
+
+/** Where a narrative came from: the guarded LLM output, or the deterministic template fallback. */
+export const NarrativeSourceSchema = z.enum(["llm", "template"]);
+export type NarrativeSource = z.infer<typeof NarrativeSourceSchema>;
+
+// ---------------------------------------------------------------------------
 // §10 Presets
 // ---------------------------------------------------------------------------
 

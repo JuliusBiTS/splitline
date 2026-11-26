@@ -62,8 +62,8 @@ describe("golden score breakdowns (ADR-0004)", () => {
     const t = score("clinical-referral-triage");
     expect([t.rawScore, t.mitigationDeductionApplied]).toEqual([23, false]);
   });
-  it("contract: raw 11", () => {
-    expect(score("contract-clause-review").rawScore).toBe(11);
+  it("contract: raw 12 (recorded decomposition: extraction touches individuals, scale 1; ADR-0019)", () => {
+    expect(score("contract-clause-review").rawScore).toBe(12);
   });
   it("hiring: raw 26 (pinned IV)", () => {
     const t = score("hiring-and-sentiment");

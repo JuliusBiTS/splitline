@@ -8,86 +8,123 @@
     "orgType": "bc_health_authority",
     "businessFunction": "health_services",
     "aiDecisionRole": "recommends",
-    "affectedPeople": ["patients"],
-    "dataCategories": ["health"],
-    "jurisdictions": ["bc"],
+    "affectedPeople": [
+      "patients"
+    ],
+    "dataCategories": [
+      "health"
+    ],
+    "jurisdictions": [
+      "bc"
+    ],
     "hosting": "us_or_global_api",
     "aiType": "generative_llm",
     "customerFacingOutput": false,
     "monitorsEmployees": false,
     "teamSetup": "separate_ai_team",
     "readiness": "medium",
-    "proposedKpis": ["Median days from referral to triage decision", "Share of referrals returned for missing information"],
+    "proposedKpis": [
+      "Median days from referral to triage decision",
+      "Share of referrals returned for missing information"
+    ],
     "sector": "health_care",
-    "useCasePatterns": ["clinical_triage"],
-    "mitigations": ["human_final_decision", "predeployment_testing", "monitoring_plan"],
+    "useCasePatterns": [
+      "clinical_triage"
+    ],
+    "mitigations": [
+      "human_final_decision",
+      "predeployment_testing",
+      "monitoring_plan"
+    ],
     "genAiToolType": "direct_api"
   },
   "decomposition": {
     "subtasks": [
       {
         "id": "s1",
-        "name": "Extract referral details",
-        "description": "Pull patient identifiers, referring clinician, reason for referral and attached results from the letter.",
+        "name": "Receive and read referral letters",
+        "description": "Incoming referral letters are received and read by intake staff. The AI would read each letter and prepare it for the steps that follow.",
         "judgmentIntensity": "low",
         "knowledgeType": "codifiable",
         "errorCost": "medium",
         "volume": "high",
         "affectsIndividuals": true,
         "consequential": false,
-        "rationale": "Structured extraction with clear fields; errors are caught at the next step."
+        "rationale": "Routine intake of documents. Errors are likely to be caught in later checks, but they cause delay and rework. Many referrals arrive, and each is about a patient."
       },
       {
         "id": "s2",
-        "name": "Check referral completeness",
-        "description": "Compare attached tests and history with the clinic's referral criteria and list what is missing.",
+        "name": "Extract referral details",
+        "description": "The AI pulls key details from the letter, such as patient identifiers, the referring provider, the reason for referral, the history and the listed tests.",
         "judgmentIntensity": "low",
         "knowledgeType": "codifiable",
         "errorCost": "medium",
         "volume": "high",
         "affectsIndividuals": true,
         "consequential": false,
-        "rationale": "The criteria are written down; a missed item delays care but is recoverable."
+        "rationale": "Structured data capture that follows clear steps. Errors can mislead later steps, but the clinician checks them before the decision. Runs for every referral."
       },
       {
         "id": "s3",
-        "name": "Suggest urgency category",
-        "description": "Propose an urgency category with the clinical reasons found in the referral.",
-        "judgmentIntensity": "high",
-        "knowledgeType": "tacit",
-        "errorCost": "critical",
-        "volume": "high",
-        "affectsIndividuals": true,
-        "consequential": true,
-        "rationale": "Under-triage can delay urgent care; the category bears directly on the patient's wait."
-      },
-      {
-        "id": "s4",
-        "name": "Draft triage summary",
-        "description": "Write a short summary of the referral for the triage clinician.",
+        "name": "Check required tests and history are attached",
+        "description": "Compare the referral against the clinic's list of required tests and history. Flag what is missing so it can be requested from the referrer.",
         "judgmentIntensity": "medium",
         "knowledgeType": "codifiable",
         "errorCost": "high",
         "volume": "high",
         "affectsIndividuals": true,
-        "consequential": false,
-        "rationale": "An inaccurate summary could mislead the clinician, so it is reviewed against the letter."
+        "consequential": true,
+        "rationale": "Follows a checklist, but some items may be judged relevant or not. A missed gap or a false flag can change the urgency category and delay care."
       },
       {
-        "id": "s5",
-        "name": "Confirm triage and book",
-        "description": "The triage clinician confirms or changes the category and books the appointment.",
+        "id": "s4",
+        "name": "Suggest an urgency category with reasons",
+        "description": "The AI proposes an urgency category for the referral and lists its reasons. Today a nurse places the referral in a category.",
         "judgmentIntensity": "high",
         "knowledgeType": "tacit",
         "errorCost": "critical",
-        "volume": "medium",
+        "volume": "high",
         "affectsIndividuals": true,
         "consequential": true,
-        "rationale": "This is the clinical decision about the patient."
+        "rationale": "Weighs competing clinical factors that experienced people could judge differently. A category set too low could delay care and harm a patient's health. It directly shapes the priority decision."
+      },
+      {
+        "id": "s5",
+        "name": "Draft a summary for the triage clinician",
+        "description": "The AI writes a one-paragraph summary of the referral, the missing information and the suggested category for the clinician to read.",
+        "judgmentIntensity": "medium",
+        "knowledgeType": "tacit",
+        "errorCost": "high",
+        "volume": "high",
+        "affectsIndividuals": true,
+        "consequential": true,
+        "rationale": "The clinician may rely on the summary in place of the full letter. An omission or distortion could change the decision. Deciding what to include takes clinical sense."
+      },
+      {
+        "id": "s6",
+        "name": "Confirm urgency category and book the patient",
+        "description": "The triage clinician reviews the referral and the AI's suggestion, confirms or changes the category, and the patient is booked.",
+        "judgmentIntensity": "high",
+        "knowledgeType": "tacit",
+        "errorCost": "critical",
+        "volume": "high",
+        "affectsIndividuals": true,
+        "consequential": true,
+        "rationale": "This is the final clinical decision about priority and access to care. It relies on experience and has serious consequences for the patient's health if it is wrong."
       }
     ],
-    "assumptions": ["Referral letters arrive as text or searchable PDFs.", "The clinic's referral criteria are documented."],
-    "clarifyingQuestions": [],
-    "suggestedUseCasePatterns": ["clinical_triage"]
+    "assumptions": [
+      "The clinic has a written list of required tests and history for each type of referral.",
+      "Referral letters arrive as text, scanned documents or faxes that the AI can read.",
+      "Missing information is requested from the referrer by clinic staff, not by the AI.",
+      "The triage clinician sees the original letter as well as the AI summary.",
+      "The clinic uses a fixed set of urgency categories."
+    ],
+    "clarifyingQuestions": [
+      "Does the triage clinician read the full referral letter, or mainly the AI summary?",
+      "Who requests missing information from the referrer, and how is it tracked?",
+      "Do some urgent referrals, such as suspected cancer, follow a separate fast-track process?"
+    ],
+    "suggestedUseCasePatterns": []
   }
 }

@@ -1,0 +1,141 @@
+{
+  "slug": "clinical-referral-triage",
+  "model": "claude-sonnet-5-5",
+  "decompose": {
+    "recordedAt": "2026-11-26",
+    "attempts": 1,
+    "decomposition": {
+      "subtasks": [
+        {
+          "id": "s1",
+          "name": "Receive and read referral letters",
+          "description": "Incoming referral letters are received and read by intake staff. The AI would read each letter and prepare it for the steps that follow.",
+          "judgmentIntensity": "low",
+          "knowledgeType": "codifiable",
+          "errorCost": "medium",
+          "volume": "high",
+          "affectsIndividuals": true,
+          "consequential": false,
+          "rationale": "Routine intake of documents. Errors are likely to be caught in later checks, but they cause delay and rework. Many referrals arrive, and each is about a patient."
+        },
+        {
+          "id": "s2",
+          "name": "Extract referral details",
+          "description": "The AI pulls key details from the letter, such as patient identifiers, the referring provider, the reason for referral, the history and the listed tests.",
+          "judgmentIntensity": "low",
+          "knowledgeType": "codifiable",
+          "errorCost": "medium",
+          "volume": "high",
+          "affectsIndividuals": true,
+          "consequential": false,
+          "rationale": "Structured data capture that follows clear steps. Errors can mislead later steps, but the clinician checks them before the decision. Runs for every referral."
+        },
+        {
+          "id": "s3",
+          "name": "Check required tests and history are attached",
+          "description": "Compare the referral against the clinic's list of required tests and history. Flag what is missing so it can be requested from the referrer.",
+          "judgmentIntensity": "medium",
+          "knowledgeType": "codifiable",
+          "errorCost": "high",
+          "volume": "high",
+          "affectsIndividuals": true,
+          "consequential": true,
+          "rationale": "Follows a checklist, but some items may be judged relevant or not. A missed gap or a false flag can change the urgency category and delay care."
+        },
+        {
+          "id": "s4",
+          "name": "Suggest an urgency category with reasons",
+          "description": "The AI proposes an urgency category for the referral and lists its reasons. Today a nurse places the referral in a category.",
+          "judgmentIntensity": "high",
+          "knowledgeType": "tacit",
+          "errorCost": "critical",
+          "volume": "high",
+          "affectsIndividuals": true,
+          "consequential": true,
+          "rationale": "Weighs competing clinical factors that experienced people could judge differently. A category set too low could delay care and harm a patient's health. It directly shapes the priority decision."
+        },
+        {
+          "id": "s5",
+          "name": "Draft a summary for the triage clinician",
+          "description": "The AI writes a one-paragraph summary of the referral, the missing information and the suggested category for the clinician to read.",
+          "judgmentIntensity": "medium",
+          "knowledgeType": "tacit",
+          "errorCost": "high",
+          "volume": "high",
+          "affectsIndividuals": true,
+          "consequential": true,
+          "rationale": "The clinician may rely on the summary in place of the full letter. An omission or distortion could change the decision. Deciding what to include takes clinical sense."
+        },
+        {
+          "id": "s6",
+          "name": "Confirm urgency category and book the patient",
+          "description": "The triage clinician reviews the referral and the AI's suggestion, confirms or changes the category, and the patient is booked.",
+          "judgmentIntensity": "high",
+          "knowledgeType": "tacit",
+          "errorCost": "critical",
+          "volume": "high",
+          "affectsIndividuals": true,
+          "consequential": true,
+          "rationale": "This is the final clinical decision about priority and access to care. It relies on experience and has serious consequences for the patient's health if it is wrong."
+        }
+      ],
+      "assumptions": [
+        "The clinic has a written list of required tests and history for each type of referral.",
+        "Referral letters arrive as text, scanned documents or faxes that the AI can read.",
+        "Missing information is requested from the referrer by clinic staff, not by the AI.",
+        "The triage clinician sees the original letter as well as the AI summary.",
+        "The clinic uses a fixed set of urgency categories."
+      ],
+      "clarifyingQuestions": [
+        "Does the triage clinician read the full referral letter, or mainly the AI summary?",
+        "Who requests missing information from the referrer, and how is it tracked?",
+        "Do some urgent referrals, such as suspected cancer, follow a separate fast-track process?"
+      ],
+      "suggestedUseCasePatterns": []
+    },
+    "grounding": [
+      {
+        "subtaskId": "s1",
+        "sourceQuote": "read every incoming referral letter"
+      },
+      {
+        "subtaskId": "s2",
+        "sourceQuote": "extract referral details"
+      },
+      {
+        "subtaskId": "s3",
+        "sourceQuote": "check that the required tests and history are attached"
+      },
+      {
+        "subtaskId": "s4",
+        "sourceQuote": "place the referral in an urgency category"
+      },
+      {
+        "subtaskId": "s5",
+        "sourceQuote": "draft a one-paragraph summary for the triage clinician"
+      },
+      {
+        "subtaskId": "s6",
+        "sourceQuote": "before a triage clinician confirms it and books the patient"
+      }
+    ]
+  },
+  "confirmationEdits": [],
+  "narrate": {
+    "recordedAt": "2026-11-26",
+    "attempts": 1,
+    "source": "llm",
+    "narrative": {
+      "executiveSummary": "Splitline's verdict is Go with conditions, at an AIA-inspired indicative tier of III, because the tool bears on decisions about patients. BC FIPPA likely applies twice: consider a supplementary assessment for storage or processing outside Canada, owned by the privacy office with the head of the public body deciding, and a privacy impact assessment with reasonable security. Consider the Health Canada medical device rules classification check, led by the clinical lead.",
+      "splitNarrative": "AI does it (spot-checked): Receive and read referral letters, and Extract referral details. AI drafts, a person checks and signs off: Check required tests and history are attached, and Draft a summary for the triage clinician. A person does it (AI may assist): Suggest an urgency category with reasons, and Confirm urgency category and book the patient. This is a starting split that the team will move as evidence comes in. The next split review is on 2026-12-26, then monthly.",
+      "leverNarratives": [
+        "Let the team doing the work decide which steps the AI does, using tools and labels shared with other teams. Keep the guardrail in place: Shared platform: common tools, common labels, and visible splits. The direct cost is some automation efficiency: you give up part of the consistency and scale you would get from one split shared by all teams.",
+        "Let the team adjust the split as it learns, on top of a fixed base of data formats, hand-off points and escalation thresholds, and re-check it monthly. Keep the guardrail: Standardized base: agreed data formats, handoff points, and escalation thresholds. The direct cost is some automation efficiency: the team spends attention adjusting the split, and outputs vary more above the fixed base.",
+        "Hold a weekly joint working session between the AI team and the operating unit. Keep the guardrail: Retained differentiation: dedicated time for technical and for domain work. The direct cost is some standalone depth on each side: experts and AI specialists spend time on each other's work."
+      ],
+      "rolloutNarrative": "Days 1–30, Foundation & guardrails: complete the privacy and medical device checks, set up the shared platform and standardized base, and publish the starting split. Days 31–60, Shadow pilot & calibration: run the AI beside the current process, calibrate thresholds and feed back corrections. Days 61–90, Controlled scale & audit: go live in controlled increments, hold the first split review and audit decisions. Track: median days from referral to triage decision; decision quality on non-routine cases (sampled expert review); corrections fed back into the system per month."
+    },
+    "engineVersion": "0.3.0",
+    "ruleCatalogueVersion": "2026-11-26.1"
+  }
+}

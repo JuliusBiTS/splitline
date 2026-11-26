@@ -43,7 +43,7 @@ test.describe("/dev/components", () => {
   });
 
   test("owner control edit is flagged against the AI proposal", async ({ page }) => {
-    const group = page.getByRole("group", { name: "Owner for Classify documents" });
+    const group = page.getByRole("group", { name: "Owner for Receive and sort claim documents" });
     const human = group.getByRole("button", { name: "Person does it" });
     await human.click();
     await expect(human).toHaveAttribute("aria-pressed", "true");

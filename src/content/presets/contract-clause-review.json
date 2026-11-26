@@ -8,74 +8,119 @@
     "orgType": "bc_private",
     "businessFunction": "legal_compliance",
     "aiDecisionRole": "recommends",
-    "affectedPeople": ["businesses_only"],
-    "dataCategories": ["customer_pi"],
-    "jurisdictions": ["bc"],
+    "affectedPeople": [
+      "businesses_only"
+    ],
+    "dataCategories": [
+      "customer_pi"
+    ],
+    "jurisdictions": [
+      "bc"
+    ],
     "hosting": "us_or_global_api",
     "aiType": "generative_llm",
     "customerFacingOutput": false,
     "monitorsEmployees": false,
     "teamSetup": "embedded",
     "readiness": "high",
-    "proposedKpis": ["Review hours per contract", "Clauses escalated to a lawyer"],
+    "proposedKpis": [
+      "Review hours per contract",
+      "Clauses escalated to a lawyer"
+    ],
     "sector": "other",
     "useCasePatterns": [],
-    "mitigations": ["predeployment_testing"],
+    "mitigations": [
+      "predeployment_testing"
+    ],
     "genAiToolType": "direct_api"
   },
   "decomposition": {
     "subtasks": [
       {
         "id": "s1",
-        "name": "Extract clauses",
-        "description": "Split the contract into clauses and label each by type (term, liability, indemnity, renewal).",
+        "name": "Extract clauses from incoming contracts",
+        "description": "The AI reads each incoming equipment-lease contract and pulls out the key clauses and the party details so they can be compared with the playbook.",
         "judgmentIntensity": "low",
+        "knowledgeType": "codifiable",
+        "errorCost": "medium",
+        "volume": "high",
+        "affectsIndividuals": true,
+        "consequential": false,
+        "rationale": "Extraction follows clear patterns and errors are caught in later review. Contracts name representatives and guarantors, so personal details are involved."
+      },
+      {
+        "id": "s2",
+        "name": "Compare clauses with the clause playbook",
+        "description": "Each extracted clause is checked against the clause playbook to see whether it matches the standard position or differs from it.",
+        "judgmentIntensity": "medium",
         "knowledgeType": "codifiable",
         "errorCost": "medium",
         "volume": "high",
         "affectsIndividuals": false,
         "consequential": false,
-        "rationale": "Clause types follow a known taxonomy; mislabels are visible in review."
+        "rationale": "The playbook is written down, but matching wording to a standard needs some weighing. A missed difference could pass to the lawyer, so errors cause rework or delay."
       },
       {
-        "id": "s2",
-        "name": "Compare with clause playbook",
-        "description": "Match each clause with the playbook's standard wording and mark deviations.",
+        "id": "s3",
+        "name": "Flag non-standard terms",
+        "description": "Clauses that differ from the playbook, or are missing, are marked as non-standard so the lawyer can focus on them.",
         "judgmentIntensity": "medium",
-        "knowledgeType": "codifiable",
+        "knowledgeType": "tacit",
         "errorCost": "high",
         "volume": "high",
         "affectsIndividuals": false,
         "consequential": false,
-        "rationale": "The playbook is written down; a missed deviation could cost money."
+        "rationale": "Deciding what counts as non-standard draws on experience. A missed flag could lead to unfavourable terms being accepted, which is a costly business error."
       },
       {
-        "id": "s3",
-        "name": "Recommend a position",
-        "description": "Recommend accepting, negotiating or rejecting each non-standard clause, with reasons.",
+        "id": "s4",
+        "name": "Recommend a position on non-standard clauses",
+        "description": "For each non-standard clause, the AI suggests a position our side could take, for the lawyer to accept, change or reject.",
         "judgmentIntensity": "high",
         "knowledgeType": "tacit",
         "errorCost": "high",
         "volume": "medium",
         "affectsIndividuals": false,
         "consequential": true,
-        "rationale": "The position sets the legal terms with the customer."
+        "rationale": "Weighing risk against commercial aims is a matter on which experienced lawyers can disagree. A poor recommendation could shape contract terms. Only businesses are affected."
       },
       {
-        "id": "s4",
+        "id": "s5",
         "name": "Draft redline suggestions",
-        "description": "Draft replacement wording for clauses the team wants to negotiate.",
+        "description": "The AI drafts proposed edits to the contract wording, reflecting the recommended positions, for a lawyer to review.",
         "judgmentIntensity": "medium",
-        "knowledgeType": "codifiable",
-        "errorCost": "medium",
+        "knowledgeType": "tacit",
+        "errorCost": "high",
         "volume": "medium",
         "affectsIndividuals": false,
         "consequential": false,
-        "rationale": "A lawyer edits and approves every redline."
+        "rationale": "Drafting wording takes skill that is hard to write down. Errors that slip through could put poor terms in a contract, but the lawyer reviews the draft."
+      },
+      {
+        "id": "s6",
+        "name": "Decide which positions to take",
+        "description": "A lawyer reviews the flagged clauses, recommendations and redlines, and decides which positions to take with the customer.",
+        "judgmentIntensity": "high",
+        "knowledgeType": "tacit",
+        "errorCost": "high",
+        "volume": "medium",
+        "affectsIndividuals": false,
+        "consequential": false,
+        "rationale": "This is the final judgment, weighing legal risk and business aims. A wrong call has costly effects, though it concerns business terms rather than a person's rights."
       }
     ],
-    "assumptions": ["Contracts are in English.", "The clause playbook is current."],
-    "clarifyingQuestions": [],
+    "assumptions": [
+      "A lawyer reviews every redline before it goes to the customer.",
+      "The clause playbook is a written document that the AI can be given.",
+      "Guarantors are named in the contract but are not the subject of any decision in this process.",
+      "Contracts are in a digital, readable format.",
+      "The AI output is a recommendation only and the lawyer makes the final decision."
+    ],
+    "clarifyingQuestions": [
+      "Are guarantors assessed or decided on in this process, or only named in contracts?",
+      "How often do contracts depart from the playbook, and how is that tracked?",
+      "Does the lawyer review every clause or only the ones flagged?"
+    ],
     "suggestedUseCasePatterns": []
   }
 }

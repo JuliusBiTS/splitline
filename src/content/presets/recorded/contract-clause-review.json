@@ -1,0 +1,149 @@
+{
+  "slug": "contract-clause-review",
+  "model": "claude-sonnet-5-5",
+  "decompose": {
+    "recordedAt": "2026-11-26",
+    "attempts": 2,
+    "decomposition": {
+      "subtasks": [
+        {
+          "id": "s1",
+          "name": "Extract clauses from incoming contracts",
+          "description": "The AI reads each incoming equipment-lease contract and pulls out the key clauses and the party details so they can be compared with the playbook.",
+          "judgmentIntensity": "low",
+          "knowledgeType": "codifiable",
+          "errorCost": "medium",
+          "volume": "high",
+          "affectsIndividuals": true,
+          "consequential": false,
+          "rationale": "Extraction follows clear patterns and errors are caught in later review. Contracts name representatives and guarantors, so personal details are involved."
+        },
+        {
+          "id": "s2",
+          "name": "Compare clauses with the clause playbook",
+          "description": "Each extracted clause is checked against the clause playbook to see whether it matches the standard position or differs from it.",
+          "judgmentIntensity": "medium",
+          "knowledgeType": "codifiable",
+          "errorCost": "medium",
+          "volume": "high",
+          "affectsIndividuals": false,
+          "consequential": false,
+          "rationale": "The playbook is written down, but matching wording to a standard needs some weighing. A missed difference could pass to the lawyer, so errors cause rework or delay."
+        },
+        {
+          "id": "s3",
+          "name": "Flag non-standard terms",
+          "description": "Clauses that differ from the playbook, or are missing, are marked as non-standard so the lawyer can focus on them.",
+          "judgmentIntensity": "medium",
+          "knowledgeType": "tacit",
+          "errorCost": "high",
+          "volume": "high",
+          "affectsIndividuals": false,
+          "consequential": false,
+          "rationale": "Deciding what counts as non-standard draws on experience. A missed flag could lead to unfavourable terms being accepted, which is a costly business error."
+        },
+        {
+          "id": "s4",
+          "name": "Recommend a position on non-standard clauses",
+          "description": "For each non-standard clause, the AI suggests a position our side could take, for the lawyer to accept, change or reject.",
+          "judgmentIntensity": "high",
+          "knowledgeType": "tacit",
+          "errorCost": "high",
+          "volume": "medium",
+          "affectsIndividuals": false,
+          "consequential": false,
+          "rationale": "Weighing risk against commercial aims is a matter on which experienced lawyers can disagree. A poor recommendation could shape contract terms. Only businesses are affected."
+        },
+        {
+          "id": "s5",
+          "name": "Draft redline suggestions",
+          "description": "The AI drafts proposed edits to the contract wording, reflecting the recommended positions, for a lawyer to review.",
+          "judgmentIntensity": "medium",
+          "knowledgeType": "tacit",
+          "errorCost": "high",
+          "volume": "medium",
+          "affectsIndividuals": false,
+          "consequential": false,
+          "rationale": "Drafting wording takes skill that is hard to write down. Errors that slip through could put poor terms in a contract, but the lawyer reviews the draft."
+        },
+        {
+          "id": "s6",
+          "name": "Decide which positions to take",
+          "description": "A lawyer reviews the flagged clauses, recommendations and redlines, and decides which positions to take with the customer.",
+          "judgmentIntensity": "high",
+          "knowledgeType": "tacit",
+          "errorCost": "high",
+          "volume": "medium",
+          "affectsIndividuals": false,
+          "consequential": false,
+          "rationale": "This is the final judgment, weighing legal risk and business aims. A wrong call has costly effects, though it concerns business terms rather than a person's rights."
+        }
+      ],
+      "assumptions": [
+        "A lawyer reviews every redline before it goes to the customer.",
+        "The clause playbook is a written document that the AI can be given.",
+        "Guarantors are named in the contract but are not the subject of any decision in this process.",
+        "Contracts are in a digital, readable format.",
+        "The AI output is a recommendation only and the lawyer makes the final decision."
+      ],
+      "clarifyingQuestions": [
+        "Are guarantors assessed or decided on in this process, or only named in contracts?",
+        "How often do contracts depart from the playbook, and how is that tracked?",
+        "Does the lawyer review every clause or only the ones flagged?"
+      ],
+      "suggestedUseCasePatterns": []
+    },
+    "grounding": [
+      {
+        "subtaskId": "s1",
+        "sourceQuote": "We want a large language model to extract clauses"
+      },
+      {
+        "subtaskId": "s2",
+        "sourceQuote": "compares the clauses with our clause playbook"
+      },
+      {
+        "subtaskId": "s3",
+        "sourceQuote": "flags non-standard terms"
+      },
+      {
+        "subtaskId": "s4",
+        "sourceQuote": "recommend a position on non-standard clauses"
+      },
+      {
+        "subtaskId": "s5",
+        "sourceQuote": "drafts a redline for a lawyer"
+      },
+      {
+        "subtaskId": "s6",
+        "sourceQuote": "who decides which positions to take"
+      }
+    ]
+  },
+  "confirmationEdits": [
+    {
+      "op": "set",
+      "subtaskId": "s4",
+      "field": "consequential",
+      "value": true,
+      "reason": "The recommended position sets the contract terms the organization accepts; the reviewer confirms it as the step that bears on the decision, as in the hand-confirmed preset (SPEC §10 golden tier II)."
+    }
+  ],
+  "narrate": {
+    "recordedAt": "2026-11-26",
+    "attempts": 1,
+    "source": "llm",
+    "narrative": {
+      "executiveSummary": "The verdict is Go with conditions, at the AIA-inspired indicative tier II. BC PIPA and PIPEDA likely apply, so consider documenting a reasonable purpose and a valid form of consent, and accountability for personal information sent to an AI vendor; the OPC draft guidance suggests vendor due diligence. Splitline rates each of these an action, with the privacy officer working with the product owner or procurement as likely owners.",
+      "splitNarrative": "AI does it (spot-checked) for Extract clauses from incoming contracts and Compare clauses with the clause playbook. AI drafts, a person checks and signs off for Flag non-standard terms, Recommend a position on non-standard clauses, Draft redline suggestions and Decide which positions to take. This is a starting split that the team will move as evidence comes in. The next split review is on 2026-12-26, then monthly.",
+      "leverNarratives": [
+        "Who decides what the AI does: let the team doing the work choose which steps the AI does, using tools and labels shared with other teams. Keep the guardrail in place: Shared platform: common tools, common labels, and visible splits. The direct cost is some automation efficiency: you give up part of the consistency and scale you would get from one split shared by all teams.",
+        "How the team adjusts the split, and how often: the team adjusts the split as it learns, on a fixed base of data formats, hand-off points and escalation thresholds, and re-checks it monthly. Keep the guardrail in place: Standardized base: agreed data formats, handoff points, and escalation thresholds. The direct cost is some automation efficiency: the team spends attention adjusting the split, and outputs vary more above the fixed base.",
+        "How your experts and the AI team learn from each other: set up a rotating AI steward inside the team, with regular joint sessions on the system's failures and edge cases. Keep the guardrail in place: Retained differentiation: dedicated time for technical and for domain work. The direct cost is some standalone depth on each side: experts and AI specialists spend time on each other's work."
+      ],
+      "rolloutNarrative": "Days 1–30, Foundation & guardrails: assign condition owners, set up the shared platform and standardized base, and publish the starting split. Days 31–60, Shadow pilot & calibration: run the AI in shadow mode and calibrate escalation thresholds. Days 61–90, Controlled scale & audit: go live in controlled increments, hold the first split review and audit a sample of decisions. KPIs: Review hours per contract; Decision quality on non-routine cases (sampled expert review); Corrections fed back into the system per month."
+    },
+    "engineVersion": "0.3.0",
+    "ruleCatalogueVersion": "2026-11-26.1"
+  }
+}
