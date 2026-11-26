@@ -143,3 +143,15 @@ describe("status cap holds on every fixture", () => {
     }
   });
 });
+
+describe("planning metadata (ADR-0018)", () => {
+  it("every rule names a likely owner role and a rough effort band", () => {
+    for (const r of RULE_CATALOGUE) {
+      expect(r.ownerRole, r.id).toBeTruthy();
+      expect(["small", "medium", "large"], r.id).toContain(r.effort);
+    }
+  });
+  it("owner roles name a role only, never a legal duty or a compliance claim", () => {
+    for (const r of RULE_CATALOGUE) expect(r.ownerRole ?? "", r.id).not.toMatch(/\b(must|shall|required|compliant|compliance with)\b/i);
+  });
+});

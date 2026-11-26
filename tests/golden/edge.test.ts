@@ -36,7 +36,7 @@ describe("edge goldens (SPEC §10)", () => {
     expect(triggeredIds(EDGE.quebecWithReviewHfd)).not.toContain("QC-L25-121");
   });
 
-  it("crisis flag → temporary-centralization scope note that reverses P1; tier and verdict unchanged", () => {
+  it("crisis flag → temporary-centralization scope note that reverses team-level split decisions (P1); tier and verdict unchanged", () => {
     const crisis = run(EDGE.crisis);
     const base = run(EDGE.noPersonalData);
     expect(crisis.facts.crisisContext).toBe(true);
@@ -44,7 +44,7 @@ describe("edge goldens (SPEC §10)", () => {
     expect(crisis.verdict.verdict).toBe(base.verdict.verdict);
     expect(crisis.operatingModel.scopeNotes).toContain(CRISIS_SCOPE_NOTE);
     expect(CRISIS_SCOPE_NOTE).toMatch(/temporary centralization/i);
-    expect(CRISIS_SCOPE_NOTE).toContain("reverses P1");
+    expect(CRISIS_SCOPE_NOTE).toContain("reverses the usual rule that the team sets its own split");
     expect(crisis.operatingModel.levers[0].setting).toMatch(/^Temporary centralization/);
     expect(base.operatingModel.scopeNotes).not.toContain(CRISIS_SCOPE_NOTE);
   });
@@ -56,7 +56,7 @@ describe("edge goldens (SPEC §10)", () => {
     expect(low.tier.level).toBe(base.tier.level);
     expect(low.verdict.verdict).toBe(base.verdict.verdict);
     const exchange = low.operatingModel.levers[2];
-    expect(exchange.setting).toMatch(/^Ramp up exchange gradually, enablement first/);
+    expect(exchange.setting).toMatch(/^Ramp up joint work gradually, enablement first/);
     expect(exchange.details.join(" ")).toContain("Gradual ramp");
     expect(low.operatingModel.scopeNotes).toContain(LOW_READINESS_SCOPE_NOTE);
     expect(base.operatingModel.levers[2].setting).not.toMatch(/gradually/);

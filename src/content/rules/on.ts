@@ -24,6 +24,8 @@ export const ON_RULES: RuleDefinition[] = [
       "Add an AI-use disclosure to publicly advertised postings for Ontario roles and to the application form.",
       "Remove any 'Canadian experience' requirement from those postings.",
     ],
+    ownerRole: "HR, with the hiring manager",
+    effort: "small",
     sources: [SRC.oslerOntarioHiring],
     lastVerified: LAST_VERIFIED,
   },

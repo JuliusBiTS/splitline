@@ -323,6 +323,10 @@ export const RuleMetaSchema = z
     actionsToConsider: z.array(z.string().min(1)).min(1),
     /** How the use case can be redesigned to clear a blocker. Required for any rule that can block. */
     redesignPath: z.string().optional(),
+    /** Likely owner role for planning (ADR-0018). Required for rules that can reach action or blocker (catalogue test). */
+    ownerRole: z.string().min(1).optional(),
+    /** Rough effort band for planning (ADR-0018). */
+    effort: z.enum(["small", "medium", "large"]).optional(),
     sources: z.array(RuleSourceSchema).min(1),
     lastVerified: IsoDate,
   })
@@ -403,6 +407,13 @@ export const LeverCardSchema = z.object({
 });
 export type LeverCard = z.infer<typeof LeverCardSchema>;
 
+/** ADR-0018: rough, case-specific cost lines; the thesis direct cost stays on each LeverCard. */
+export const CostEstimateSchema = z.object({
+  topic: z.enum(["decision_rights", "coordination", "exchange", "review"]),
+  lines: z.array(z.string().min(1)).min(1),
+});
+export type CostEstimate = z.infer<typeof CostEstimateSchema>;
+
 export const OperatingModelSchema = z.object({
   split: z.array(SplitItemSchema),
   isStartingSplit: z.literal(true),
@@ -415,6 +426,8 @@ export const OperatingModelSchema = z.object({
     suggestedKpis: z.array(z.string()),
   }),
   scopeNotes: z.array(z.string()),
+  /** Case-specific operational cost estimates (ADR-0018): one per lever, plus "review" when people check AI output. */
+  costEstimates: z.array(CostEstimateSchema).min(3),
 });
 export type OperatingModel = z.infer<typeof OperatingModelSchema>;
 
@@ -438,7 +451,12 @@ export const DeliverableSourceSchema = z.discriminatedUnion("kind", [
 ]);
 export type DeliverableSource = z.infer<typeof DeliverableSourceSchema>;
 
-export const DeliverableSchema = z.object({ text: z.string(), source: DeliverableSourceSchema });
+export const DeliverableSchema = z.object({
+  text: z.string(),
+  source: DeliverableSourceSchema,
+  /** Likely owner role for planning (ADR-0018), e.g. "Privacy office". Never a legal duty. */
+  ownerRole: z.string().min(1),
+});
 export type Deliverable = z.infer<typeof DeliverableSchema>;
 
 export const RolloutKpiSchema = z.object({

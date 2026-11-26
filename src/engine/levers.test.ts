@@ -112,7 +112,7 @@ describe("decision rights (`02_*` §3.3)", () => {
     expect(["III", "IV"]).toContain(forced.tier.level);
     const text = forced.operatingModel.levers[0].details.join(" ");
     expect(text).toContain(HFD_NON_FEDERAL);
-    expect(text).toContain("Applies to: s2");
+    expect(text).toContain("Applies to: Step s2.");
     expect(text).not.toContain("the Directive requires");
     // Below tier III: no human-final-decision line.
     const low = run(EDGE.noPersonalData);
@@ -139,20 +139,20 @@ describe("coordination (`02_*` §3.4)", () => {
   it("names the cadence and the review questions; tighter thresholds for high/critical error steps", () => {
     const r = run(EDGE.privateInsurerClaims);
     const co = r.operatingModel.levers[1];
-    expect(co.setting).toContain("split review quarterly");
+    expect(co.setting).toContain("Re-check the split quarterly");
     expect(co.details.join(" ")).toContain("What is now automated?");
     expect(co.details.join(" ")).toContain("tighter escalation thresholds");
-    expect(co.details.join(" ")).toContain("s2 Step s2");
+    expect(co.details.join(" ")).toContain("high or critical error cost: Step s2");
   });
 
   it("no high-error steps → no threshold line; derived dynamism is labelled", () => {
     const co = levers(makeCase("gen ai", { aiType: "generative_llm" }))[1];
     expect(co.setting).toContain("monthly");
     expect(co.details.join(" ")).not.toContain("tighter escalation thresholds");
-    expect(co.details.join(" ")).toContain("derived from the AI type");
+    expect(co.details.join(" ")).toContain("judged from the AI type");
     const set = levers(makeCase("set dynamism", { dynamism: "medium" }))[1];
     expect(set.setting).toContain("every 2 months");
-    expect(set.details.join(" ")).not.toContain("derived from the AI type");
+    expect(set.details.join(" ")).not.toContain("judged from the AI type");
   });
 });
 

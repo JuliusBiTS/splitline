@@ -115,8 +115,8 @@ describe("diffResults", () => {
     // The P1 reversal is visible in the diff (02_* §1.10, §3.3).
     expect(crisis.decisionRights.changed).toBe(true);
     expect(crisis.decisionRights.to).toMatch(/^Temporary centralization/);
-    expect(crisis.chips).toContain("Decision rights: temporary centralization (reverses P1)");
-    expect(crisis.scopeNotesAdded.some((n) => n.includes("reverses P1"))).toBe(true);
+    expect(crisis.chips).toContain("Who decides the split: temporary centralization (the team no longer sets the split)");
+    expect(crisis.scopeNotesAdded.some((n) => n.includes("reverses the usual rule"))).toBe(true);
     expect(crisis.scopeNotesRemoved).toEqual([]);
   });
 
@@ -124,8 +124,8 @@ describe("diffResults", () => {
     const c = EDGE.crisis;
     const base = run(c);
     const d = computeWhatIf(base, c.intake, c.decomposition, { crisisContext: false }, opts).diff;
-    expect(d.chips).toContain("Decision rights: the team sets the split");
-    expect(d.scopeNotesRemoved.some((n) => n.includes("reverses P1"))).toBe(true);
+    expect(d.chips).toContain("Who decides the split: the team sets the split");
+    expect(d.scopeNotesRemoved.some((n) => n.includes("reverses the usual rule"))).toBe(true);
   });
 
   it("the scope switch shows as central guardrails in the diff", () => {
@@ -133,7 +133,7 @@ describe("diffResults", () => {
     const base = run(c);
     const d = computeWhatIf(base, c.intake, c.decomposition, { aiDecisionRole: "decides_alone" }, opts);
     expect(["III", "IV"]).toContain(d.result.tier.level);
-    expect(d.diff.chips).toContain("Decision rights: central guardrails, local proposals");
+    expect(d.diff.chips).toContain("Who decides the split: central guardrails, local proposals");
   });
 
   it("reports verdict changes and severity changes of rules present in both results", () => {

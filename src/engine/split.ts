@@ -38,24 +38,24 @@ export function matchBranches(s: Subtask, tier: TierLevel): Match[] {
   const m: Match[] = [];
   const t = tierRank(tier);
   if (s.volume === "high" && s.knowledgeType === "codifiable" && ERROR_COST_RANK[s.errorCost] <= 1 && !s.consequential)
-    m.push({ owner: "machine", reason: "High volume, codifiable, error cost at most medium and not consequential." });
-  if (s.consequential) m.push({ owner: "machine_review", reason: "Consequential step: a person reviews the output." });
+    m.push({ owner: "machine", reason: "High volume, rule-based, low or medium error cost and no decision about a person: the AI can do it, with spot checks." });
+  if (s.consequential) m.push({ owner: "machine_review", reason: "Bears on a decision about a person: a person checks the AI output and signs off." });
   if (ERROR_COST_RANK[s.errorCost] >= 2)
-    m.push({ owner: "machine_review", reason: `Error cost is ${s.errorCost}: a person reviews the output.` });
+    m.push({ owner: "machine_review", reason: `Error cost is ${s.errorCost}: a person checks the AI output and signs off.` });
   if (t >= 3 && bearsOnDecision(s))
     m.push({
       owner: "machine_review",
-      reason: `Indicative tier ${tier} and the step bears on the consequential decision: at least machine + human review.`,
+      reason: `Indicative tier ${tier} and the step bears on a decision about a person: a person at least checks the AI output and signs off.`,
     });
   if (s.errorCost === "critical" && s.knowledgeType === "tacit")
-    m.push({ owner: "human", reason: "Critical error cost with tacit knowledge: a person does this step." });
+    m.push({ owner: "human", reason: "Critical error cost and judgment that is hard to write down: a person does this step." });
   if (t >= 4 && isTheDecision(s))
-    m.push({ owner: "human", reason: "At indicative tier IV this step is the consequential decision: a person makes it." });
+    m.push({ owner: "human", reason: "At indicative tier IV this step is the decision about a person: a person makes it." });
   return m;
 }
 
 export const NO_BRANCH_REASON =
-  "No heuristic branch matched: start with human review; the split review may move this step to machine.";
+  "No heuristic branch matched: start with a person checking the AI output; a later split review may let the AI do it alone.";
 
 /** Starting owner for one subtask: the most human matching branch (ADR-0007 §6), else machine + review (ADR-0016 §2). */
 export function startingOwner(s: Subtask, tier: TierLevel): SplitItem {
@@ -85,7 +85,7 @@ export function enforceSplitFloor(
       return {
         ...x,
         owner: "machine_review",
-        reason: `Kept at machine + human review: at indicative tier ${facts.indicativeTier} this step bears on the consequential decision.`,
+        reason: `Kept with a person checking the AI output: at indicative tier ${facts.indicativeTier} this step bears on a decision about a person.`,
       };
     return { ...x };
   });

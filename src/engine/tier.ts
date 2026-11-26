@@ -86,9 +86,19 @@ export function levelFor(score: number, maxScore: number = TIER_MAX_SCORE): Tier
   return "IV";
 }
 
+/** Plain mitigation line for the tier rationale (ADR-0018): which mitigations are ticked and their effect. */
+export function mitigationLine(mitigations: readonly string[], applied: boolean, rawScore: number, score: number): string {
+  const ticked = [...new Set(mitigations)];
+  if (ticked.length === 0) return `No mitigations ticked. At least ${MITIGATION_MIN_TICKED} of 5 lower the score by 15%.`;
+  const list = ticked.map((m) => valueLabel(m)).join(", ");
+  return applied
+    ? `Mitigations in place (${ticked.length} of 5): ${list}. Score reduced by 15% (${rawScore} → ${round1(score)}).`
+    : `Mitigations in place (${ticked.length} of 5): ${list}. At least ${MITIGATION_MIN_TICKED} of 5 lower the score by 15%.`;
+}
+
 const FACTOR_LABELS: Record<TierFactorKey, string> = {
   aiDecisionRole: "AI decision role",
-  consequential: "Most consequential subtask",
+  consequential: "Steps that bear on a decision about a person",
   dataSensitivity: "Data sensitivity",
   affectedPeople: "Affected people",
   reversibility: "Reversibility",
@@ -122,7 +132,7 @@ export function computeTier(f: BaseFacts): TierResult {
       key: "consequential",
       label: FACTOR_LABELS.consequential,
       valueLabel: f.consequentialPresent
-        ? `consequential (${f.consequentialSubtasks.map((s) => s.name).join(", ")})`
+        ? f.consequentialSubtasks.map((s) => s.name).join(", ")
         : "none",
       points: f.consequentialPresent ? TIER_WEIGHTS.consequential.consequential : TIER_WEIGHTS.consequential.none,
       maxPoints: maxOf(TIER_WEIGHTS.consequential),
@@ -183,20 +193,16 @@ export function computeTier(f: BaseFacts): TierResult {
     return x ? `${x.label}: ${x.valueLabel} (+${x.points})` : k;
   });
   if (f.consequentialPresent) {
-    rationale.push(
-      `Consequential points come from: ${f.consequentialSubtasks.map((s) => `${s.name} (${s.id})`).join(", ")}.`,
-    );
+    // Already named when the factor is among the top 3; otherwise name the steps once here.
+    if (!topFactors.includes("consequential"))
+      rationale.push(`Steps that bear on a decision about a person: ${f.consequentialSubtasks.map((s) => s.name).join(", ")}.`);
   } else if (f.confirmedNoConsequential) {
     rationale.push("You confirmed that no step bears on a decision about a person.");
   }
   if (f.reversibilityOverridden) {
     rationale.push(`Reversibility set by user: ${REVERSIBILITY_LABELS[f.reversibility]}.`);
   }
-  if (mitigationDeductionApplied) {
-    rationale.push(
-      `${f.mitigationCount} of 5 mitigations ticked: raw score ${rawScore} reduced by 15% to ${round1(score)}.`,
-    );
-  }
+  rationale.push(mitigationLine(f.mitigations, mitigationDeductionApplied, rawScore, score));
 
   return {
     label: TIER_LABEL,

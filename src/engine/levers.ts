@@ -14,6 +14,35 @@ export const LEVER_NAMES: Record<LeverKey, string> = {
   exchange: "Grouping and exchange (P3)",
 };
 
+/**
+ * Manager-facing lever names (ADR-0018). The thesis names above stay in "Research basis", the
+ * Pulse and the Lab; the main workspace view uses these.
+ */
+export const LEVER_PLAIN_NAMES: Record<LeverKey, string> = {
+  decision_rights: "Who decides what the AI does",
+  coordination: "How the team adjusts the split, and how often",
+  exchange: "How your experts and the AI team learn from each other",
+};
+
+/**
+ * The thesis direct cost (Table 4) in plain words, always shown on the main view next to the
+ * estimates (`02_*` §1.7: never hidden). The verbatim Table 4 text stays in Research basis.
+ */
+export const DIRECT_COST_PLAIN: Record<LeverKey, string> = {
+  decision_rights:
+    "Some automation efficiency: you give up part of the consistency and scale you would get from one split shared by all teams.",
+  coordination:
+    "Some automation efficiency: the team spends attention adjusting the split, and outputs vary more above the fixed base.",
+  exchange: "Some standalone depth on each side: experts and AI specialists spend time on each other's work.",
+};
+
+/** Thesis proposition behind each lever (`02_*` §1.4), shown in "Research basis". */
+export const LEVER_PROPOSITIONS: Record<LeverKey, string> = {
+  decision_rights: "Decentralized decision rights over the split (P1)",
+  coordination: "Mutual adjustment instead of standardization (P2)",
+  exchange: "Integration of automation and augmentation work (P3)",
+};
+
 /** The driver each lever primarily governs (`02_*` §1.4). */
 export const LEVER_DRIVERS: Record<LeverKey, string> = {
   decision_rights: "Informed location of the split",
@@ -61,6 +90,29 @@ export const TRADE_OFF_NOTE =
 export const THESIS_SCOPE_DISCLOSURE =
   "The thesis propositions are untested. The thesis model is firm-level; Splitline applies it at unit and use-case level, following Table 5 and the task-episode measure (Section 6.4).";
 
+/** Plain version of the scope disclosure, always visible on the Operating model tab (ADR-0018). */
+export const THESIS_SCOPE_NOTE_PLAIN =
+  "These settings come from a firm-level model in a master's thesis, applied here at team and use-case level. Its propositions are untested.";
+
+/** The reinforcement in manager terms (ADR-0018); keeps both directions and the minimum rule (`02_*` §1.1–1.3). */
+export const REINFORCEMENT_PLAIN =
+  "Is the AI making your people better, and your people making the AI better? These three settings feed both directions. The weaker direction sets the result, so a strong one cannot make up for a weak one.";
+
+/** Research-basis wording of the reinforcement (`02_*` §1.1–1.3). Never "technical readiness vs absorptive capacity". */
+export const REINFORCEMENT_RESEARCH =
+  "Reinforcement = min(A→B, B→A), each from −1 to +1. A→B (automation → augmentation): freed capacity, and data on where the machine does well or fails. B→A (augmentation → automation): expertise and corrections codified back into the pipeline. The minimum rule is non-compensatory: a strong direction cannot offset a weak one.";
+
+/** Plain label for the illustrative signals (thesis Table 4 reference moves to Research basis). */
+export const LEVER_INDICATORS_LABEL_PLAIN =
+  "Signals and warning signs are illustrative, not validated. A warning sign means a setting has been pushed too far.";
+
+/** Thesis references for the scope notes, shown in Research basis (`02_*` §1.10). */
+export const SCOPE_NOTE_RESEARCH_REFS = [
+  "Central guardrails, local proposals: where task knowledge is codifiable and the setting is safety-critical or heavily regulated, central control over the split can be preferable (thesis Section 5.1).",
+  "Crisis context: temporary centralization can reverse P1, decentralized decision rights (thesis Section 5.4).",
+  "Low readiness: absorptive capacity bounds how far integration can go, so exchange ramps up gradually (Cohen & Levinthal).",
+] as const;
+
 export const SHARED_PLATFORM_ITEMS = [
   "Common tooling across teams",
   "Common task labels",
@@ -85,16 +137,16 @@ function afterCrisis(central: boolean): string {
 }
 
 export function crisisSetting(central: boolean): string {
-  return `Temporary centralization: during the crisis, an accountable owner sets the split. This reverses P1; ${afterCrisis(central)}.`;
+  return `Temporary centralization: during the crisis, an accountable owner sets the split. This reverses the usual rule that the team sets its own split; ${afterCrisis(central)}.`;
 }
 
 export const CRISIS_SETTING = crisisSetting(false);
 
 export const DEFAULT_DECISION_RIGHTS_SETTING =
-  "The team that does the work sets and revises the split (P1), within a shared platform.";
+  "The team that does the work decides which steps the AI does, and changes that over time, using tools and labels shared with other teams.";
 
 export const GRADUAL_RAMP_SETTING =
-  "Ramp up exchange gradually, enablement first: integration is bounded by the team's absorptive capacity.";
+  "Ramp up joint work gradually, enablement first: the team can only take on as much as it can absorb.";
 
 /** FED-DADM-HITL copy (ADR-0012, SPEC §7.4). Never reads as a legal requirement for non-federal organizations. */
 export const HFD_NON_FEDERAL =
@@ -103,7 +155,7 @@ export const HFD_FEDERAL =
   "If your official AIA returns Level III or IV, the Directive requires human intervention points and a human final decision. The indicative tier is not the official AIA level.";
 
 function namesOf(facts: Pick<CaseFacts, "consequentialSubtasks">): string {
-  return facts.consequentialSubtasks.map((s) => `${s.id} ${s.name}`).join(", ");
+  return facts.consequentialSubtasks.map((s) => s.name).join(", ");
 }
 
 export function humanFinalDecisionRequired(facts: Pick<CaseFacts, "indicativeTier">): boolean {
@@ -136,21 +188,23 @@ function decisionRightsCard(facts: CaseFacts): LeverCard {
   };
 }
 
+const DYNAMISM_PLAIN: Record<CaseFacts["dynamism"], string> = { high: "fast", medium: "at a moderate pace", low: "slowly" };
+
 function coordinationCard(facts: CaseFacts, cadence: SplitReviewCadence): LeverCard {
   const t = TABLE_4.coordination;
   const details: string[] = [
     `Standardized base: ${STANDARDIZED_BASE_ITEMS.join("; ")}.`,
     `Each split review asks: ${SPLIT_REVIEW_QUESTIONS.join(" ")}`,
-    `Dynamism is ${facts.dynamism}${facts.dynamismDerived ? " (derived from the AI type)" : ""}: the faster AI capability moves in this task domain, the more often the split is reviewed.`,
+    `AI capability in this kind of task moves ${DYNAMISM_PLAIN[facts.dynamism]}${facts.dynamismDerived ? " (judged from the AI type)" : ""}: the faster it moves, the more often you re-check the split.`,
   ];
   const risky = facts.subtasks.filter((s) => s.errorCost === "high" || s.errorCost === "critical");
   if (risky.length > 0)
     details.push(
-      `Set tighter escalation thresholds for steps with high or critical error cost: ${risky.map((s) => `${s.id} ${s.name}`).join(", ")}.`,
+      `Set tighter escalation thresholds for steps with high or critical error cost: ${risky.map((s) => s.name).join(", ")}.`,
     );
   return {
     lever: "coordination",
-    setting: `Mutual adjustment of the split within a standardized base; split review ${CADENCE_LABELS[cadence]}.`,
+    setting: `The team adjusts the split as it learns, on top of a fixed base of data formats, hand-off points and escalation thresholds. Re-check the split ${CADENCE_LABELS[cadence]}.`,
     guardrail: t.guardrail,
     directCost: t.directCost,
     monitoringIndicator: t.monitoringIndicator,
@@ -196,21 +250,21 @@ export function computeLevers(facts: CaseFacts, cadence: SplitReviewCadence): Op
 
 export function crisisScopeNote(central: boolean): string {
   const after = afterCrisis(central);
-  return `Crisis context: temporary centralization of decision rights over the split. This reverses P1 (decentralized decision rights; thesis Section 5.4). ${after.charAt(0).toUpperCase()}${after.slice(1)}.`;
+  return `Crisis context: temporary centralization. During the crisis, one accountable owner decides the split. This reverses the usual rule that the team sets its own split. ${after.charAt(0).toUpperCase()}${after.slice(1)}.`;
 }
 
 export const CRISIS_SCOPE_NOTE = crisisScopeNote(false);
 
 export const LOW_READINESS_SCOPE_NOTE =
-  "Low readiness: integration is bounded by absorptive capacity, so exchange ramps up gradually, with enablement first.";
+  "Low readiness: the team can only take on as much joint work as it can absorb, so joint work ramps up gradually, with enablement first.";
 
 export function centralGuardrailsNote(facts: CaseFacts): string {
   const why = isSafetyCritical(facts) ? "safety-critical" : `at indicative tier ${facts.indicativeTier}`;
-  return `Central guardrails, local proposals: the task knowledge here is codifiable and the case is ${why}, so central control over the split can be preferable (thesis Section 5.1). The team proposes split changes; an accountable owner ratifies them.`;
+  return `Central guardrails, local proposals: the task knowledge here can be written down and the case is ${why}, so central control over the split can be preferable. The team proposes split changes; an accountable owner ratifies them.`;
 }
 
 export function tierFloorNote(facts: CaseFacts): string {
-  return `Indicative tier ${facts.indicativeTier}: steps that bear on the consequential decision stay at machine + human review or human, even as the split moves.`;
+  return `Indicative tier ${facts.indicativeTier}: steps that bear on a decision about a person keep a person checking or doing them, even as the split moves.`;
 }
 
 export function computeScopeNotes(facts: CaseFacts): string[] {
