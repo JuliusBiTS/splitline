@@ -129,7 +129,7 @@ async function main(): Promise<void> {
     `- Required-field completeness (text fields and grounded quotes): ${pct(sum((s) => s.complete), totalRuns)}.`,
     `- Count stability: ${pct(countStableN, stats.length)} of intakes; mean attribute agreement ${(meanAgree * 100).toFixed(0)}%.`,
     `- Guard findings on first attempts (fixed by the retry or ending in the template): ${sum((s) => s.firstAttemptViolationCount)}; LLM text shipped: ${pct(sum((s) => s.narrateLlm), narrations)}.`,
-    `- Narration guard-clean on the first attempt: ${pct(sum((s) => s.narrateFirstTry), narrations)}; template fallbacks: ${sum((s) => s.templateReasons.length)}.`,
+    `- Narration valid and guard-clean on the first attempt (otherwise the retry fixed a schema, refusal or guard problem): ${pct(sum((s) => s.narrateFirstTry), narrations)}; template fallbacks: ${sum((s) => s.templateReasons.length)}.`,
     `- Prompt cache: ${cacheRead} cache-read and ${cacheWrite} cache-write input tokens vs ${inputTokens} uncached input tokens.`,
     "",
     "| Intake | Decompose ok | Subtask counts | Agreement | Narration LLM / runs | First-attempt guard findings | Failures / fallbacks |",
