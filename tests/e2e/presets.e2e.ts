@@ -1,9 +1,12 @@
 import { expect, test, type Page } from "@playwright/test";
 import { PRESETS } from "@/content/presets";
+import { RULE_CATALOGUE } from "@/content/rules";
 import { computeCase } from "@/engine";
 import { VERDICT_LABELS } from "@/engine/verdict";
 
 const TODAY = "2026-11-20";
+// Rule IDs are [A-Z0-9-] only (RuleMetaSchema), so they are safe to join into a pattern unescaped.
+const RULE_ID_PATTERN = new RegExp(`\\b(${RULE_CATALOGUE.map((r) => r.id).join("|")})\\b`);
 
 /** Fails the test if the page calls any API route (presets must render with zero API calls). */
 function trackApiCalls(page: Page): string[] {
@@ -76,10 +79,46 @@ test.describe("workspace", () => {
 
     await page.goto("/preset/claims-document-intake?tab=model");
     await expect(page.getByRole("tab", { name: "Operating model" })).toHaveAttribute("aria-selected", "true");
+    // Scope disclosure: plain note visible; the verbatim thesis text sits in Research basis (ADR-0018).
+    await expect(page.getByText(/Its propositions are untested/)).toBeVisible();
+    await expect(page.getByText("This is a starting split: it will move.").first()).toBeVisible();
+    // Every lever keeps its guardrail and its cost visible (02_* §1.7).
+    await expect(page.getByRole("heading", { name: "Keep in place", exact: true })).toHaveCount(3);
+    await expect(page.getByRole("heading", { name: "What it costs you", exact: true })).toHaveCount(3);
+    const research = page.getByRole("button", { name: "Research basis for this tab" });
+    await research.click();
     await expect(page.getByText(/The thesis propositions are untested/)).toBeVisible();
-    await expect(page.getByText("Starting split: the split will move.").first()).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Guardrail", exact: true })).toHaveCount(3);
-    await expect(page.getByRole("heading", { name: "Direct cost", exact: true })).toHaveCount(3);
+    await expect(page.getByText("Reinforcement = min(A→B, B→A)", { exact: false })).toBeVisible();
+  });
+
+  test("manager view: plain owner labels, owners on conditions, no internal IDs", async ({ page }) => {
+    await page.goto("/preset/claims-document-intake");
+    const brief = page.getByRole("tabpanel", { name: "Summary" });
+    await expect(brief.getByRole("heading", { name: "Before you pilot" })).toBeVisible();
+    await expect(brief.getByText("Likely owner:").first()).toBeVisible();
+    await expect(brief.getByRole("heading", { name: "Who does what" })).toBeVisible();
+    await expect(brief.getByText("AI drafts, a person checks and signs off").first()).toBeVisible();
+    await expect(brief.getByRole("heading", { name: "What it costs you" })).toBeVisible();
+    await expect(brief.getByText(/straight-through processing stays at zero for the first 60 days/)).toBeVisible();
+    // The condition list appears once (no duplicate "Top conditions" block).
+    await expect(brief.getByText("Top conditions", { exact: true })).toHaveCount(0);
+    for (const tab of ["summary", "model", "rollout"]) {
+      await page.goto(`/preset/claims-document-intake?tab=${tab}`);
+      const text = await page.getByRole("tabpanel").innerText();
+      expect(text, tab).not.toMatch(/\bs\d\b|\(P[1-4]\)|Table 4|Section 6\.4|DAYS DAYS|Days Days/i);
+      // No rule ID from the whole catalogue on the main view (rule IDs live on the Governance Map).
+      expect(text, tab).not.toMatch(RULE_ID_PATTERN);
+    }
+  });
+
+  test("direct load without JS: the workspace is inside the main landmark", async ({ browser }) => {
+    const ctx = await browser.newContext({ javaScriptEnabled: false });
+    const page = await ctx.newPage();
+    await page.goto("/preset/claims-document-intake");
+    const main = page.getByRole("main");
+    await expect(main.getByRole("heading", { level: 1 })).toBeVisible();
+    expect(await main.innerText()).not.toContain("Loading");
+    await ctx.close();
   });
 
   test("Summary buttons open the What-if drawer and the Operating model tab", async ({ page }) => {
@@ -87,7 +126,7 @@ test.describe("workspace", () => {
     await page.getByRole("button", { name: "Try a what-if" }).click();
     await expect(page.getByRole("dialog", { name: "What if…" })).toBeVisible();
     await page.getByRole("dialog", { name: "What if…" }).getByRole("button", { name: "Close" }).first().click();
-    await page.getByRole("button", { name: "Design the operating model" }).click();
+    await page.getByRole("button", { name: "See how your team runs it" }).click();
     await expect(page.getByRole("tab", { name: "Operating model" })).toHaveAttribute("aria-selected", "true");
   });
 
@@ -99,7 +138,7 @@ test.describe("workspace", () => {
   test("Rollout and Export tabs render engine output", async ({ page }) => {
     await page.goto("/preset/hiring-and-sentiment?tab=rollout");
     await expect(page.getByRole("heading", { name: "90-day rollout" })).toBeVisible();
-    await expect(page.getByRole("rowheader", { name: "Learning loop" })).toBeVisible();
+    await expect(page.getByRole("rowheader", { name: "Corrections flowing back" })).toBeVisible();
     await page.getByRole("tab", { name: "Export" }).click();
     await expect(page.getByLabel("Inventory record JSON")).toContainText('"verdict": "redesign"');
   });

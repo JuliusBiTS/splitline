@@ -40,13 +40,13 @@ describe("verdict", () => {
 describe("split map", () => {
   it("summarizes owners like the intake bottom bar", () => {
     expect(splitSummary(["machine", "machine_review", "machine", "machine_review", "human"])).toBe(
-      "5 subtasks · 2 Machine · 2 Machine + review · 1 Human",
+      "5 subtasks · 2 AI does it · 2 AI drafts, person signs off · 1 Person does it",
     );
   });
   it("derives the edited flag from the AI proposal", () => {
     expect(isOwnerEdited("machine_review", "machine")).toBe(true);
     expect(isOwnerEdited("human", "human")).toBe(false);
-    expect(ownerEditedNote("machine")).toBe("Owner edited by you · AI proposed Machine");
+    expect(ownerEditedNote("machine")).toBe("Owner edited by you · AI proposed: AI does it");
   });
 });
 

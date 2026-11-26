@@ -11,6 +11,7 @@ import type {
   CaseFacts,
   Deliverable,
   KpiKind,
+  LeverKey,
   LeverCard,
   MonitoringPlanItem,
   OperatingModel,
@@ -25,6 +26,26 @@ export const ROLLOUT_PHASE_TITLES = {
   shadow_pilot: "Shadow pilot & calibration",
   controlled_scale: "Controlled scale & audit",
 } as const;
+
+/** Likely owner role per lever deliverable (ADR-0018). Planning aid only. */
+export function leverOwnerRole(lever: LeverKey, teamSetup: CaseFacts["teamSetup"]): string {
+  if (lever === "decision_rights") return "Product owner";
+  if (lever === "coordination") return "Product owner, with the AI team lead";
+  return teamSetup === "vendor_run" ? "Internal AI steward, with the vendor" : teamSetup === "embedded" ? "AI steward in the team" : "AI team lead";
+}
+
+export const MODEL_OWNER_ROLE = "Product owner";
+
+/** Fallback when a rule has no owner role yet (the catalogue test requires one for action/blocker rules). */
+export const RULE_OWNER_FALLBACK = "Product owner, with your privacy or legal adviser";
+
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+/** "2027-05-01" → "May 1, 2027" (pure; no Date). */
+export function formatIsoDateLong(iso: string): string {
+  const [y, m, d] = iso.split("-").map(Number);
+  return `${MONTHS[(m ?? 1) - 1]} ${d}, ${y}`;
+}
 
 const KPI_KINDS: readonly KpiKind[] = ["efficiency", "augmentation_value", "learning_loop"];
 
@@ -62,43 +83,53 @@ export interface RolloutInput {
 export function computeRollout({ facts, triggeredRules, operatingModel, catalogue }: RolloutInput): RolloutPlan {
   const byId = new Map(catalogue.map((r) => [r.id, r]));
   const titleOf = (id: string) => byId.get(id)?.title ?? id;
+  // Future rules carry their start date so a Days 1–30 task never reads as in force today (ADR-0018).
+  const whenPrefix = (t: TriggeredRule) => {
+    const date = byId.get(t.ruleId)?.effectiveDate;
+    return t.effectiveStatus === "IN_FORCE_FUTURE" && date ? `Applies from ${formatIsoDateLong(date)}: ` : "";
+  };
+  const ruleOwner = (id: string) => byId.get(id)?.ownerRole ?? RULE_OWNER_FALLBACK;
+  const leverOwner = (lever: LeverKey) => leverOwnerRole(lever, facts.teamSetup);
+  const nameOf = new Map(facts.subtasks.map((s) => [s.id, s.name]));
   const blockers = triggeredRules.filter((t) => t.severity === "blocker");
   const actions = triggeredRules.filter((t) => t.severity === "action");
   const proposed = triggeredRules.filter((t) => t.effectiveStatus === "PROPOSED");
   const kpis = selectRolloutKpis(facts.proposedKpis);
   const kpiNames = kpis.map((k) => k.name);
   const [dr, co, ex] = operatingModel.levers;
-  const humanSteps = operatingModel.split.filter((s) => s.owner === "human").map((s) => s.subtaskId);
-  const machineSteps = operatingModel.split.filter((s) => s.owner === "machine").map((s) => s.subtaskId);
+  const humanSteps = operatingModel.split.filter((s) => s.owner === "human").map((s) => nameOf.get(s.subtaskId) ?? s.subtaskId);
+  const machineSteps = operatingModel.split.filter((s) => s.owner === "machine").map((s) => nameOf.get(s.subtaskId) ?? s.subtaskId);
 
   // Days 1–30
   const foundation: Deliverable[] = [
     ...blockers.map((t) => ({
-      text: `Redesign for ${titleOf(t.ruleId)}: ${byId.get(t.ruleId)?.redesignPath ?? t.actions.join(" ")}`,
+      text: `${whenPrefix(t)}Redesign for ${titleOf(t.ruleId)}: ${byId.get(t.ruleId)?.redesignPath ?? t.actions.join(" ")}`,
       source: { kind: "rule" as const, ruleId: t.ruleId },
+      ownerRole: ruleOwner(t.ruleId),
     })),
     ...[...blockers, ...actions].map((t) => ({
-      text: `${titleOf(t.ruleId)}: ${t.actions.join(" ")}`,
+      text: `${whenPrefix(t)}${titleOf(t.ruleId)}: ${t.actions.join(" ")}`,
       source: { kind: "rule" as const, ruleId: t.ruleId },
+      ownerRole: ruleOwner(t.ruleId),
     })),
     {
       text: `Set up the shared platform: ${SHARED_PLATFORM_ITEMS.join("; ")}.`,
-      source: { kind: "lever", lever: "decision_rights" },
+      source: { kind: "lever", lever: "decision_rights" }, ownerRole: leverOwner("decision_rights"),
     },
-    { text: `Agree the standardized base: ${STANDARDIZED_BASE_ITEMS.join("; ")}.`, source: { kind: "lever", lever: "coordination" } },
+    { text: `Agree the standardized base: ${STANDARDIZED_BASE_ITEMS.join("; ")}.`, source: { kind: "lever", lever: "coordination" }, ownerRole: leverOwner("coordination") },
     facts.readiness === "low"
       ? {
           text: "Enablement first: how the system works, where it fails, and how to log a correction.",
-          source: { kind: "lever", lever: "exchange" },
+          source: { kind: "lever", lever: "exchange" }, ownerRole: leverOwner("exchange"),
         }
-      : { text: `Start the exchange rhythm: ${ex.setting}`, source: { kind: "lever", lever: "exchange" } },
+      : { text: `Start the joint working rhythm: ${ex.setting}`, source: { kind: "lever", lever: "exchange" }, ownerRole: leverOwner("exchange") },
     {
       text: "Set up the correction channel: every human correction is captured in a structured form.",
-      source: { kind: "lever", lever: "exchange" },
+      source: { kind: "lever", lever: "exchange" }, ownerRole: leverOwner("exchange"),
     },
     {
       text: `Publish the starting split in the split register, with the first split review on ${operatingModel.nextReviewDate}.`,
-      source: { kind: "model" },
+      source: { kind: "model" }, ownerRole: MODEL_OWNER_ROLE,
     },
   ];
   const foundationGates: string[] = [];
@@ -109,18 +140,18 @@ export function computeRollout({ facts, triggeredRules, operatingModel, catalogu
   // Days 31–60
   const pilot: Deliverable[] = [
     {
-      text: "Run the AI system in shadow mode next to the current process and compare outputs on every machine and machine + review step.",
-      source: { kind: "model" },
+      text: "Run the AI system in shadow mode next to the current process and compare its outputs on every step it does or drafts.",
+      source: { kind: "model" }, ownerRole: MODEL_OWNER_ROLE,
     },
-    { text: "Calibrate the escalation thresholds on the shadow-pilot errors.", source: { kind: "lever", lever: "coordination" } },
+    { text: "Calibrate the escalation thresholds on the shadow-pilot errors.", source: { kind: "lever", lever: "coordination" }, ownerRole: leverOwner("coordination") },
     {
       text: "Review failures and edge cases in the joint sessions; feed corrections back through the correction channel.",
-      source: { kind: "lever", lever: "exchange" },
+      source: { kind: "lever", lever: "exchange" }, ownerRole: leverOwner("exchange"),
     },
-    { text: "Track overrides against the expected band.", source: { kind: "lever", lever: "decision_rights" } },
+    { text: "Track overrides against the expected band.", source: { kind: "lever", lever: "decision_rights" }, ownerRole: leverOwner("decision_rights") },
   ];
   if (humanSteps.length > 0)
-    pilot.push({ text: `Keep ${humanSteps.join(", ")} with people; the pilot collects evidence for the split review.`, source: { kind: "model" } });
+    pilot.push({ text: `Keep ${humanSteps.join(", ")} with people; the pilot collects evidence for the split review.`, source: { kind: "model" }, ownerRole: MODEL_OWNER_ROLE });
   const pilotGates = [
     "Automation error rate on shadow cases is within the agreed escalation thresholds.",
     "Corrections are captured and fed back.",
@@ -133,20 +164,24 @@ export function computeRollout({ facts, triggeredRules, operatingModel, catalogu
     {
       text:
         machineSteps.length > 0
-          ? `Go live in controlled increments, starting with the machine steps (${machineSteps.join(", ")}).`
+          ? `Go live in controlled increments, starting with the steps the AI does alone (${machineSteps.join(", ")}).`
           : "Go live in controlled increments, with human review on every step.",
-      source: { kind: "model" },
+      source: { kind: "model" }, ownerRole: MODEL_OWNER_ROLE,
     },
     {
       text: `Hold the first split review (${CADENCE_LABELS[operatingModel.splitReviewCadence]}): ${SPLIT_REVIEW_QUESTIONS.join(" ")}`,
-      source: { kind: "lever", lever: "coordination" },
+      source: { kind: "lever", lever: "coordination" }, ownerRole: leverOwner("coordination"),
     },
-    { text: "Audit a sample of decisions against the conditions from Days 1–30.", source: { kind: "model" } },
+    { text: "Audit a sample of decisions against the conditions from Days 1–30.", source: { kind: "model" }, ownerRole: MODEL_OWNER_ROLE },
     ...[dr, co, ex].map((l) => ({
       text: `Monitor ${l.monitoringIndicator.toLowerCase()}; warning sign: ${l.warningIndicator.toLowerCase()}.`,
-      source: { kind: "lever" as const, lever: l.lever },
+      source: { kind: "lever" as const, lever: l.lever }, ownerRole: leverOwner(l.lever),
     })),
-    ...proposed.map((t) => ({ text: `Prepare for (proposed): ${titleOf(t.ruleId)}.`, source: { kind: "rule" as const, ruleId: t.ruleId } })),
+    ...proposed.map((t) => ({
+      text: `Prepare for (proposed): ${titleOf(t.ruleId)}.`,
+      source: { kind: "rule" as const, ruleId: t.ruleId },
+      ownerRole: ruleOwner(t.ruleId),
+    })),
   ];
   const scaleGates = [
     "No lever warning sign is active.",

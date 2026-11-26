@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import { formatIsoDate } from "@/components/splitline/format";
 import { computePreset, inventoryRecord, PRESET_AS_OF } from "@/components/workspace/model";
 import { ExportPanel, OperatingModelPanel, RolloutPanel, SummaryPanel, TriagePanel } from "@/components/workspace/panels";
@@ -23,20 +22,12 @@ export async function generateMetadata({ params }: PageProps<"/preset/[slug]">):
 
 /**
  * Preset workspace (SPEC §4): same tabs as a live case, computed at build time from committed JSON.
- * `params` is read inside Suspense (Cache Components); every known slug is prerendered in full, and
- * `src/proxy.ts` gives unknown slugs a real 404.
+ * Every slug comes from `generateStaticParams`, so `params` is build-time data and the page awaits
+ * it directly: the whole workspace is in the static HTML inside `<main>`, with no Suspense fallback
+ * that assistive technology or a no-JS client could get stuck on. `src/proxy.ts` gives unknown
+ * slugs a real 404.
  */
-export default function PresetPage({ params }: PageProps<"/preset/[slug]">) {
-  return (
-    <main id="main" className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col gap-6 px-4 pt-8 pb-24 sm:px-10 md:pb-8 lg:px-20">
-      <Suspense fallback={<p className="text-[15px] text-muted-foreground">Loading the preset…</p>}>
-        <PresetWorkspace params={params} />
-      </Suspense>
-    </main>
-  );
-}
-
-async function PresetWorkspace({ params }: { params: PageProps<"/preset/[slug]">["params"] }) {
+export default async function PresetPage({ params }: PageProps<"/preset/[slug]">) {
   const { slug } = await params;
   const preset = getPreset(slug);
   if (!preset) notFound();
@@ -45,7 +36,7 @@ async function PresetWorkspace({ params }: { params: PageProps<"/preset/[slug]">
   const orgLabel = valueLabel(preset.intake.orgType);
 
   return (
-    <>
+    <main id="main" className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col gap-6 px-4 pt-8 pb-24 sm:px-10 md:pb-8 lg:px-20">
       <header className="flex flex-col gap-2">
         <p className="font-mono text-xs font-medium tracking-[0.04em] text-muted-foreground uppercase">
           {orgLabel} · {preset.organization}
@@ -76,6 +67,6 @@ async function PresetWorkspace({ params }: { params: PageProps<"/preset/[slug]">
           blockersCount: r.triggeredRules.filter((t) => t.severity === "blocker").length,
         }}
       />
-    </>
+    </main>
   );
 }

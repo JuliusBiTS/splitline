@@ -18,6 +18,8 @@ export const INTL_RULES: RuleDefinition[] = [
       "Record the use case in your AI inventory.",
       "Keep an impact-assessment summary and repeat it at deployment and at any significant change.",
     ],
+    ownerRole: "Product owner",
+    effort: "small",
     sources: [SRC.iso42005],
     lastVerified: LAST_VERIFIED,
   },

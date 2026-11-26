@@ -44,7 +44,7 @@ test.describe("/dev/components", () => {
 
   test("owner control edit is flagged against the AI proposal", async ({ page }) => {
     const group = page.getByRole("group", { name: "Owner for Classify documents" });
-    const human = group.getByRole("button", { name: "Human" });
+    const human = group.getByRole("button", { name: "Person does it" });
     await human.click();
     await expect(human).toHaveAttribute("aria-pressed", "true");
     await expect(page.getByText(/Owner edited by you · AI proposed/).first()).toBeVisible();
@@ -60,7 +60,7 @@ test.describe("/dev/components", () => {
     await page.keyboard.press("Space");
     await expect(sw).toBeChecked();
     await expect(dialog.getByRole("list", { name: "Differences" })).toBeVisible();
-    await expect(dialog.getByText("Decision rights")).toBeVisible();
+    await expect(dialog.getByText("Who decides the split")).toBeVisible();
     await expect(dialog.getByRole("button", { name: "Apply to design" })).toBeEnabled();
   });
 

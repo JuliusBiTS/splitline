@@ -1,6 +1,6 @@
 # Splitline: Product Specification
 
-**Version:** 1.0 (spec locked after the Phase 0 interview) · **Date:** 2026-11-20 · **Owner:** Julius Wölki
+**Version:** 1.1 (manager copy pass, ADR-0018; v1.0 locked after the Phase 0 interview) · **Date:** 2026-11-26 · **Owner:** Julius Wölki
 **Tagline:** *Design where the machine ends and judgment begins.*
 
 > This spec is the source of truth for *what* to build. `docs/PLAN.md` says *in which order*. `docs/research/*` holds the evidence. If this spec and the research disagree, raise it; do not silently pick one. Section 14 records the interview decisions and the items explicitly deferred (each with an ADR). Changes since v0.9 are summarized in §15.
@@ -181,6 +181,8 @@ interface RuleDefinition {
   severity: (c: CaseFacts) => Severity;
   consideration: string;           // plain-language why
   actionsToConsider: string[];
+  ownerRole?: string;              // likely owner role for planning (ADR-0018), e.g. "Privacy office"; never a legal duty
+  effort?: "small" | "medium" | "large"; // rough effort band for planning (ADR-0018)
   sources: Array<{ label: string; url: string }>;
   lastVerified: string;            // ISO date
 }
@@ -193,6 +195,7 @@ interface TriggeredRule {
 ```
 - Rules live as data in `src/content/rules/` (one file per jurisdiction). The catalogue starts from `docs/research/01_*`, section 3.
 - `matchedFacts` lists the intake values that triggered the rule (shown in RuleCard as "Why this applies").
+- **Planning metadata (ADR-0018):** every catalogue rule has `ownerRole` and `effort` (catalogue test). They are planning aids shown as "Likely owner" and "Rough effort" with the note "Owners and effort are rough planning estimates, not legal advice. Confirm with your privacy office or counsel." They never change triggers, severity or the verdict. Effort bands: small (days), medium (1–3 weeks), large (a month or more).
 
 **Evaluation order (ADR-0007):** `IntakeInput` + confirmed `Decomposition` → `CaseFacts` → **tier** (§7.2) → **rules** (predicates may read the tier, e.g. `FED-DADM-HITL`) → **severity cap** → **verdict** (§7.3) → operating model (§7.4) → rollout (§7.5). The tier never reads rule results, so there is no cycle.
 
@@ -272,9 +275,16 @@ interface OperatingModel {
   levers: [LeverCard, LeverCard, LeverCard];
   driftCheck: { ok: boolean; missing: Array<"augmentation_value" | "learning_loop">; suggestedKpis: string[] };
   scopeNotes: string[];   // e.g. central guardrails for codifiable + tier ≥ III; crisis reversal
+  costEstimates: CostEstimate[]; // ADR-0018: one per lever, plus "review" when people check AI output
 }
+interface CostEstimate { topic: "decision_rights" | "coordination" | "exchange" | "review"; lines: string[] }
 ```
 - Split heuristic, lever settings, cadence and drift check follow `02_*` §3 exactly.
+- **Two-layer language (ADR-0018):** the workspace shows manager terms; thesis terms sit in a collapsible "Research basis" on each lever card, under "What it costs you" and at the end of the Operating model tab.
+  - Owner labels map 1:1 to `SplitOwner`: `machine` → "AI does it (spot-checked)"; `machine_review` → "AI drafts, a person checks and signs off"; `human` → "A person does it (AI may assist)". The thesis labels (Machine / Machine + human review / Human) appear in Research basis.
+  - Lever names: decision rights → "Who decides what the AI does"; coordination → "How the team adjusts the split, and how often"; exchange → "How your experts and the AI team learn from each other". Reinforcement → "Is the AI making your people better, and your people making the AI better?", with the minimum rule stated in plain words ("the weaker direction sets the result"); min(A→B, B→A) in Research basis.
+  - The scope disclosure is a quiet, always-visible plain note at the end of the Operating model tab; the verbatim disclosure sits in its Research basis.
+- **Cost estimates (ADR-0018):** `costEstimates` translate each lever's direct cost (`directCost`, thesis Table 4, kept unchanged) into rough operational terms, derived deterministically from `teamSetup`, `readiness`, the crisis flag, the scope switch, the review cadence and the starting split (machine steps → no straight-through processing before Day 61; `machine_review` steps grouped by volume → reviewer time; `human` steps). Each lever always shows its direct cost in plain words ("Direct cost: …", `DIRECT_COST_PLAIN`, the Table 4 cost restated), its guardrail ("Keep in place") and ≥ 1 case line. Case lines are labelled as Splitline estimates with the note "Estimates are Splitline's own rough figures, not findings from the thesis. They assume a unit of about 5–15 people; adjust them to your team." The verbatim Table 4 text is in Research basis.
 - **IF** tier ≥ III, **THE system SHALL** set every subtask that bears on the consequential decision to `machine_review` or `human`, and the Decision Rights card SHALL require a human final decision (rule `FED-DADM-HITL`). This holds even though `FED-DADM-HITL` is capped at `info` for non-federal organizations: the cap affects the verdict, not the operating model.
   - **Card copy (ADR-0012):** for non-federal organizations, the human final decision is presented as Splitline's design setting, citing "Reference: DADM Appendix C (mandatory for federal institutions only)". It must never read as a legal requirement.
   - **For federal institutions:** the card reads "If your official AIA returns Level III or IV, the Directive requires human intervention points and a human final decision." The indicative tier is never presented as the official AIA level.
@@ -286,7 +296,7 @@ interface OperatingModel {
   - **Effect:** the Decision Rights card switches to "central guardrails, local proposals". The team proposes split changes, an accountable owner ratifies them, and a matching `scopeNotes` entry is added.
 
 ### 7.5 Rollout (90 days)
-Three phases (Days 1–30 Foundation & guardrails; 31–60 Shadow pilot & calibration; 61–90 Controlled scale & audit). Each phase has deliverables, KPIs and gate criteria. Deliverables come from triggered rules (e.g. a PIA) and from the levers (shared platform, standardized base, joint sessions). KPIs always include one efficiency, one augmentation-value and one learning-loop KPI.
+Three phases (Days 1–30 Foundation & guardrails; 31–60 Shadow pilot & calibration; 61–90 Controlled scale & audit). Each phase has deliverables, KPIs and gate criteria. Deliverables come from triggered rules (e.g. a PIA) and from the levers (shared platform, standardized base, joint sessions). Each deliverable has an `ownerRole` (ADR-0018): the rule's `ownerRole` for rule deliverables; product owner (decision rights, operating model), product owner with the AI team lead (coordination), and the AI team lead / AI steward / internal AI steward with the vendor (exchange, by team setup). Deliverable text names subtasks by name, never by ID; deliverables from IN_FORCE_FUTURE rules start with "Applies from <date>:". KPIs always include one efficiency, one augmentation-value and one learning-loop KPI.
 
 ### 7.6 What-if
 Toggles: hosting, AI decision role, Quebec/Ontario affected, crisis, dynamism, customer-facing. **WHEN** a toggle changes, **THE system SHALL** recompute synchronously (< 100 ms) and show diff chips (e.g. "Tier II → III", "+2 rules", "Verdict unchanged").
@@ -355,7 +365,7 @@ All presets use fictional organizations. Preset copy must explain *why* the verd
 
 - **Charter (Markdown + print stylesheet):** one page, A4/Letter.
   - Header: Splitline, case title, date, tier, verdict.
-  - Body: conditions, split summary, three levers with guardrails and costs, 90-day plan, KPIs, triggered rules with effective status, sources and last-verified date.
+  - Body: conditions with likely owner and rough effort, split summary in plain owner labels, three levers with guardrails, cost estimates and the Table 4 direct cost, 90-day plan, KPIs, triggered rules with effective status, sources and last-verified date.
   - Footer: disclaimer and the Splitline URL.
 - **Inventory record (JSON), ISO/IEC 42001-style:** `useCaseId, title, owner(placeholder), orgType, aiType, aiDecisionRole, dataCategories, hosting, indicativeTier, verdict, triggeredRuleIds, splitReviewCadence, nextReviewDate, createdAt, engineVersion, ruleCatalogueVersion`.
 
@@ -410,6 +420,9 @@ Env: `ANTHROPIC_API_KEY`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, 
 - Written thesis permission → before M3, ADR-0009.
 
 ## 15. Changes since v0.9
+
+**v1.1 (2026-11-26, ADR-0018, manager copy pass):** §7.1 rule `ownerRole`/`effort`; §7.4 two-layer language, plain owner labels, `costEstimates`; §7.5 `Deliverable.ownerRole`; §11 charter content. The tier rationale names consequential steps without IDs and lists the ticked mitigations.
+
 - §4: main navigation; "Governance Map"; share link without free text; author placement.
 - §5: `sector`, `useCasePatterns`, `mitigations`, `reversibilityOverride`.
 - §6: `suggestedUseCasePatterns`; consequential floor; row highlighting.

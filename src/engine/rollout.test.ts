@@ -76,7 +76,7 @@ describe("90-day rollout (SPEC §7.5)", () => {
     expect(f.deliverables.some((d) => d.text.startsWith("Redesign for") && d.source.kind === "rule" && d.source.ruleId === "BC-PIPA-MON")).toBe(true);
     expect(f.gateCriteria[0]).toContain("Every blocker is cleared through its redesign path");
     // Human steps stay with people in the pilot.
-    expect(r.rollout.phases[1].deliverables.some((d) => d.text.startsWith("Keep s2, s3, s5 with people"))).toBe(true);
+    expect(r.rollout.phases[1].deliverables.some((d) => d.text.startsWith("Keep Score and rank applicants, Auto-reject below cut-off, Flag low performers with people"))).toBe(true);
   });
 
   it("no blockers → no redesign gate; info-only case → no 'owner and dated plan' gate", () => {
@@ -100,11 +100,11 @@ describe("90-day rollout (SPEC §7.5)", () => {
 
   it("low readiness starts with enablement; otherwise the exchange rhythm starts in Days 1–30", () => {
     expect(run(EDGE.lowReadiness).rollout.phases[0].deliverables.some((d) => d.text.startsWith("Enablement first"))).toBe(true);
-    expect(run(EDGE.noPersonalData).rollout.phases[0].deliverables.some((d) => d.text.startsWith("Start the exchange rhythm"))).toBe(true);
+    expect(run(EDGE.noPersonalData).rollout.phases[0].deliverables.some((d) => d.text.startsWith("Start the joint working rhythm"))).toBe(true);
   });
 
   it("go-live starts with machine steps, or keeps review on every step when there are none", () => {
-    expect(preset("claims-document-intake").rollout.phases[2].deliverables[0]?.text).toContain("machine steps (s1, s2)");
+    expect(preset("claims-document-intake").rollout.phases[2].deliverables[0]?.text).toContain("steps the AI does alone (Classify documents, Extract receipt fields)");
     const allReview = {
       ...PLAIN_DECOMPOSITION,
       subtasks: [subtask("s1", { consequential: true }), subtask("s2", { errorCost: "high" }), subtask("s3")],
@@ -115,5 +115,40 @@ describe("90-day rollout (SPEC §7.5)", () => {
 
   it("names the first split review date", () => {
     expect(preset("hiring-and-sentiment").rollout.phases[0].deliverables.some((d) => d.text.includes("2027-02-20"))).toBe(true);
+  });
+});
+
+describe("rollout owners and plain copy (ADR-0018)", () => {
+  it("every deliverable has a likely owner role and no subtask IDs", () => {
+    for (const c of ALL_CASES) {
+      const r = run(c);
+      for (const p of r.rollout.phases)
+        for (const d of p.deliverables) {
+          expect(d.ownerRole.length, c.name).toBeGreaterThan(0);
+          const t = r.facts.subtasks.reduce((x, s) => x.split(s.name).join("<name>"), d.text);
+          expect(t, c.name).not.toMatch(/\bs\d\b/);
+        }
+    }
+  });
+  it("rule deliverables take the rule's owner role", () => {
+    const r = run({ name: "claims", ...getPreset("claims-document-intake")! });
+    const pia = r.rollout.phases[0].deliverables.find((d) => d.source.kind === "rule" && d.source.ruleId === "BC-FIPPA-01");
+    expect(pia?.ownerRole).toBe("Privacy office, with the product owner");
+  });
+});
+
+describe("future rules in the rollout (ADR-0018, legal review)", () => {
+  it("deliverables from IN_FORCE_FUTURE rules start with their start date", () => {
+    let seen = 0;
+    for (const c of ALL_CASES) {
+      const r = run(c);
+      const future = new Set(r.triggeredRules.filter((t) => t.effectiveStatus === "IN_FORCE_FUTURE").map((t) => t.ruleId));
+      for (const d of r.rollout.phases[0].deliverables)
+        if (d.source.kind === "rule" && future.has(d.source.ruleId)) {
+          seen++;
+          expect(d.text, c.name).toMatch(/^Applies from [A-Z][a-z]+ \d{1,2}, \d{4}: /);
+        }
+    }
+    expect(seen).toBeGreaterThan(0);
   });
 });

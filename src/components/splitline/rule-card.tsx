@@ -7,20 +7,29 @@ import type { RuleCardModel } from "./rule-card.logic";
 import { StatusBadge } from "./status-badge";
 
 /** RuleCard list: Base UI accordion; first item open by default (handoff §3). */
-export function RuleCardList({ rules, defaultOpen = 0 }: { rules: RuleCardModel[]; defaultOpen?: number | null }) {
+export function RuleCardList({
+  rules,
+  defaultOpen = 0,
+  showPlanning = false,
+}: {
+  rules: RuleCardModel[];
+  defaultOpen?: number | null;
+  /** Show the likely owner and rough effort under each title (Summary "Before you pilot", ADR-0018). */
+  showPlanning?: boolean;
+}) {
   return (
     <Accordion
       defaultValue={defaultOpen === null || !rules[defaultOpen] ? [] : [rules[defaultOpen].ruleId]}
       className="rounded-card border border-border bg-surface"
     >
       {rules.map((r) => (
-        <RuleCardItem key={r.ruleId} rule={r} />
+        <RuleCardItem key={r.ruleId} rule={r} showPlanning={showPlanning} />
       ))}
     </Accordion>
   );
 }
 
-function RuleCardItem({ rule }: { rule: RuleCardModel }) {
+function RuleCardItem({ rule, showPlanning }: { rule: RuleCardModel; showPlanning: boolean }) {
   return (
     <AccordionItem value={rule.ruleId}>
       <AccordionTrigger className="grid grid-cols-[1fr_24px] gap-3 px-4 py-4 sm:grid-cols-[200px_1fr_24px] sm:gap-4 sm:px-6 sm:py-5">
@@ -30,7 +39,24 @@ function RuleCardItem({ rule }: { rule: RuleCardModel }) {
             <span className="text-[13px] font-normal text-muted-foreground">{rule.badge.statusLabel}</span>
           )}
         </span>
-        <span className="col-start-1 row-start-2 text-base font-medium text-ink sm:col-start-2 sm:row-start-1">{rule.title}</span>
+        <span className="col-start-1 row-start-2 flex flex-col gap-1 sm:col-start-2 sm:row-start-1">
+          <span className="text-base font-medium text-ink">{rule.title}</span>
+          {showPlanning && (rule.ownerRole || rule.effortLabel) && (
+            <span className="text-sm font-normal text-ink-2">
+              {rule.ownerRole && (
+                <>
+                  <span className="text-muted-foreground">Likely owner:</span> {rule.ownerRole}
+                </>
+              )}
+              {rule.ownerRole && rule.effortLabel && <span aria-hidden> · </span>}
+              {rule.effortLabel && (
+                <>
+                  <span className="text-muted-foreground">Rough effort:</span> {rule.effortLabel}
+                </>
+              )}
+            </span>
+          )}
+        </span>
       </AccordionTrigger>
       <AccordionContent className="px-4 sm:pr-6 sm:pl-[240px]">
         <h4 className="text-sm font-semibold text-ink">Why this applies</h4>
@@ -77,7 +103,7 @@ function RuleCardItem({ rule }: { rule: RuleCardModel }) {
             href={`/sources#${rule.ruleId}`}
             className="inline-flex min-h-6 items-center font-medium text-brand underline underline-offset-2"
           >
-            See {rule.ruleId} on the Governance Map
+            See this rule on the Governance Map
           </Link>
         </p>
       </AccordionContent>

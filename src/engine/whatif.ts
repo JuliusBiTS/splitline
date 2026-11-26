@@ -84,7 +84,7 @@ export function diffResults(before: EngineResult, after: EngineResult): WhatIfDi
   if (rulesChangedSeverity.length > 0) chips.push(`${plural(rulesChangedSeverity.length, "rule")} changed severity`);
   if (splitChanges.length > 0) chips.push(`${plural(splitChanges.length, "split owner")} changed`);
   if (cadence.changed) chips.push(`Split review: ${CADENCE_LABELS[cadence.from]} → ${CADENCE_LABELS[cadence.to]}`);
-  if (decisionRights.changed) chips.push(`Decision rights: ${decisionRightsChip(after.operatingModel.levers[0].setting)}`);
+  if (decisionRights.changed) chips.push(`Who decides the split: ${decisionRightsChip(after.operatingModel.levers[0].setting)}`);
 
   return {
     tier,
@@ -103,7 +103,7 @@ export function diffResults(before: EngineResult, after: EngineResult): WhatIfDi
 
 /** Short chip text for a decision-rights setting: the part before the first colon or full stop. */
 function decisionRightsChip(setting: string): string {
-  if (setting.startsWith("Temporary centralization")) return "temporary centralization (reverses P1)";
+  if (setting.startsWith("Temporary centralization")) return "temporary centralization (the team no longer sets the split)";
   if (setting.startsWith("Central guardrails")) return "central guardrails, local proposals";
   return "the team sets the split";
 }

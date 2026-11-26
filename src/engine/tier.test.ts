@@ -89,7 +89,8 @@ describe("rationale", () => {
   });
   it("names the subtask that supplied the consequential points", () => {
     const t = tierOf({ aiDecisionRole: "recommends" }, CONSEQUENTIAL_DECOMPOSITION);
-    expect(t.rationale.join(" ")).toContain("Step s2 (s2)");
+    expect(t.rationale.join(" ")).toContain("Step s2");
+    expect(t.rationale.join(" ")).not.toContain("(s2)");
   });
   it("names a reversibility override", () => {
     expect(tierOf({ reversibilityOverride: "hard_to_reverse" }).rationale.join(" ")).toContain(
@@ -104,5 +105,24 @@ describe("rationale", () => {
     const gen = tierOf({ customerFacingOutput: true, aiType: "generative_llm" });
     const ml = tierOf({ customerFacingOutput: true, aiType: "classical_ml" });
     expect(gen.rawScore - ml.rawScore).toBe(2);
+  });
+});
+
+describe("rationale wording for managers (ADR-0018)", () => {
+  it("names the steps that bear on a decision about a person once, without IDs", () => {
+    const t = tierOf({ aiDecisionRole: "recommends" }, CONSEQUENTIAL_DECOMPOSITION);
+    const text = t.rationale.join(" ");
+    expect(text).toContain("Steps that bear on a decision about a person: Step s2");
+    expect(text).not.toMatch(/Most consequential subtask|consequential \(/);
+    expect(t.rationale.filter((l) => l.includes("Steps that bear on a decision"))).toHaveLength(1);
+  });
+  it("lists the ticked mitigations and their effect", () => {
+    const four = tierOf({ mitigations: ["human_final_decision", "appeal_path", "predeployment_testing", "monitoring_plan"] });
+    expect(four.rationale.join(" ")).toContain(
+      "Mitigations in place (4 of 5): human makes the final decision, appeal path, pre-deployment testing, monitoring plan. Score reduced by 15%",
+    );
+    const one = tierOf({ mitigations: ["appeal_path"] });
+    expect(one.rationale.join(" ")).toContain("Mitigations in place (1 of 5): appeal path. At least 4 of 5 lower the score by 15%.");
+    expect(tierOf({ mitigations: [] }).rationale.join(" ")).toContain("No mitigations ticked.");
   });
 });
