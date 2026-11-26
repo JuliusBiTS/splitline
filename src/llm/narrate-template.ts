@@ -23,7 +23,7 @@ const sentence = (s: string) => (/[.!?…]$/.test(s.trim()) ? s.trim() : `${s.tr
 export function templateNarrative(f: NarrationFacts): Narrative {
   const conditionText =
     f.conditions.length > 0
-      ? `Before you pilot, consider: ${f.conditions.map((c) => `${c.title} (${c.status})`).join("; ")}.`
+      ? `Before you pilot, consider: ${f.conditions.map((c) => `${c.title} (${c.status === "Applies" ? "likely applies" : c.status})`).join("; ")}.`
       : "No condition needs action before a pilot.";
   const executiveSummary = fit(
     `${f.verdict} at ${f.tier.label} ${f.tier.level}. ${conditionText} ${
