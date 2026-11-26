@@ -12,6 +12,11 @@ test.describe("charter print view (SPEC §11)", () => {
       await page.goto(`/preset/${slug}/charter`);
       await expect(page.getByRole("article")).toContainText("Indicative triage only, not legal advice.");
       await page.emulateMedia({ media: "print" });
+      // Headroom: at the Letter printable width (8.5 in minus @page margins) the charter must use at
+      // most 90% of the printable height, so font differences across platforms cannot add a page.
+      await page.setViewportSize({ width: 816 - 68, height: 1000 });
+      const height = await page.getByRole("article").evaluate((el) => el.getBoundingClientRect().height);
+      expect(height / (1056 - 60), `${slug} fill`).toBeLessThanOrEqual(0.9);
       for (const format of ["Letter", "A4"] as const) {
         const pdf = await page.pdf({ format, printBackground: true, preferCSSPageSize: false });
         expect(pdf.length).toBeGreaterThan(1000);

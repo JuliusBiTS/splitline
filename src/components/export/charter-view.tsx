@@ -18,7 +18,7 @@ export function CharterView({ m }: { m: CharterModel }) {
   return (
     <article
       aria-label={`Charter: ${m.title}`}
-      className="charter mx-auto flex w-full max-w-[860px] flex-col gap-4 rounded-card border border-border bg-surface p-6 text-[13px] leading-snug text-ink-2 sm:p-8 print:max-w-none print:gap-[4pt] print:rounded-none print:border-0 print:p-0 print:text-[6.5pt] print:leading-[1.22]"
+      className="charter mx-auto flex w-full max-w-[860px] flex-col gap-4 rounded-card border border-border bg-surface p-6 text-[13px] leading-snug text-ink-2 sm:p-8 print:max-w-none print:gap-[4pt] print:rounded-none print:border-0 print:p-0 print:text-[6.2pt] print:leading-[1.2]"
     >
       <header className="flex flex-col gap-1 border-b-2 border-brand pb-2 print:pb-[3pt]">
         <p className="font-mono text-[11px] tracking-[0.04em] text-brand uppercase print:text-[6.5pt]">Splitline charter · {m.date}</p>
@@ -26,7 +26,7 @@ export function CharterView({ m }: { m: CharterModel }) {
         <p className="text-[14px] text-ink print:text-[8pt]">
           <strong>Verdict: {m.verdict}</strong> · {m.tierLine}
         </p>
-        <p className="print:text-[6.5pt]">{m.reason}</p>
+        <p className="print:text-[6.2pt]">{m.reason}</p>
         {m.inBrief && (
           <p className="print:hidden">
             {m.inBrief.text} <span className="text-muted-foreground">({m.inBrief.provenance})</span>
@@ -101,7 +101,7 @@ export function CharterView({ m }: { m: CharterModel }) {
                     <li key={d}>{d}</li>
                   ))}
                 </ul>
-                <p className="text-muted-foreground">Gate: {p.gate.join("; ")}</p>
+                <p className="text-muted-foreground print:hidden">Gate: {p.gate.join("; ")}</p>
               </div>
             ))}
           </div>
@@ -125,8 +125,8 @@ export function CharterView({ m }: { m: CharterModel }) {
         </Block>
       </div>
 
-      <footer className="flex flex-col gap-0.5 border-t border-divider pt-2 text-[12px] text-muted-foreground print:pt-[3pt] print:text-[6.5pt]">
-        <p>{[...m.notes, "The full plan with likely owners is in the Markdown charter and the Rollout tab."].join(" ")}</p>
+      <footer className="flex flex-col gap-0.5 border-t border-divider pt-2 text-[12px] text-muted-foreground print:pt-[3pt] print:text-[6.2pt]">
+        <p>{[...m.notes, "The full plan with likely owners and phase gates is in the Markdown charter and the Rollout tab."].join(" ")}</p>
         <p>
           Made with Splitline · {m.url} · All sources per rule: {m.sourcesUrl}
         </p>
