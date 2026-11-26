@@ -33,7 +33,9 @@ interface IntakeStats {
   narrateLlm: number;
   narrateFirstTry: number;
   firstAttemptViolations: string[];
-  shippedViolations: number;
+  narrateSchemaValid: number;
+  guardFallbacks: number;
+  firstAttemptViolationCount: number;
   templateReasons: string[];
 }
 
@@ -55,7 +57,9 @@ async function main(): Promise<void> {
       narrateLlm: 0,
       narrateFirstTry: 0,
       firstAttemptViolations: [],
-      shippedViolations: 0,
+      narrateSchemaValid: 0,
+      guardFallbacks: 0,
+      firstAttemptViolationCount: 0,
       templateReasons: [],
     };
     for (let run = 1; run <= RUNS; run++) {
@@ -82,7 +86,11 @@ async function main(): Promise<void> {
       if (n.source === "llm") s.narrateLlm++;
       if (n.source === "llm" && n.attempts === 1) s.narrateFirstTry++;
       if (n.violations[0]?.length) s.firstAttemptViolations.push(...n.violations[0].map((v) => `${v.kind} "${v.match}"`));
-      if (n.source === "llm") s.shippedViolations += n.violations[n.violations.length - 1]?.length ?? 0;
+      s.firstAttemptViolationCount += n.violations[0]?.length ?? 0;
+      // Schema-valid: the last attempt parsed into NarrativeSchema (a guard rejection still counts as schema-valid).
+      if (n.source === "llm" || n.failure?.kind === "guard") s.narrateSchemaValid++;
+      // Guard violation that survived the retry, i.e. the narrative had to fall back to the template.
+      if (n.failure?.kind === "guard") s.guardFallbacks++;
       if (n.failure) s.templateReasons.push(`${n.failure.kind}${n.failure.detail ? ` (${n.failure.detail})` : ""}`);
       console.log(`${e.id} run ${run}: decompose ${d.ok ? `${d.decomposition.subtasks.length} subtasks/${d.attempts} try` : "failed"}; narrate ${n.source}/${n.attempts} try`);
     }
@@ -99,7 +107,6 @@ async function main(): Promise<void> {
   const cacheRead = usage.reduce((a, u) => a + u.cacheReadInputTokens, 0);
   const cacheWrite = usage.reduce((a, u) => a + u.cacheCreationInputTokens, 0);
   const inputTokens = usage.reduce((a, u) => a + u.inputTokens, 0);
-  const shipped = sum((s) => s.shippedViolations);
 
   const lines = [
     `# LLM eval, ${today}`,
@@ -112,8 +119,8 @@ async function main(): Promise<void> {
     "| Check | Target | Result |",
     "|---|---|---|",
     `| Decomposition schema-valid (within the one retry) | 100% | ${pct(sum((s) => s.decomposeOk), totalRuns)} |`,
-    `| Narration schema-valid and guard-clean (LLM text shipped) | 100% | ${pct(sum((s) => s.narrateLlm), narrations)} |`,
-    `| Guard violations in shipped narratives | 0 | ${shipped} |`,
+    `| Narration schema-valid (within the one retry) | 100% | ${pct(sum((s) => s.narrateSchemaValid), narrations)} |`,
+    `| Guard violations after the retry (narration fell back to the template because of the guard) | 0 | ${sum((s) => s.guardFallbacks)} |`,
     `| Stability (count ±1 and attribute agreement ≥ ${AGREEMENT_THRESHOLD * 100}%) | ≥ 80% of intakes | ${pct(stable, stats.length)} |`,
     "",
     "## Detail",
@@ -121,6 +128,7 @@ async function main(): Promise<void> {
     `- Decomposition valid on the first attempt: ${pct(sum((s) => s.decomposeFirstTry), totalRuns)}.`,
     `- Required-field completeness (text fields and grounded quotes): ${pct(sum((s) => s.complete), totalRuns)}.`,
     `- Count stability: ${pct(countStableN, stats.length)} of intakes; mean attribute agreement ${(meanAgree * 100).toFixed(0)}%.`,
+    `- Guard findings on first attempts (fixed by the retry or ending in the template): ${sum((s) => s.firstAttemptViolationCount)}; LLM text shipped: ${pct(sum((s) => s.narrateLlm), narrations)}.`,
     `- Narration guard-clean on the first attempt: ${pct(sum((s) => s.narrateFirstTry), narrations)}; template fallbacks: ${sum((s) => s.templateReasons.length)}.`,
     `- Prompt cache: ${cacheRead} cache-read and ${cacheWrite} cache-write input tokens vs ${inputTokens} uncached input tokens.`,
     "",

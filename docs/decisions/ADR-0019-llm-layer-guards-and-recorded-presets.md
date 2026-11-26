@@ -44,7 +44,13 @@ Phase 5 adds the only model-facing code: `/api/decompose` (description → propo
    - a statute name whose rules did not trigger;
    - any rule-ID-shaped token (triggered or not, since ADR-0018 bans IDs from the main view) or subtask ID;
    - "compliant", "you must", "must comply", "legal advice";
-   - a PROPOSED bill named in a sentence without "proposed".
+   - a PROPOSED bill named in a sentence without "proposed" (C-36 also matches "PPCDA");
+   - "required by law", "legally required" and "AIA tier/level/score";
+   - laws that never apply here, whatever triggered: AIDA, Artificial Intelligence and Data Act, Bill C-27, EU AI Act, GDPR;
+   - thesis jargon on the main view: P1–P4, Table 4, Section n, reinforcement, mutual adjustment, decision rights (ADR-0018);
+   - a lever text that does not name its guardrail (the words before the colon) or its direct cost (opening words of `DIRECT_COST_PLAIN`), since `02_*` §1.7 says the cost is never hidden.
+
+   REF-AIA-TIER always triggers, so its lexicon entry allows no names: "DADM" and "Algorithmic Impact Assessment" count only when a DADM rule triggered. HC-SAMD-01 is worded "likely triggers a classification check" in the facts (research §2.9), not "applies". The template shortens only the lever setting, never the guardrail or the direct cost.
 
    "AIA" counts as a mention of the official DADM assessment, except in the tier label "AIA-inspired". The case title and step names typed by the user are masked first. Two failed attempts → `templateNarrative()`, which is built from the same facts and passes the guard for every fixture case (tested).
 7. **Case token** (resolves ADR-0008's open point).
@@ -69,7 +75,12 @@ Phase 5 adds the only model-facing code: `/api/decompose` (description → propo
    - A test asserts `applyConfirmationEdits(raw, edits)` equals the preset decomposition and that the recorded narrative passes the guard.
    - Golden tiers stay exact. Golden split expectations may be re-keyed to the new subtask IDs when the same step moved.
    - The recorded narrative is stored but not rendered until Phase 6 (Summary and charter).
-10. **Boundary.** A test fails if anything outside `src/llm/`, `src/app/api/` and tests imports the LLM layer, the SDK or the API helpers.
+10. **Eval metrics** (`scripts/eval-llm.lib.ts`):
+    - "schema-valid" = the last attempt parsed into the strict schema within the one retry (a guard rejection still counts as schema-valid);
+    - "guard violations 0" = no narration had to fall back to the template because the guard still rejected it after the retry. First-attempt findings are reported separately.
+    - A template fallback is never stored as a preset recording.
+11. **Prompt wording after review:** `critical` error cost means serious or irreversible harm to health or safety (rights and livelihood go through `consequential`), because `isSafetyCritical` reads it. A step is consequential when its output directly feeds the decision and an error would change it. `codifiable` means explicit rules or checklists. The narration says the starting split will move and keeps "temporary" for temporary centralization.
+12. **Boundary.** A test fails if anything outside `src/llm/`, `src/app/api/` and tests imports the LLM layer, the SDK or the API helpers.
 
 ## Consequences
 - `.env.example` gains `CASE_TOKEN_SECRET`. SPEC §8, §13 and §15 are updated (v1.2).

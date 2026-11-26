@@ -9,7 +9,7 @@
 export interface LexiconEntry {
   /** Short source name shown to the model and used by the template, e.g. "BC FIPPA". */
   display: string;
-  /** Names that count as a mention of this instrument. */
+  /** Names that count as a mention of this instrument. Empty only for REF-AIA-TIER (see its entry). */
   names: readonly string[];
 }
 
@@ -29,8 +29,8 @@ export const STATUTE_LEXICON: Readonly<Record<string, LexiconEntry>> = {
     display: "OPC draft guidance",
     names: ["OPC", "Office of the Privacy Commissioner", "Privacy Commissioner of Canada"],
   },
-  "FED-C36-ADM": { display: "Bill C-36 (proposed)", names: ["C-36", "Protecting Privacy and Consumer Data Act"] },
-  "FED-C36-XB": { display: "Bill C-36 (proposed)", names: ["C-36", "Protecting Privacy and Consumer Data Act"] },
+  "FED-C36-ADM": { display: "Bill C-36 (proposed)", names: ["C-36", "PPCDA", "Protecting Privacy and Consumer Data Act"] },
+  "FED-C36-XB": { display: "Bill C-36 (proposed)", names: ["C-36", "PPCDA", "Protecting Privacy and Consumer Data Act"] },
   "FED-DADM-01": {
     display: "Directive on Automated Decision-Making",
     names: ["Directive on Automated Decision-Making", "DADM", "Treasury Board", "Algorithmic Impact Assessment", "AIA"],
@@ -39,7 +39,9 @@ export const STATUTE_LEXICON: Readonly<Record<string, LexiconEntry>> = {
     display: "Directive on Automated Decision-Making",
     names: ["Directive on Automated Decision-Making", "DADM", "Treasury Board"],
   },
-  "REF-AIA-TIER": { display: "Algorithmic Impact Assessment (reference only)", names: ["Algorithmic Impact Assessment", "DADM"] },
+  // Always triggers (it explains the tier), so it allows no names: "DADM" and "Algorithmic Impact Assessment"
+  // count only when FED-DADM-01 or FED-DADM-HITL triggered. The tier label "AIA-inspired" is exempt in patternFor.
+  "REF-AIA-TIER": { display: "Splitline's AIA-inspired indicative tier (reference only)", names: [] },
   "OSFI-E23": { display: "OSFI Guideline E-23", names: ["OSFI", "E-23"] },
   "INS-OSFI-GENAI": { display: "OSFI generative AI bulletin", names: ["OSFI"] },
   "VC-GENAI-MGR": { display: "Voluntary Code on generative AI", names: ["Voluntary Code", "ISED"] },

@@ -35,12 +35,20 @@ export interface NarrationFacts {
   scopeNotes: string[];
 }
 
+/**
+ * Status wording that differs from the generic label. HC-SAMD-01 is a check against the exclusion
+ * criteria, not a finding that the device rules apply (research §2.9).
+ */
+export const STATUS_WORDING_OVERRIDES: Readonly<Record<string, string>> = {
+  "HC-SAMD-01": "likely triggers a classification check",
+};
+
 function ruleFact(t: TriggeredRule): NarrationRuleFact {
   const rule = getRule(t.ruleId);
   const fact: NarrationRuleFact = {
     source: displayNameFor(t.ruleId),
     title: rule?.title ?? t.ruleId,
-    status: rule ? statusLabel(rule, t) : t.effectiveStatus,
+    status: STATUS_WORDING_OVERRIDES[t.ruleId] ?? (rule ? statusLabel(rule, t) : t.effectiveStatus),
     severity: t.severity,
   };
   if (rule?.ownerRole && t.severity !== "info") fact.likelyOwner = rule.ownerRole;

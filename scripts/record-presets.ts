@@ -92,6 +92,12 @@ async function recordNarratives(): Promise<void> {
     const facts = buildNarrationFacts(result, p.decomposition, p.intake.title);
     const out = await narrate(facts, result.triggeredRules.map((t) => t.ruleId));
     usage.push(...out.usage);
+    if (out.source !== "llm") {
+      // A template fallback is not a recording of the model: fail and keep the previous file.
+      console.error(`${p.slug}: narration fell back to the template (${out.failure?.kind ?? "unknown"}); not recorded.`);
+      process.exitCode = 1;
+      continue;
+    }
     rec.narrate = {
       recordedAt: today,
       attempts: out.attempts,

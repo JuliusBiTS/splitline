@@ -19,7 +19,7 @@ describe("statute lexicon", () => {
   it("has an entry with at least one name for every catalogue rule, and no extra entries", () => {
     const ids = RULE_CATALOGUE.map((r) => r.id).sort();
     expect(Object.keys(STATUTE_LEXICON).sort()).toEqual(ids);
-    for (const e of Object.values(STATUTE_LEXICON)) expect(e.names.length).toBeGreaterThan(0);
+    for (const [id, e] of Object.entries(STATUTE_LEXICON)) if (id !== "REF-AIA-TIER") expect(e.names.length).toBeGreaterThan(0);
   });
 
   it("maps shared names to every rule that uses them", () => {
@@ -58,6 +58,18 @@ describe("checkNarrative", () => {
     expect(matches).toEqual(expect.arrayContaining(["you must", "compliant", "legal advice"]));
   });
 
+  it("flags laws that never apply, the AIA tier misuse, 'required by law' and thesis jargon", () => {
+    const kinds = checkNarrative(n("AIDA and the GDPR apply; your AIA tier is II; this is required by law under P1 and Table 4."), ["FED-DADM-01"]).map((v) => v.kind);
+    expect(kinds.filter((k) => k === "never_allowed_statute")).toHaveLength(2);
+    expect(kinds.filter((k) => k === "banned_phrase")).toHaveLength(2);
+    expect(kinds.filter((k) => k === "thesis_jargon")).toHaveLength(2);
+  });
+
+  it("does not let the always-triggered tier reference allow DADM names", () => {
+    expect(checkNarrative(n("DADM requires a human final decision."), ["REF-AIA-TIER"])[0]?.kind).toBe("untriggered_statute");
+    expect(checkNarrative(n("PPCDA requires an assessment."), ["FED-C36-XB"])[0]?.kind).toBe("proposed_as_binding");
+  });
+
   it("requires 'proposed' in any sentence naming a proposed bill", () => {
     expect(checkNarrative(n("Bill C-36 requires an assessment."), ["FED-C36-XB"])[0]?.kind).toBe("proposed_as_binding");
     expect(checkNarrative(n("Prepare for proposed Bill C-36."), ["FED-C36-XB"])).toEqual([]);
@@ -69,15 +81,15 @@ describe("template narrative", () => {
     const r = computeCase(c.intake, c.decomposition, { today: TEST_TODAY });
     const facts = buildNarrationFacts(r, c.decomposition, "Test case");
     const t = templateNarrative(facts);
-    expect(checkNarrative(t, r.triggeredRules.map((x) => x.ruleId), { userNames: userNamesOf(facts) })).toEqual([]);
+    expect(checkNarrative(t, r.triggeredRules.map((x) => x.ruleId), { userNames: userNamesOf(facts), levers: facts.levers })).toEqual([]);
     expect(t.executiveSummary.length).toBeLessThanOrEqual(700);
     expect(t.splitNarrative.length).toBeLessThanOrEqual(700);
     expect(t.rolloutNarrative.length).toBeLessThanOrEqual(700);
-    for (const l of t.leverNarratives) {
+    t.leverNarratives.forEach((l, i) => {
       expect(l.length).toBeLessThanOrEqual(500);
-      expect(l).toContain("Keep in place:");
-      expect(l).toContain("Direct cost:");
-    }
+      expect(l).toContain(`Keep in place: ${facts.levers[i]!.guardrail}`);
+      expect(l).toContain(`Direct cost: ${facts.levers[i]!.directCost}`);
+    });
     expect(t.executiveSummary).toContain("AIA-inspired indicative tier");
   });
 });

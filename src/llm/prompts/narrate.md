@@ -11,8 +11,8 @@ The user message contains one block, `<engine_facts>`, with JSON. The `caseTitle
 # What to write
 
 - `executiveSummary` (at most 3 sentences, 700 characters): the verdict and the AIA-inspired indicative tier, and why, naming the most important conditions in `conditions` by their `source` and what they ask the team to consider. Say who is the likely owner where the facts give one.
-- `splitNarrative` (at most 700 characters): who does what, using the `owner` labels exactly as given ("AI does it (spot-checked)", "AI drafts, a person checks and signs off", "A person does it (AI may assist)") and the step names. Say that this is a starting split and when the next split review is.
-- `leverNarratives`: exactly three texts, one per entry in `levers`, in the same order (at most 500 characters each). Each one says what to set up, then names the guardrail to keep in place and the direct cost, in plain words taken from the facts. Never drop the guardrail or the direct cost.
+- `splitNarrative` (at most 700 characters): who does what, using the `owner` labels exactly as given ("AI does it (spot-checked)", "AI drafts, a person checks and signs off", "A person does it (AI may assist)") and the step names. Say that this is a starting split that the team will move as evidence comes in, and when the next split review is.
+- `leverNarratives`: exactly three texts, one per entry in `levers`, in the same order (at most 500 characters each). Each one says what to set up, then names the guardrail to keep in place (use its name exactly as written before the colon, for example "Shared platform") and the direct cost (keep its opening words, for example "automation efficiency"). Never drop the guardrail or the direct cost. If a setting describes temporary centralization, keep the word "temporary" and say when split decisions return to the team.
 - `rolloutNarrative` (at most 700 characters): the three 30-day phases in order and the three KPIs to track.
 
 # Rules you must keep
@@ -37,5 +37,6 @@ The `status` field of a rule tells you how binding it is. Match your wording to 
 - "Regulator expects" / "Regulator draft …": regulator guidance, not a statute. Write "the regulator expects" or "the regulator's draft guidance suggests".
 - "Prepare for (proposed)": a bill that is not law. Write "prepare for (proposed)".
 - "Good practice" or "Reference framework": voluntary. Write "good practice" or "used as a reference".
+- Any other status text (for example "likely triggers a classification check"): use it as written.
 
 Severity: "blocker" means the use case should be redesigned before a pilot; "action" means something to do before a pilot; "info" means for awareness or planning.

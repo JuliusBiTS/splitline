@@ -16,7 +16,7 @@ const sleep = vi.fn(async () => {});
 const good: Narrative = {
   executiveSummary: "Go with conditions at AIA-inspired indicative tier II. This likely triggers BC PIPA consent duties; prepare for proposed Bill C-36.",
   splitNarrative: "The AI drafts clause flags and a person checks and signs off. This is a starting split.",
-  leverNarratives: ["Set up local decisions. Keep the guardrail. Direct cost: some efficiency.", "Adjust weekly.", "Pair experts with the AI team."],
+  leverNarratives: facts.levers.map((l) => `${l.name}: set it up. Keep in place: ${l.guardrail}. Direct cost: ${l.directCost}`) as [string, string, string],
   rolloutNarrative: "Days 1–30 foundation, 31–60 shadow pilot, 61–90 controlled scale.",
 };
 
@@ -51,6 +51,14 @@ describe("narrate (mocked SDK)", () => {
     expect(r.attempts).toBe(2);
     expect(r.violations[0]!.length).toBeGreaterThan(0);
     expect(client.parse.mock.calls[1]![0].messages[0].content).toContain("<previous_attempt_problems>");
+  });
+
+  it("a lever text that drops its guardrail or direct cost is a guard violation", async () => {
+    const client = mockClient();
+    client.parse.mockResolvedValue(parsedResponse({ ...good, leverNarratives: ["Set it up.", good.leverNarratives[1], good.leverNarratives[2]] }));
+    const r = await narrate(facts, triggered, { client, sleep });
+    expect(r.source).toBe("template");
+    expect(r.violations[0]!.map((v) => v.kind)).toEqual(["lever_missing_guardrail", "lever_missing_direct_cost"]);
   });
 
   it("guard violation twice → template fallback", async () => {

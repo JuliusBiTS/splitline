@@ -55,6 +55,14 @@ export function describeViolation(v: GuardViolation): string {
       return `${v.field}: uses "${v.match}", which reads as a legal conclusion. Rephrase with "likely triggers" or "consider".`;
     case "proposed_as_binding":
       return `${v.field}: names "${v.match}" without saying in the same sentence that it is proposed.`;
+    case "never_allowed_statute":
+      return `${v.field}: names "${v.match}", which does not apply here. Remove it.`;
+    case "thesis_jargon":
+      return `${v.field}: uses the research term "${v.match}". Use the plain lever names and labels from the facts.`;
+    case "lever_missing_guardrail":
+      return `${v.field}: does not name the guardrail "${v.match}". Name it as written before its colon.`;
+    case "lever_missing_direct_cost":
+      return `${v.field}: does not state the direct cost ("${v.match}"). Include it in plain words from the facts.`;
   }
 }
 
@@ -109,7 +117,7 @@ export async function narrate(
         violations.push([]);
         continue;
       }
-      const found = checkNarrative(parsed.data, triggeredRuleIds, { userNames: userNamesOf(facts) });
+      const found = checkNarrative(parsed.data, triggeredRuleIds, { userNames: userNamesOf(facts), levers: facts.levers });
       violations.push(found);
       if (found.length === 0) return { narrative: parsed.data, source: "llm", attempts: attempt, usage, violations };
       problems = found.map(describeViolation);

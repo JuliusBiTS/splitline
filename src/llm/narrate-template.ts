@@ -42,9 +42,12 @@ export function templateNarrative(f: NarrationFacts): Narrative {
     700,
   );
 
-  const leverNarratives = f.levers.map((l) =>
-    fit(`${l.name}: ${sentence(l.setting)} Keep in place: ${sentence(l.guardrail)} Direct cost: ${sentence(l.directCost)}`, 500),
-  ) as [string, string, string];
+  // The guardrail and the direct cost are never cut (`02_*` §1.7): only the setting is shortened to fit.
+  const leverNarratives = f.levers.map((l) => {
+    const tail = ` Keep in place: ${sentence(l.guardrail)} Direct cost: ${sentence(l.directCost)}`;
+    const head = `${l.name}: `;
+    return `${head}${sentence(fit(l.setting, 500 - head.length - tail.length - 1))}${tail}`;
+  }) as [string, string, string];
 
   const rolloutNarrative = fit(
     `${f.rollout.map((p) => `Days ${p.days.replace(/^days\s+/i, "")}: ${p.title}`).join(". ")}. Track three KPIs: ${joinList(f.kpis)}.`,

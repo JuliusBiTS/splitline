@@ -17,7 +17,11 @@ export type GuardViolationKind =
   | "rule_id"
   | "subtask_id"
   | "banned_phrase"
-  | "proposed_as_binding";
+  | "proposed_as_binding"
+  | "never_allowed_statute"
+  | "thesis_jargon"
+  | "lever_missing_guardrail"
+  | "lever_missing_direct_cost";
 
 export interface GuardViolation {
   kind: GuardViolationKind;
@@ -30,7 +34,35 @@ const BANNED_PHRASES: readonly RegExp[] = [
   /\byou must\b/gi,
   /\bmust comply\b/gi,
   /\blegal advice\b/gi,
+  /\b(?:required by law|legally required)\b/gi,
+  // The tier is never an official AIA result (CLAUDE.md content rules).
+  /\bAIA\s+(?:tier|level|score)\b/g,
 ];
+
+/**
+ * Laws the model may know from training that are not in the catalogue and never apply here
+ * (AIDA died with Bill C-27; there is no federal AI statute; EU law is out of scope).
+ */
+const NEVER_ALLOWED: readonly RegExp[] = [
+  /(?<![A-Za-z0-9])AIDA(?![A-Za-z0-9])/g,
+  /\bArtificial Intelligence and Data Act\b/gi,
+  /(?<![A-Za-z0-9])C-27(?![A-Za-z0-9])/g,
+  /\bEU AI Act\b/gi,
+  /(?<![A-Za-z0-9])GDPR(?![A-Za-z0-9])/g,
+];
+
+/** Thesis vocabulary that belongs in "Research basis", not on the main view (ADR-0018). */
+const THESIS_JARGON = /(?<![A-Za-z0-9])P[1-4](?![A-Za-z0-9])|\bTable 4\b|\bSection \d|\breinforcement\b|\bmutual adjustment\b|\bdecision rights\b/gi;
+
+/** A lever text must name its guardrail (the part before the colon) and its direct cost (`02_*` §1.7). */
+export function guardrailKey(guardrail: string): string {
+  return (guardrail.includes(":") ? guardrail.split(":")[0]! : guardrail.split(/\s+/).slice(0, 3).join(" ")).trim().toLowerCase();
+}
+
+export function directCostKey(directCost: string): string {
+  const head = directCost.includes(":") ? directCost.split(":")[0]! : directCost;
+  return head.replace(/^some\s+/i, "").split(/\s+/).slice(0, 2).join(" ").trim().toLowerCase();
+}
 
 /** Rule-ID-shaped tokens with a catalogue prefix, including made-up ones ("BC-PIPA-07"). */
 const RULE_ID_SHAPE = /(?<![A-Za-z0-9-])(?:BC|FED|ON|QC|INS|LIAB|REF|OSFI|VC|HC|ISO)(?:-[A-Z0-9]+)+(?![A-Za-z0-9-])/g;
@@ -54,6 +86,8 @@ export interface GuardOptions {
   statuteNames?: readonly StatuteName[];
   /** User-chosen names (case title, step names). Masked before the checks: a step the user named "s1" is not an ID. */
   userNames?: readonly string[];
+  /** The three levers from the facts, in narrative order; each lever text must keep its guardrail and direct cost. */
+  levers?: ReadonlyArray<{ guardrail: string; directCost: string }>;
 }
 
 const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -100,6 +134,18 @@ export function checkNarrative(
         if (m) out.push({ kind: "proposed_as_binding", field, match: m[0] });
       }
     }
+    for (const re of NEVER_ALLOWED) {
+      for (const m of text.matchAll(re)) out.push({ kind: "never_allowed_statute", field, match: m[0] });
+    }
+    for (const m of text.matchAll(THESIS_JARGON)) out.push({ kind: "thesis_jargon", field, match: m[0] });
   }
+  (opts.levers ?? []).forEach((lever, i) => {
+    const field = `leverNarratives.${i}`;
+    const text = (narrative.leverNarratives[i] ?? "").toLowerCase();
+    const g = guardrailKey(lever.guardrail);
+    const c = directCostKey(lever.directCost);
+    if (!text.includes(g)) out.push({ kind: "lever_missing_guardrail", field, match: g });
+    if (!text.includes(c)) out.push({ kind: "lever_missing_direct_cost", field, match: c });
+  });
   return out;
 }

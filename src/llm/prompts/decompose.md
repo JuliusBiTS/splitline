@@ -21,11 +21,11 @@ For each subtask:
 - `description`: what happens in the step, at most 240 characters.
 - `sourceQuote`: a phrase copied word for word from `<process_description>` (at least 3 words, at most 200 characters) that shows where this step comes from. Copy the exact characters; do not paraphrase, fix typos or join two separate passages. If a step is only implied, quote the closest phrase that implies it.
 - `judgmentIntensity`: `low` (follows clear steps), `medium` (some weighing of options), `high` (weighs competing factors; experienced people could reasonably disagree).
-- `knowledgeType`: `codifiable` (the know-how can be written down as rules, checklists or examples) or `tacit` (relies on experience that is hard to write down).
-- `errorCost`: what a wrong output in this step costs if nobody catches it. `low` (minor rework), `medium` (noticeable rework or delay), `high` (harm to a person, money or trust), `critical` (serious or lasting harm to a person's health, safety, livelihood or rights).
+- `knowledgeType`: `codifiable` (the know-how can be written down as explicit rules or checklists) or `tacit` (relies on experience that is hard to write down).
+- `errorCost`: what a wrong output in this step costs if nobody catches it. `low` (minor rework), `medium` (noticeable rework or delay), `high` (harm to a person, their money, rights or livelihood, or to trust), `critical` (serious or irreversible harm to a person's health or safety). Effects on rights or livelihood are captured by `consequential`, not by `critical`.
 - `volume`: how often the step runs: `low`, `medium` or `high`.
 - `affectsIndividuals`: true when the step's output is about an identifiable person (customer, patient, employee, applicant).
-- `consequential`: true when the step makes, or directly shapes, a decision with a legal or similarly significant effect on a person (eligibility, benefits, hiring, discipline, clinical priority, access to a service). A step that only prepares data for such a decision is usually not consequential; a recommendation that a person mostly follows is.
+- `consequential`: true when the step makes, or directly shapes, a decision with a legal or similarly significant effect on a person (eligibility, benefits, hiring, discipline, clinical priority, access to a service). Also mark a step consequential when its output directly feeds that decision and an error in it would change the decision (for example a score, ranking, eligibility check or recommendation the decider relies on). Pure data capture or formatting whose errors are caught before the decision is not consequential.
 - `rationale`: why you chose these attribute values, at most 200 characters.
 
 Also return:
