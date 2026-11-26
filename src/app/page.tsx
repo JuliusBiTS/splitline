@@ -39,6 +39,9 @@ export default function Home() {
           <p className="text-lg leading-relaxed text-muted-foreground sm:text-xl">
             Turn an AI idea into a governed human–AI operating model in about 15 minutes, then measure whether it is working.
           </p>
+          <p className="text-base font-medium text-ink sm:text-lg">
+            Find out if an AI use case can be piloted in BC, under what conditions, and how your team should run it.
+          </p>
         </section>
 
         <section aria-labelledby="presets-title" className="flex flex-col gap-5">

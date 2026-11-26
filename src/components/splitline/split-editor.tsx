@@ -4,7 +4,7 @@ import { useId, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import type { SplitOwner } from "@/engine/types";
-import { isOwnerEdited, isSplitOwner, OWNER_LABELS, OWNERS, ownerEditedNote, splitSummary } from "./split-map.logic";
+import { isOwnerEdited, isSplitOwner, OWNER_LABELS_SHORT, OWNERS, ownerEditedNote, splitSummary } from "./split-map.logic";
 
 type Level = "low" | "medium" | "high" | "critical";
 const BASE_LEVELS: { value: Level; label: string }[] = [
@@ -24,7 +24,7 @@ export interface SplitEditorRow {
   reason: string;
 }
 
-/** Owner control: a single-select segmented ToggleGroup (Base UI) of Machine / Machine + review / Human. */
+/** Owner control: a single-select segmented ToggleGroup (Base UI) of the three plain owner labels. */
 export function OwnerControl({
   value,
   onChange,
@@ -45,7 +45,7 @@ export function OwnerControl({
     >
       {OWNERS.map((o) => (
         <ToggleGroupItem key={o} value={o} className="w-auto px-3 text-sm">
-          {OWNER_LABELS[o]}
+          {OWNER_LABELS_SHORT[o]}
         </ToggleGroupItem>
       ))}
     </ToggleGroup>

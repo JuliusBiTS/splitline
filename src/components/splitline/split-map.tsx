@@ -1,6 +1,6 @@
 import type { SplitOwner } from "@/engine/types";
 import { cn } from "@/lib/utils";
-import { OWNER_LABELS, OWNERS } from "./split-map.logic";
+import { OWNER_LABELS, OWNER_LABELS_SHORT, OWNERS } from "./split-map.logic";
 
 export interface SplitMapRow {
   subtaskId: string;
@@ -10,7 +10,7 @@ export interface SplitMapRow {
 }
 
 /**
- * SplitMap (read view): subtasks × {Machine, Machine + review, Human}. The owning cell gets an
+ * SplitMap (read view): subtasks × {AI does it, AI drafts + person signs off, person does it}. The owning cell gets an
  * accent dot + reason chip; the owner is also written out for screen readers (never position alone).
  */
 export function SplitMap({
@@ -31,7 +31,7 @@ export function SplitMap({
       <div className="relative overflow-x-auto rounded-card border border-border">
         <table className="w-full min-w-[640px] border-collapse text-left text-[15px]">
           <caption className="sr-only">
-            {startingSplitLabel}. Owner of each subtask: Machine, Machine + review, or Human.
+            {startingSplitLabel}. Who does each step: {OWNERS.map((o) => OWNER_LABELS[o]).join("; ")}.
           </caption>
           <thead className="bg-subtle text-[13px] font-medium text-muted-foreground">
             <tr>
@@ -40,7 +40,7 @@ export function SplitMap({
               </th>
               {OWNERS.map((o) => (
                 <th key={o} scope="col" className="border-l border-divider px-4 py-3 font-medium">
-                  {OWNER_LABELS[o]}
+                  {OWNER_LABELS_SHORT[o]}
                 </th>
               ))}
             </tr>
