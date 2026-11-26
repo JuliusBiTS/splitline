@@ -1,6 +1,6 @@
 # Splitline: Product Specification
 
-**Version:** 1.2 (LLM layer, ADR-0019; v1.1 manager copy pass, ADR-0018; v1.0 locked after the Phase 0 interview) · **Date:** 2026-11-26 · **Owner:** Julius Wölki
+**Version:** 1.3 (live cases and export, ADR-0020; v1.2 LLM layer, ADR-0019; v1.1 manager copy pass, ADR-0018; v1.0 locked after the Phase 0 interview) · **Date:** 2026-11-26 · **Owner:** Julius Wölki
 **Tagline:** *Design where the machine ends and judgment begins.*
 
 > This spec is the source of truth for *what* to build. `docs/PLAN.md` says *in which order*. `docs/research/*` holds the evidence. If this spec and the research disagree, raise it; do not silently pick one. Section 14 records the interview decisions and the items explicitly deferred (each with an ADR). Changes since v0.9 are summarized in §15.
@@ -62,7 +62,7 @@ It combines three things:
 
 **Main navigation:** Presets (`/`) · Start your own (`/case/new`) · Living Lab (`/lab`) · Pulse (`/pulse`) · Governance Map (`/sources`).
 
-Case IDs are client-side (stored in `localStorage` plus a URL-hash share link). No server storage. **The share link carries structured data only** (all intake fields except `processDescription`, plus the confirmed decomposition). The free-text description stays in the creator's `localStorage`; results reproduce fully because the engine never reads free text (ADR-0008).
+Case IDs are client-side (stored in `localStorage` plus a URL-hash share link). No server storage. **The share link carries structured data only** (all intake fields except `processDescription`, plus the confirmed decomposition). The free-text description stays in the creator's `localStorage`; results reproduce fully because the engine never reads free text (ADR-0008). Format: `/case/<id>#v1.<base64url(deflate-raw(JSON))>` carrying `{ asOf, structured intake, decomposition }`; the AI narrative stays with the creator (ADR-0020).
 
 ## 5. Intake (input model)
 
@@ -370,6 +370,7 @@ All presets use fictional organizations. Preset copy must explain *why* the verd
   - Header: Splitline, case title, date, tier, verdict.
   - Body: conditions with likely owner and rough effort, split summary in plain owner labels, three levers with guardrails, cost estimates and the Table 4 direct cost, 90-day plan, KPIs, triggered rules with effective status, sources and last-verified date.
   - Footer: disclaimer and the Splitline URL.
+  - The print view (`/preset/[slug]/charter`, `/case/[id]/charter`) lists deliverable headlines and the first source per rule to stay on one page; the Markdown keeps full deliverables with owners and all sources (ADR-0020).
 - **Inventory record (JSON), ISO/IEC 42001-style:** `useCaseId, title, owner(placeholder), orgType, aiType, aiDecisionRole, dataCategories, hosting, indicativeTier, verdict, triggeredRuleIds, splitReviewCadence, nextReviewDate, createdAt, engineVersion, ruleCatalogueVersion`.
 
 ## 12. Non-functional requirements
@@ -423,6 +424,8 @@ Env: `ANTHROPIC_API_KEY`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, 
 - Written thesis permission → before M3, ADR-0009.
 
 ## 15. Changes since v0.9
+
+**v1.3 (2026-11-26, ADR-0020, live cases):** §4 share-link format and case as-of date; §5 step 2 shows every field without a default (9 questions + patterns), with stated advanced defaults; §11 print view compaction; recorded narratives on the Summary and in the charter with a provenance label.
 
 **v1.2 (2026-11-26, ADR-0019, LLM layer):** §8 narrate input is structured intake + confirmed decomposition (server recomputes); `sourceQuote` grounding; stricter guard; `GET /api/live-status`; §10 presets hold recorded decompositions with reviewed confirmation edits; §13 `CASE_TOKEN_SECRET`.
 

@@ -71,7 +71,15 @@ export function QuadrantChart({
                 stroke="var(--sl-ink)"
                 strokeWidth="2"
               />
-              <text x={p.x + 10} y={p.y - 8} fontSize="12" fontWeight={latest ? 600 : 400} fill="var(--sl-ink)">
+              {/* Labels flip to the left of points in the right half, so they never run past the plot edge. */}
+              <text
+                x={p.x > mid ? p.x - 10 : p.x + 10}
+                y={p.y - 8}
+                textAnchor={p.x > mid ? "end" : "start"}
+                fontSize="12"
+                fontWeight={latest ? 600 : 400}
+                fill="var(--sl-ink)"
+              >
                 {p.label}
               </text>
             </g>

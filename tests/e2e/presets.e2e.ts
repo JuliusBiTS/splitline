@@ -97,7 +97,7 @@ test.describe("workspace", () => {
     await expect(brief.getByRole("heading", { name: "Before you pilot" })).toBeVisible();
     await expect(brief.getByText("Likely owner:").first()).toBeVisible();
     await expect(brief.getByRole("heading", { name: "Who does what" })).toBeVisible();
-    await expect(brief.getByText("AI drafts, a person checks and signs off").first()).toBeVisible();
+    await expect(brief.getByRole("region", { name: "Who does what" }).getByText("AI drafts, a person checks and signs off").first()).toBeVisible();
     await expect(brief.getByRole("heading", { name: "What it costs you" })).toBeVisible();
     await expect(brief.getByText(/straight-through processing stays at zero for the first 60 days/)).toBeVisible();
     // The condition list appears once (no duplicate "Top conditions" block).

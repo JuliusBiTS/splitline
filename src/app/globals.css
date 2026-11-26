@@ -169,3 +169,19 @@
     }
   }
 }
+
+/* Charter print stylesheet (SPEC §11): one A4/Letter page. Size-neutral margins fit both. */
+@page {
+  size: auto;
+  margin: 8mm 9mm;
+}
+@media print {
+  html,
+  body {
+    background: var(--sl-surface);
+  }
+  .charter a {
+    color: inherit;
+    text-decoration: none;
+  }
+}

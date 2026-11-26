@@ -5,6 +5,7 @@
 import { ruleCardModel, type RuleCardModel } from "@/components/splitline/rule-card.logic";
 import { getRule } from "@/content/rules";
 import { computeCase, type EngineResult } from "@/engine";
+import { TIER_LABEL } from "@/engine/tier";
 import type { ConfirmedDecomposition, IntakeInputRaw, Preset } from "@/engine/types";
 
 /** The date preset results are computed for (split review dates count from it). */
@@ -33,6 +34,33 @@ export function rulesBySeverity(result: EngineResult): RuleCardModel[] {
     sorted.map((t) => t.ruleId),
   );
 }
+
+/**
+ * Plain explanation of the verdict for live cases (presets carry an authored one). Built only from
+ * engine output, so it never invents a reason; legal microcopy stays "likely" (CLAUDE.md).
+ */
+export function verdictReason(result: EngineResult): string {
+  const title = (id: string) => getRule(id)?.title ?? "a triggered rule";
+  const blockers = result.triggeredRules.filter((t) => t.severity === "blocker");
+  const actions = result.triggeredRules.filter((t) => t.severity === "action");
+  const tier = `The ${TIER_LABEL} is ${result.tier.level}.`;
+  if (blockers.length > 0) {
+    const names = blockers.slice(0, 2).map((t) => title(t.ruleId).replace(/\.$/, ""));
+    const fix =
+      result.verdict.verdict === "stop"
+        ? "At least one has no redesign path in the catalogue, so reconsider the use case as described."
+        : "Each one names a redesign path in the Triage tab; plan that before a pilot.";
+    return `${blockers.length === 1 ? "One rule likely blocks" : `${blockers.length} rules likely block`} this design as described (see each rule's status): ${names.join("; ")}. ${fix} ${tier}`;
+  }
+  if (actions.length > 0) {
+    const top = result.verdict.topConditions[0];
+    return `${actions.length === 1 ? "One item to consider" : `${actions.length} items to consider`} before a pilot${
+      top ? `, led by: ${title(top).replace(/\.$/, "")}` : ""
+    }. None of them likely blocks the design as described. ${tier}`;
+  }
+  return `No rule here likely adds a condition before a pilot; the Triage tab lists good-practice items to consider. ${tier}`;
+}
+
 
 export function subtaskNames(decomposition: ConfirmedDecomposition): Map<string, string> {
   return new Map(decomposition.subtasks.map((s) => [s.id, s.name]));
