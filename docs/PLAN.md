@@ -108,6 +108,23 @@ Phase 3 (design) runs in parallel to Phases 1–2. Phases 1–2 have no UI depen
 
 ---
 
+## Copy pass: manager language (between Phases 4 and 5, ADR-0018)
+**Goal:** a non-specialist AI or transformation manager can read a preset as a decision brief, with thesis fidelity intact.
+- [x] Two-layer language: manager terms on the main view; thesis terms, propositions and the verbatim scope disclosure in "Research basis".
+- [x] Plain split owner labels (1:1 with `SplitOwner`); the claims s5 mismatch resolved and every preset checked.
+- [x] Case-specific cost estimates from the engine (`costEstimates`), labelled as estimates; guardrail and Table 4 direct cost kept for every lever.
+- [x] Summary as a one-screen brief (verdict, Before you pilot with likely owner and rough effort, Who does what, What it costs you, next review); no duplicated conditions.
+- [x] Rollout: owner role per deliverable, no internal IDs, "DAYS DAYS" fixed. Tier rationale in plain words, with the ticked mitigations listed.
+- [x] Landing promise line; `<main>` landmark holds the workspace on a direct load (no Suspense fallback).
+
+**Acceptance**
+- `pnpm verify`, `pnpm test:e2e` and `pnpm test:a11y` pass.
+- The e2e check finds no `s1`-style IDs, "(P1)", "Table 4", "Section 6.4" or rule IDs on the claims Summary, Model or Rollout tab; a no-JS load has the `h1` inside `main`.
+- `thesis-fidelity-reviewer`, `legal-content-reviewer` and `plan-reviewer` have no open correctness findings.
+- Before/after screenshots of the claims Summary at 1440 px and 375 px are in `docs/evidence/copy-manager-pass/`.
+
+---
+
 ## Phase 5: LLM layer (decompose, narrate) with guards and evals
 **Goal:** live runs that are safe, cheap and graceful when unavailable.
 - [ ] `src/llm/client.ts`: model constant, prompt caching, error mapping (429 rate / ramp / spend cap).
