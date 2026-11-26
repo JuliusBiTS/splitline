@@ -143,9 +143,9 @@ Phase 3 (design) runs in parallel to Phases 1–2. Phases 1–2 have no UI depen
 
 ## Phase 6: Live intake, export, Pulse UI, deploy (→ M1)
 **Goal:** the full self-serve flow plus the first public deploy.
-- [ ] `/case/new` 3-step intake with progressive disclosure, a "don't enter personal info" banner, editable subtask table, manual fallback.
-- [ ] `/case/[id]` workspace (same components as presets); `localStorage` persistence + share link (URL hash, compressed).
-- [ ] Export: Markdown charter, print stylesheet (one page), inventory JSON.
+- [x] `/case/new` 3-step intake with progressive disclosure, a "don't enter personal info" banner, editable subtask table, manual fallback.
+- [x] `/case/[id]` workspace (same components as presets); `localStorage` persistence + share link (URL hash, compressed).
+- [x] Export: Markdown charter, print stylesheet (one page), inventory JSON.
 - [ ] `/pulse`: survey, scoring, 2×2, lagging driver → lever.
 - [ ] Vercel deploy, env vars, Upstash, Vercel Analytics custom events.
 - [ ] `release-check` skill run before deploy.

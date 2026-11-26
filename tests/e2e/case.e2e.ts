@@ -164,3 +164,23 @@ test.describe("manual path (live mode off)", () => {
     await expect(page.getByRole("heading", { name: "This link could not be opened" })).toBeVisible();
   });
 });
+
+test("intake works by keyboard only", async ({ page }) => {
+  await page.goto("/case/new");
+  await page.getByLabel("Use-case title").focus();
+  await page.keyboard.type("Keyboard case");
+  await page.keyboard.press("Tab");
+  await page.keyboard.type(preset.intake.processDescription);
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("button", { name: "Continue to context" })).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("heading", { name: "Context" })).toBeFocused();
+  // Native selects and checkboxes: Tab to reach, arrows and Space to choose.
+  await page.keyboard.press("Tab");
+  await expect(page.getByLabel("Type of organization")).toBeFocused();
+  await page.keyboard.press("ArrowDown");
+  await expect(page.getByLabel("Type of organization")).not.toHaveValue("");
+  await page.getByRole("checkbox", { name: "Patients" }).focus();
+  await page.keyboard.press("Space");
+  await expect(page.getByRole("checkbox", { name: "Patients" })).toBeChecked();
+});
