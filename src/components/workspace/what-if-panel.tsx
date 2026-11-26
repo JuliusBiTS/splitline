@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { WhatIfDrawer } from "@/components/splitline/what-if-drawer";
 import { diffChips, type DiffChip } from "@/components/splitline/what-if.logic";
-import type { ConfirmedDecomposition, Dynamism, IntakeInputRaw, TierLevel, Verdict } from "@/engine/types";
+import type { ConfirmedDecomposition, Dynamism, IntakeInputRaw, TierLevel, Verdict, WhatIfToggles } from "@/engine/types";
 import { baseValues, changedToggles, isChanged, whatIfControls, withControl, type WhatIfValues } from "./what-if-controls";
 
 /** Custom event that opens the What-if drawer (e.g. from the Summary "Try a what-if" button). */
@@ -35,6 +35,7 @@ export function WhatIfPanel({
   dynamism,
   today,
   base,
+  onApply,
 }: {
   intake: IntakeInputRaw;
   decomposition: ConfirmedDecomposition;
@@ -43,6 +44,8 @@ export function WhatIfPanel({
   today: string;
   /** Engine results of the unchanged case, computed on the server. */
   base: Omit<Snapshot, "chips">;
+  /** Live cases (ADR-0017 §4): saves the changed toggles into the case. Presets omit it. */
+  onApply?: (toggles: WhatIfToggles) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [engine, setEngine] = useState<EngineModule | null>(null);
@@ -98,7 +101,15 @@ export function WhatIfPanel({
       rulesCount={snapshot.rulesCount}
       blockersCount={snapshot.blockersCount}
       pending={open && !engine}
-      footerNote="Presets are fixed. Start your own to keep changes."
+      onApply={
+        onApply
+          ? () => {
+              onApply(changedToggles(initial, values));
+              setOpen(false);
+            }
+          : undefined
+      }
+      footerNote={onApply ? undefined : "Presets are fixed. Start your own to keep changes."}
     />
   );
 }

@@ -37,10 +37,12 @@ import {
 } from "@/engine/levers";
 import { TIER_LABEL } from "@/engine/tier";
 import type { ConfirmedDecomposition, CostEstimate, KpiKind, LeverKey } from "@/engine/types";
+import type { NarrativeView } from "@/content/presets/narratives";
 import { cn } from "@/lib/utils";
 import { rulesBySeverity, ruleCardsFor, subtaskNames, type InventoryRecord } from "./model";
 import { TabLinkButton } from "./workspace-tabs";
 import { OpenWhatIfButton } from "./open-what-if-button";
+import { ExportActions } from "./export-actions";
 
 function H2({ children, id }: { children: ReactNode; id?: string }) {
   return (
@@ -169,14 +171,43 @@ function WhoDoesWhat({ r, decomposition }: { r: EngineResult; decomposition: Con
   );
 }
 
+/** The guarded narrative (recorded for presets, live or template for cases), with its provenance. */
+export function NarrativeBlock({ view }: { view: NarrativeView }) {
+  const n = view.narrative;
+  return (
+    <section aria-labelledby="in-brief" className="flex flex-col gap-3 rounded-card border border-border bg-surface p-5 sm:p-6">
+      <h2 id="in-brief" className="text-lg font-semibold text-ink">
+        In brief
+      </h2>
+      <p className="text-[15px] leading-relaxed text-ink-2">{n.executiveSummary}</p>
+      <details className="text-[15px] text-ink-2">
+        <summary className="min-h-6 cursor-pointer font-medium text-brand">Read the full summary</summary>
+        <div className="mt-3 flex flex-col gap-3 leading-relaxed">
+          <p>{n.splitNarrative}</p>
+          {n.leverNarratives.map((l) => (
+            <p key={l}>{l}</p>
+          ))}
+          <p>{n.rolloutNarrative}</p>
+        </div>
+      </details>
+      <p className="text-[13px] text-muted-foreground">{view.provenance}</p>
+    </section>
+  );
+}
+
 export function SummaryPanel({
   r,
   reason,
   decomposition,
+  narrative,
+  narrativeNote,
 }: {
   r: EngineResult;
   reason: string;
   decomposition: ConfirmedDecomposition;
+  narrative?: NarrativeView | null;
+  /** Shown instead of the narrative, e.g. for a case opened from a share link. */
+  narrativeNote?: string;
 }) {
   const top = ruleCardsFor(r, r.verdict.topConditions);
   return (
@@ -197,6 +228,7 @@ export function SummaryPanel({
             }
             disclaimer={DISCLAIMER_LONG}
           />
+          {narrative ? <NarrativeBlock view={narrative} /> : narrativeNote ? <p className="text-sm text-muted-foreground">{narrativeNote}</p> : null}
           <section aria-labelledby="before-pilot" className="flex flex-col gap-3">
             <H2 id="before-pilot">Before you pilot</H2>
             {top.length > 0 ? (
@@ -467,7 +499,21 @@ export function RolloutPanel({ r }: { r: EngineResult }) {
   );
 }
 
-export function ExportPanel({ r, record }: { r: EngineResult; record: InventoryRecord }) {
+export function ExportPanel({
+  r,
+  record,
+  title,
+  markdown,
+  charterHref,
+  source,
+}: {
+  r: EngineResult;
+  record: InventoryRecord;
+  title: string;
+  markdown: string;
+  charterHref: string;
+  source: "preset" | "case";
+}) {
   return (
     <Panel>
       <section aria-labelledby="charter" className="flex flex-col gap-3">
@@ -482,15 +528,8 @@ export function ExportPanel({ r, record }: { r: EngineResult; record: InventoryR
           <li>{r.triggeredRules.length} triggered rules</li>
           <li>{r.operatingModel.split.length} steps in the starting split</li>
         </ul>
-        <div className="flex flex-wrap items-center gap-3">
-          <button type="button" disabled className={buttonVariants({ variant: "outline" })}>
-            Download charter (Markdown)
-          </button>
-          <button type="button" disabled className={buttonVariants({ variant: "outline" })}>
-            Download inventory record (JSON)
-          </button>
-          <p className="text-sm text-muted-foreground">Downloads arrive with live runs.</p>
-        </div>
+        <ExportActions title={title} markdown={markdown} record={record} charterHref={charterHref} source={source} />
+        <p className="text-sm text-muted-foreground">Files are made in your browser. Nothing is uploaded.</p>
       </section>
       <section aria-labelledby="inventory" className="flex flex-col gap-3">
         <H2 id="inventory">Inventory record preview</H2>

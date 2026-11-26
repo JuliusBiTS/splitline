@@ -6,6 +6,10 @@ import { ExportPanel, OperatingModelPanel, RolloutPanel, SummaryPanel, TriagePan
 import { WhatIfPanel } from "@/components/workspace/what-if-panel";
 import { WorkspaceTabs } from "@/components/workspace/workspace-tabs";
 import { getPreset, PRESETS } from "@/content/presets";
+import { getRecordedNarrative } from "@/content/presets/narratives";
+import { charterMarkdown } from "@/export/charter";
+import { siteUrl } from "@/lib/site";
+import { TrackOnMount } from "@/components/workspace/track-event";
 import { valueLabel } from "@/engine/labels";
 
 export function generateStaticParams() {
@@ -34,6 +38,16 @@ export default async function PresetPage({ params }: PageProps<"/preset/[slug]">
   const r = computePreset(preset);
   const record = inventoryRecord(`preset-${preset.slug}`, preset.intake, r, PRESET_AS_OF);
   const orgLabel = valueLabel(preset.intake.orgType);
+  const narrative = getRecordedNarrative(preset.slug, formatIsoDate);
+  const markdown = charterMarkdown({
+    title: preset.intake.title,
+    asOf: PRESET_AS_OF,
+    result: r,
+    decomposition: preset.decomposition,
+    reason: preset.verdictExplanation,
+    narrative,
+    url: `${siteUrl()}/preset/${preset.slug}`,
+  });
 
   return (
     <main id="main" className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col gap-6 px-4 pt-8 pb-24 sm:px-10 md:pb-8 lg:px-20">
@@ -48,13 +62,23 @@ export default async function PresetPage({ params }: PageProps<"/preset/[slug]">
       </header>
       <WorkspaceTabs
         panels={{
-          summary: <SummaryPanel r={r} reason={preset.verdictExplanation} decomposition={preset.decomposition} />,
+          summary: <SummaryPanel r={r} reason={preset.verdictExplanation} decomposition={preset.decomposition} narrative={narrative} />,
           triage: <TriagePanel r={r} />,
           model: <OperatingModelPanel r={r} decomposition={preset.decomposition} />,
           rollout: <RolloutPanel r={r} />,
-          export: <ExportPanel r={r} record={record} />,
+          export: (
+            <ExportPanel
+              r={r}
+              record={record}
+              title={preset.intake.title}
+              markdown={markdown}
+              charterHref={`/preset/${preset.slug}/charter`}
+              source="preset"
+            />
+          ),
         }}
       />
+      <TrackOnMount event={{ name: "preset_open", props: { slug: preset.slug } }} />
       <WhatIfPanel
         intake={preset.intake}
         decomposition={preset.decomposition}

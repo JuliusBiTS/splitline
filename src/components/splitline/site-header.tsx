@@ -22,9 +22,13 @@ export function isNavActive(href: string, pathname: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-/** Site header: skip link, logo, main nav. Below `md` the nav folds into a disclosure menu. */
+/** Reads the current path (needs Suspense on dynamic routes under Cache Components). */
 export function SiteHeader() {
-  const pathname = usePathname() ?? "/";
+  return <SiteHeaderView pathname={usePathname() ?? "/"} />;
+}
+
+/** Site header: skip link, logo, main nav. Below `md` the nav folds into a disclosure menu. */
+export function SiteHeaderView({ pathname }: { pathname: string }) {
   const [open, setOpen] = useState(false);
   const links = (onNavigate?: () => void) =>
     MAIN_NAV.map((l) => {
